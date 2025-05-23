@@ -1,0 +1,361 @@
+[
+  {
+    "package": "Little Champs Checkup",
+    "price": 3000,
+    "tests": [
+      "CBC",
+      "Fasting & PPBS",
+      "Blood Grouping & Rh",
+      "Lipid Profile",
+      "AST & ALT",
+      "Hepatic Panel (LFT)",
+      "TFT",
+      "TSH",
+      "Urine Routine",
+      "ECG",
+      "X-ray"
+    ],
+    "consultations": [
+      "Dental",
+      "Paediatrics",
+      "ENT",
+      "General Medicine"
+    ],
+    "description": "A comprehensive health check-up package designed specifically for children, including pediatric, ENT, dental, and general medical consultations."
+  },
+  {
+    "package": "Smart Check",
+    "price": 3000,
+    "tests": [
+      "CBC",
+      "Fasting & PPBS",
+      "Blood Grouping & Rh",
+      "Lipid Profile",
+      "AST & ALT",
+      "Hepatic Panel (LFT)",
+      "TFT",
+      "TSH",
+      "Urine Routine",
+      "ECG",
+      "X-ray"
+    ],
+    "consultations": [
+      "Dental",
+      "Paediatrics",
+      "ENT",
+      "General Medicine"
+    ],
+    "description": "A basic wellness package designed for adults, suitable for general health screening, covering essential blood tests, imaging, and routine consultations."
+  },
+  {
+    "package": "Diabetic Package",
+    "price": 6000,
+    "tests": [
+      "CBC",
+      "Fasting & PPBS",
+      "Lipid Profile",
+      "Hepatic Panel (LFT)",
+      "Renal Panel (BUN, Creatine)",
+      "TSH",
+      "Hba1c",
+      "Urine Routine",
+      "Urine Microalbumin",
+      "ECG",
+      "X-ray",
+      "US - Abdomen"
+    ],
+    "consultations": [
+      "Diet",
+      "Nutrition",
+      "Endocrinology",
+      "Dental"
+    ],
+    "description": "A specialized package designed for adults, for monitoring and managing diabetes, including blood sugar, renal function, Hba1c, and endocrinology consultation."
+  },
+  {
+    "package": "Cardiac Package",
+    "price": 6000,
+    "tests": [
+      "CBC",
+      "Fasting & PPBS",
+      "Lipid Profile",
+      "Hepatic Panel (LFT)",
+      "X-ray",
+      "Electrolytes Panel",
+      "ECG",
+      "ECHO",
+      "TMT",
+      "Urine Routine",
+      "Urine Microalbumin",
+      "TFT"
+    ],
+    "consultations": [
+      "Cardiology",
+      "General Medicine",
+      "Diet",
+      "Nutrition",
+      "Dental"
+    ],
+    "description": "A targeted package designed for adults, for heart health evaluation, including ECG, ECHO, TMT, lipid profile, and cardiology consultation."
+  },
+  {
+    "package": "Wellness Package - Male",
+    "price": 7000,
+    "tests": [
+      "CBC",
+      "Fasting & PPBS",
+      "Lipid Profile",
+      "Hepatic Panel (LFT)",
+      "Renal Profile",
+      "TSH",
+      "ECG",
+      "TMT",
+      "Spirometry",
+      "Urine Routine",
+      "X-ray",
+      "US - Abdomen"
+    ],
+    "consultations": [
+      "Cardiology",
+      "General Medicine",
+      "Pulmonology",
+      "Dental",
+      "Diet",
+      "Nutrition"
+    ],
+    "description": "A comprehensive health check-up tailored for adult men, including heart, liver, kidney, and lung function tests, imaging, and specialty consultations."
+  },
+  {
+    "package": "Wellness Package - Female",
+    "price": 7000,
+    "tests": [
+      "CBC",
+      "Fasting & PPBS",
+      "Lipid Profile",
+      "Hepatic Panel (LFT)",
+      "Renal Profile",
+      "TFT",
+      "ECG",
+      "TMT",
+      "Spirometry",
+      "Urine Routine",
+      "X-ray",
+      "US - Abdomen"
+    ],
+    "consultations": [
+      "Cardiology",
+      "Gynecology",
+      "Dental",
+      "General Medicine",
+      "Pulmonology",
+      "Diet",
+      "Nutrition"
+    ],
+    "description": "A full-body wellness check-up for adult women, covering vital organ function, hormonal screening, and relevant specialty consultations like gynecology."
+  },
+  {
+    "package": "Executive Package - Male",
+    "price": 9000,
+    "tests": [
+      "CBC",
+      "Fasting & PPBS",
+      "Lipid Profile",
+      "Hepatic Panel (LFT)",
+      "Renal Panel (BUN, Creatine)",
+      "TSH",
+      "Electrolytes Panel",
+      "PSA - Males",
+      "ECG",
+      "ECHO",
+      "Spirometry",
+      "Urine Routine",
+      "US - Abdomen",
+      "X-ray"
+    ],
+    "consultations": [
+      "Cardiology",
+      "Pulmonology",
+      "General Medicine",
+      "Diet",
+      "Dental",
+      "Nutrition"
+    ],
+    "description": "An advanced health package for adult men with extended diagnostics including PSA, cardiac, renal, liver, and respiratory assessments."
+  },
+  {
+    "package": "Executive Package - Female",
+    "price": 9000,
+    "tests": [
+      "CBC",
+      "Fasting & PPBS",
+      "Lipid Profile",
+      "Hepatic Panel (LFT)",
+      "Renal Profile",
+      "TFT",
+      "Electrolytes Panel",
+      "ECG",
+      "Spirometry",
+      "Urine Routine",
+      "US - Abdomen",
+      "PAP Smear",
+      "ECHO",
+      "X-ray"
+    ],
+    "consultations": [
+      "Cardiology",
+      "Pulmonology",
+      "General Medicine",
+      "Gynecology",
+      "Dental",
+      "Diet",
+      "Nutrition"
+    ],
+    "description": "A premium health package for adult women, covering gynecology (PAP smear), hormonal, cardiac, and full-body diagnostics."
+  },
+  {
+    "package": "Master Health Check-up - Male",
+    "price": 12000,
+    "tests": [
+      "CBC",
+      "Fasting & PPBS",
+      "Blood Group",
+      "Lipid Profile",
+      "Hepatic Panel (LFT)",
+      "Renal Panel (BUN, Creatine)",
+      "TFT",
+      "ECG",
+      "ECHO",
+      "Electrolyte Panel",
+      "Spirometry",
+      "Urine Routine",
+      "X-ray",
+      "US - Abdomen",
+      "TMT",
+      "PSA - Males",
+      "HBA1C"
+    ],
+    "consultations": [
+      "Cardiology",
+      "Dental",
+      "General Medicine",
+      "ENT",
+      "Pulmonology",
+      "Diet",
+      "Nutrition"
+    ],
+    "description": "A detailed, all-inclusive diagnostic package for adult men including cardiac, kidney, liver, thyroid, prostate, and metabolic health evaluations."
+  },
+  {
+    "package": "Master Health Check-up - Female",
+    "price": 12000,
+    "tests": [
+      "CBC",
+      "Fasting & PPBS",
+      "Blood Group",
+      "Lipid Profile",
+      "Hepatic Panel (LFT)",
+      "Renal Panel (BUN, Creatine)",
+      "TFT",
+      "ECG",
+      "ECHO",
+      "Electrolyte Panel",
+      "Spirometry",
+      "Urine Routine",
+      "X-ray",
+      "US - Abdomen",
+      "TMT",
+      "HBA1C",
+      "PAP Smear"
+    ],
+    "consultations": [
+      "Cardiology",
+      "Dental",
+      "General Medicine",
+      "ENT",
+      "Pulmonology",
+      "Gynecology",
+      "Diet",
+      "Nutrition"
+    ],
+    "description": "A full-spectrum diagnostic package for adult women including gynecology, metabolic, cardiac, and organ function assessments."
+  },
+  {
+    "package": "Knee Arthritis Package",
+    "price": 4999,
+    "tests": [
+      "Complete Blood Count (CBC)",
+      "Erythrocyte Sedimentation Rate (ESR)",
+      "CRP (Immunoturbidimetric method)",
+      "Calcium (NM-BAPTA method)",
+      "Vitamin D Total (25-HYDROXY) ECLIA",
+      "ASO Quantitative (Immunoturbidimetric method)",
+      "Rheumatoid Factor (RF) Quantitative (Immunoturbidimetric method)",
+      "Uric Acid (Uricase method)",
+      "X-ray Knee Both AP",
+      "X-ray Knee Lateral view (Left)",
+      "X-ray Knee Lateral view (Right)"
+    ],
+    "consultations": [
+      "Orthopedics"
+    ],
+    "description": "A targeted package designed for adults, for diagnosing and monitoring knee arthritis and related joint conditions, including orthopedic consultation and joint imaging."
+  },
+  {
+    "package": "Spine Care Package",
+    "price": 4999,
+    "tests": [
+      "Complete Blood Count (CBC)",
+      "Erythrocyte Sedimentation Rate (ESR)",
+      "CRP (Immunoturbidimetric method)",
+      "Calcium (NM-BAPTA method)",
+      "Vitamin D Total (25-HYDROXY) ECLIA",
+      "ASO Quantitative (Immunoturbidimetric method)",
+      "Rheumatoid Factor (RF) Quantitative (Immunoturbidimetric method)",
+      "Uric Acid (Uricase method)",
+      "X-ray Lumbar Spine AP view",
+      "X-ray L Spine Extension",
+      "X-ray L Spine Flexion"
+    ],
+    "consultations": [
+      "Orthopedics"
+    ],
+    "description": "A specialized diagnostic package designed for adults, for spine-related issues, offering blood markers, calcium, vitamin D, and lumbar spine imaging."
+  },
+  {
+    "package": "Thyroid Basic Package",
+    "price": 999,
+    "tests": [
+      "TFT"
+    ],
+    "consultations": [
+      "Endocrinology"
+    ],
+    "description": "A simple package designed for adults, focused on thyroid health screening with TFT and endocrinology consultation."
+  },
+  {
+    "package": "Thyroid Premium Package",
+    "price": 1999,
+    "tests": [
+      "TFT",
+      "Microsomal Antibody (Anti TPO)"
+    ],
+    "consultations": [
+      "Endocrinology"
+    ],
+    "description": "A comprehensive thyroid evaluation package designed for adults, including TFT and antibody tests, suitable for early thyroid disorder detection."
+  },
+  {
+    "package": "Thyroid Premium Plus Package",
+    "price": 3999,
+    "tests": [
+      "TFT",
+      "Microsomal Antibody (Anti TPO)",
+      "Thyroglobulin Antibody (Anti TG)",
+      "US Thyroid"
+    ],
+    "consultations": [
+      "Endocrinology"
+    ],
+    "description": "An advanced thyroid health package designed for adults, with hormonal, antibody, and imaging (ultrasound thyroid) assessments for in-depth evaluation."
+  }
+]
