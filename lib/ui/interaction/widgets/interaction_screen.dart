@@ -1,50 +1,109 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rive/rive.dart';
+import 'package:voice_interaction/data/models/health_package.dart';
+import 'package:voice_interaction/data/services/realtime_api_service.dart';
+import 'package:voice_interaction/ui/interaction/view_model/interaction_event.dart';
+import 'package:voice_interaction/ui/interaction/view_model/interaction_state.dart';
 import 'package:voice_interaction/ui/interaction/view_model/interaction_view_model.dart';
+import 'package:voice_interaction/ui/interaction/widgets/language_selection_widget.dart';
 import 'package:voice_interaction/ui/interaction/widgets/package_details_widget.dart';
 
-class InteractionScreen extends ConsumerStatefulWidget {
+class InteractionScreen extends StatefulWidget {
   const InteractionScreen({super.key});
 
   @override
-  ConsumerState<InteractionScreen> createState() => _InteractionScreenState();
+  State<InteractionScreen> createState() => _InteractionScreenState();
 }
 
-class _InteractionScreenState extends ConsumerState<InteractionScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() => ref.read(voiceInteractionProvider.notifier).init());
+class _InteractionScreenState extends State<InteractionScreen> {
+  HealthPackage? packageDetails;
+  SpeechState speechState = SpeechState.idle;
+  StateMachineController? controller;
+  SMITrigger? bringMic;
+  SMITrigger? bringMouth;
+  SMITrigger? stopMouth;
+  SMITrigger? stillAgain;
+
+  void _showLanguageDialog(InteractionViewModel model) async {
+    final selectedLanguage = await showModalBottomSheet<String>(
+      context: context,
+      builder: (_) => LanguageSelectionWidget(),
+    );
+
+    if (selectedLanguage != null) {
+      model.add(StartApiConnectionEvent(language: selectedLanguage));
+    }
   }
 
-  @override
-  void dispose() {
-    ref.read(voiceInteractionProvider.notifier).dispose();
-    super.dispose();
+  void onRiveInit(Artboard artboard) {
+    controller = StateMachineController.fromArtboard(
+      artboard,
+      'State Machine (robot speaks)',
+    );
+
+    if (controller != null) {
+      artboard.addController(controller!);
+      bringMic = controller!.getTriggerInput('bring mic');
+      bringMouth = controller!.getTriggerInput('bring mouth');
+      stopMouth = controller!.getTriggerInput('stop mouth');
+      stillAgain = controller!.getTriggerInput('still again');
+    }
+  }
+
+  void _handleTrigger(SMITrigger? trigger) {
+    trigger?.fire();
   }
 
   @override
   Widget build(BuildContext context) {
-    final model = ref.read(voiceInteractionProvider.notifier);
-    final packageDetails = ref.watch(voiceInteractionProvider.select((_) => model.packageDetails));
+    return BlocProvider(
+      create: (_) => InteractionViewModel(),
+      child: BlocConsumer<InteractionViewModel, InteractionState>(
+        listener: (context, state) {
+          if (state.speechState == SpeechState.idle) {
+            if (speechState == SpeechState.speaking) {
+              _handleTrigger(stopMouth);
+            }
 
-    return Stack(
-      children: [
-        GestureDetector(
-          onDoubleTap: model.unmuteMic,
-          child: RiveAnimation.asset(
-            'assets/face.riv',
-            fit: BoxFit.contain,
-            onInit: model.onRiveInit,
-          ),
-        ),
-        if (packageDetails != null)
-          PackageDetailsWidget(
-            data: packageDetails,
-            onDone: model.clearPackageDetails,
-          ),
-      ],
+            _handleTrigger(stillAgain);
+          } else if (state.speechState == SpeechState.listening) {
+            if (speechState == SpeechState.speaking) {
+              _handleTrigger(stopMouth);
+            } else if (speechState == SpeechState.idle) {
+              _handleTrigger(bringMic);
+            }
+          } else if (state.speechState == SpeechState.speaking) {
+            _handleTrigger(bringMouth);
+          }
+
+          setState(() {
+            packageDetails = state.packageDetails;
+          });
+        },
+        builder: (context, state) {
+          final model = context.read<InteractionViewModel>();
+          model.add(InitializeEvent());
+
+          return Stack(
+            children: [
+              GestureDetector(
+                onDoubleTap: () => _showLanguageDialog(model),
+                child: RiveAnimation.asset(
+                  'assets/face.riv',
+                  fit: BoxFit.contain,
+                  onInit: onRiveInit,
+                ),
+              ),
+              if (packageDetails != null)
+                PackageDetailsWidget(
+                  data: packageDetails!.toJson(),
+                  onDone: () => model.add(ClosePackageDetailsEvent()),
+                ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

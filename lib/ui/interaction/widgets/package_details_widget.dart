@@ -77,7 +77,7 @@ class _PackageDetailsWidgetState extends State<PackageDetailsWidget> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeIn,
       child: Container(
-        color: Colors.black.withOpacity(0.7),
+        color: Colors.black.withValues(alpha: 0.7),
         child: Stack(
           children: [
             Center(
@@ -102,7 +102,7 @@ class _PackageDetailsWidgetState extends State<PackageDetailsWidget> {
                       const SizedBox(height: 16),
                       Text(
                         widget.data['description'] ?? '',
-                        style: const TextStyle(fontSize: 16, color: Colors.black87),
+                        style: const TextStyle(fontSize: 16, color: Colors.black),
                       ),
                       const SizedBox(height: 24),
                       Text(

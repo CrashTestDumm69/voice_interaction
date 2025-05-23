@@ -34,6 +34,10 @@ bool operator ==(Object other) {
 @override
 int get hashCode => Object.hash(runtimeType,package,price,const DeepCollectionEquality().hash(tests),const DeepCollectionEquality().hash(consultations),description);
 
+@override
+String toString() {
+  return 'HealthPackage(package: $package, price: $price, tests: $tests, consultations: $consultations, description: $description)';
+}
 
 
 }

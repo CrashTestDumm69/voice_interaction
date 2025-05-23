@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:voice_interaction/ui/interaction/widgets/interaction_screen.dart';
 
 void main() async {
@@ -18,7 +17,7 @@ void main() async {
     systemNavigationBarIconBrightness: Brightness.light
   ));  
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
