@@ -75,8 +75,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
         if (state.speechState == SpeechState.idle) {
           if (speechState == SpeechState.speaking) {
             _handleTrigger(stopMouth);
+            Future.delayed(const Duration(milliseconds: 500), () => _handleTrigger(stillAgain));
+          } else {
+            _handleTrigger(stillAgain);
           }
-          _handleTrigger(stillAgain);
         } else if (state.speechState == SpeechState.listening) {
           if (speechState == SpeechState.speaking) {
             _handleTrigger(stopMouth);

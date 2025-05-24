@@ -278,5 +278,6 @@ class RealtimeApiService {
     _audioStream?.dispose();
     _inactivityTimer?.cancel();
     _connectionStateController.add(RealtimeConnectionState.disconnected);
+    _packageDetailsController.add(null);
   }
 }
