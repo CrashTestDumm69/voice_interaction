@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$InteractionState {
 
- RealtimeConnectionState get connectionState; SpeechState get speechState; HealthPackage? get packageDetails;
+ RealtimeConnectionState get connectionState; SpeechState get speechState; HealthPackage? get packageDetails; bool get isMicMuted;
 /// Create a copy of InteractionState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $InteractionStateCopyWith<InteractionState> get copyWith => _$InteractionStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InteractionState&&(identical(other.connectionState, connectionState) || other.connectionState == connectionState)&&(identical(other.speechState, speechState) || other.speechState == speechState)&&(identical(other.packageDetails, packageDetails) || other.packageDetails == packageDetails));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InteractionState&&(identical(other.connectionState, connectionState) || other.connectionState == connectionState)&&(identical(other.speechState, speechState) || other.speechState == speechState)&&(identical(other.packageDetails, packageDetails) || other.packageDetails == packageDetails)&&(identical(other.isMicMuted, isMicMuted) || other.isMicMuted == isMicMuted));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,connectionState,speechState,packageDetails);
+int get hashCode => Object.hash(runtimeType,connectionState,speechState,packageDetails,isMicMuted);
 
 @override
 String toString() {
-  return 'InteractionState(connectionState: $connectionState, speechState: $speechState, packageDetails: $packageDetails)';
+  return 'InteractionState(connectionState: $connectionState, speechState: $speechState, packageDetails: $packageDetails, isMicMuted: $isMicMuted)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $InteractionStateCopyWith<$Res>  {
   factory $InteractionStateCopyWith(InteractionState value, $Res Function(InteractionState) _then) = _$InteractionStateCopyWithImpl;
 @useResult
 $Res call({
- RealtimeConnectionState connectionState, SpeechState speechState, HealthPackage? packageDetails
+ RealtimeConnectionState connectionState, SpeechState speechState, HealthPackage? packageDetails, bool isMicMuted
 });
 
 
@@ -63,12 +63,13 @@ class _$InteractionStateCopyWithImpl<$Res>
 
 /// Create a copy of InteractionState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? connectionState = null,Object? speechState = null,Object? packageDetails = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? connectionState = null,Object? speechState = null,Object? packageDetails = freezed,Object? isMicMuted = null,}) {
   return _then(InteractionState(
 connectionState: null == connectionState ? _self.connectionState : connectionState // ignore: cast_nullable_to_non_nullable
 as RealtimeConnectionState,speechState: null == speechState ? _self.speechState : speechState // ignore: cast_nullable_to_non_nullable
 as SpeechState,packageDetails: freezed == packageDetails ? _self.packageDetails : packageDetails // ignore: cast_nullable_to_non_nullable
-as HealthPackage?,
+as HealthPackage?,isMicMuted: null == isMicMuted ? _self.isMicMuted : isMicMuted // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

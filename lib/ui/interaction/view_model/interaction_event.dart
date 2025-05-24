@@ -12,6 +12,4 @@ class EndApiSessionEvent extends InteractionEvent {}
 
 class ClosePackageDetailsEvent extends InteractionEvent {}
 
-class UnmuteMicrophoneEvent extends InteractionEvent {}
-
-class MuteMicrophoneEvent extends InteractionEvent {}
+class ToggleMicrophoneEvent extends InteractionEvent {}

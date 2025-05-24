@@ -10,37 +10,43 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
   final RealtimeApiService service = RealtimeApiService();
   StreamSubscription? _connectionState; 
   StreamSubscription? _speechState;
+  StreamSubscription? _packageDetails;
 
   InteractionViewModel() : super(InteractionState.initial()) {
     on<InitializeEvent>((event, emit) {
       _connectionState = service.connectionState.listen((connectionState) => emit(state.copyWith(connectionState: connectionState)));
       _speechState = service.speechState.listen((speechState) => emit(state.copyWith(speechState: speechState)));
+      _packageDetails = service.packageDetails.listen((package) => emit(state.copyWith(packageDetails: package)));
     });
     
-    on<StartApiConnectionEvent>((event, emit) async {
-      await _initService(event.language == "English" ? RealtimeApiData.englishInstructions : RealtimeApiData.tamilInstructions);
+    on<StartApiConnectionEvent>((event, emit) {
+      service.initConnection(event.language == "English" ? RealtimeApiData.englishInstructions : RealtimeApiData.tamilInstructions);
     });
 
     on<EndApiSessionEvent>((event, emit) {
-      _stopService();
+      service.dispose();
+      emit(InteractionState.initial());
     });
-  }
 
-  Future<void> _initService(String instruction) async {
-    await service.initConnection(instruction);
-  }
+    on<ToggleMicrophoneEvent>((event, emit) {
+      if(service.isMicMuted) {
+        service.unmuteMic();
+        emit(state.copyWith(isMicMuted: false));
+      } else {
+        service.muteMic();
+        emit(state.copyWith(isMicMuted: true));
+      }
+    });
 
-  void _stopService() {
-    service.dispose();
-  }
-
-  void unmuteMic() {
-    service.unmuteMic();
+    on<ClosePackageDetailsEvent>((event, emit) {
+      service.clearPackage();
+    });
   }
 
   void dispose() {
     _connectionState?.cancel();
     _speechState?.cancel();
+    _packageDetails?.cancel();
     service.dispose();
   }
 }

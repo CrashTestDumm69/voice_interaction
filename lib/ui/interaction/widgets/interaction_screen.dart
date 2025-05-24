@@ -17,6 +17,7 @@ class InteractionScreen extends StatefulWidget {
 }
 
 class _InteractionScreenState extends State<InteractionScreen> {
+  late final InteractionViewModel model;
   HealthPackage? packageDetails;
   SpeechState speechState = SpeechState.idle;
   StateMachineController? controller;
@@ -24,6 +25,16 @@ class _InteractionScreenState extends State<InteractionScreen> {
   SMITrigger? bringMouth;
   SMITrigger? stopMouth;
   SMITrigger? stillAgain;
+  bool isMicMuted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      model = context.read<InteractionViewModel>();
+      model.add(InitializeEvent());
+    });
+  }
 
   void _showLanguageDialog(InteractionViewModel model) async {
     final selectedLanguage = await showModalBottomSheet<String>(
@@ -57,53 +68,102 @@ class _InteractionScreenState extends State<InteractionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => InteractionViewModel(),
-      child: BlocConsumer<InteractionViewModel, InteractionState>(
-        listener: (context, state) {
-          if (state.speechState == SpeechState.idle) {
-            if (speechState == SpeechState.speaking) {
-              _handleTrigger(stopMouth);
-            }
-
-            _handleTrigger(stillAgain);
-          } else if (state.speechState == SpeechState.listening) {
-            if (speechState == SpeechState.speaking) {
-              _handleTrigger(stopMouth);
-            } else if (speechState == SpeechState.idle) {
-              _handleTrigger(bringMic);
-            }
-          } else if (state.speechState == SpeechState.speaking) {
-            _handleTrigger(bringMouth);
+    return BlocConsumer<InteractionViewModel, InteractionState>(
+      listener: (context, state) {
+        // debugPrint("State - ${state.speechState.toString()}");
+        // debugPrint("Package - ${state.packageDetails.toString()}");
+        if (state.speechState == SpeechState.idle) {
+          if (speechState == SpeechState.speaking) {
+            _handleTrigger(stopMouth);
           }
+          _handleTrigger(stillAgain);
+        } else if (state.speechState == SpeechState.listening) {
+          if (speechState == SpeechState.speaking) {
+            _handleTrigger(stopMouth);
+          } else if (speechState == SpeechState.idle) {
+            _handleTrigger(bringMic);
+          }
+        } else if (state.speechState == SpeechState.speaking) {
+          _handleTrigger(bringMouth);
+        }
 
+        if (speechState != state.speechState) {
+          setState(() {
+            speechState = state.speechState;
+          });
+        }
+        if (packageDetails != state.packageDetails) {
           setState(() {
             packageDetails = state.packageDetails;
           });
-        },
-        builder: (context, state) {
-          final model = context.read<InteractionViewModel>();
-          model.add(InitializeEvent());
-
-          return Stack(
-            children: [
-              GestureDetector(
-                onDoubleTap: () => _showLanguageDialog(model),
-                child: RiveAnimation.asset(
-                  'assets/face.riv',
-                  fit: BoxFit.contain,
-                  onInit: onRiveInit,
+        }
+        if (isMicMuted != state.isMicMuted) {
+          setState(() {
+            isMicMuted = state.isMicMuted;
+          });
+        }
+      },
+      builder: (context, state) {
+        return Stack(
+          children: [
+            GestureDetector(
+              onDoubleTap: () => _showLanguageDialog(model),
+              child: RiveAnimation.asset(
+                'assets/face.riv',
+                fit: BoxFit.contain,
+                onInit: onRiveInit,
+              ),
+            ),
+            if (packageDetails != null)
+              PackageDetailsWidget(
+                data: packageDetails!.toJson(),
+                onDone: () => model.add(ClosePackageDetailsEvent()),
+              ),
+            if (state.connectionState == RealtimeConnectionState.connecting)
+              Positioned.fill(
+              child: Container(
+                color: Colors.black.withValues(alpha: 0.8),
+                child: const Center(
+                child: CircularProgressIndicator(color: Colors.white),
                 ),
               ),
-              if (packageDetails != null)
-                PackageDetailsWidget(
-                  data: packageDetails!.toJson(),
-                  onDone: () => model.add(ClosePackageDetailsEvent()),
+              ),
+            if (state.connectionState == RealtimeConnectionState.connected)
+              Positioned(
+              bottom: 32,
+              right: 32,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                FloatingActionButton(
+                  heroTag: 'mic_toggle',
+                  backgroundColor: isMicMuted
+                    ? Colors.red
+                    : Colors.green,
+                  child: Icon(
+                    isMicMuted
+                    ? Icons.mic_off
+                    : Icons.mic,
+                  color: Colors.white,
+                  ),
+                  onPressed: () => model.add(ToggleMicrophoneEvent())
                 ),
-            ],
-          );
-        },
-      ),
+                const SizedBox(height: 16),
+                FloatingActionButton(
+                  heroTag: 'end_session',
+                  backgroundColor: Colors.grey[800],
+                  child: const Icon(Icons.call_end, color: Colors.white),
+                  onPressed: () {
+                  model.add(EndApiSessionEvent());
+                  },
+                ),
+                ],
+              ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

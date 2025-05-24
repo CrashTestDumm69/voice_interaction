@@ -15,15 +15,20 @@ class InteractionState with _$InteractionState{
   @override
   final HealthPackage? packageDetails;
 
+  @override
+  final bool isMicMuted;
+
   InteractionState({
     required this.connectionState,
     required this.speechState,
-    required this.packageDetails
+    required this.packageDetails,
+    required this.isMicMuted
   });
 
   factory InteractionState.initial() => InteractionState(
     connectionState: RealtimeConnectionState.disconnected,
     speechState: SpeechState.idle,
-    packageDetails: null
+    packageDetails: null,
+    isMicMuted: false,
   );
 }
