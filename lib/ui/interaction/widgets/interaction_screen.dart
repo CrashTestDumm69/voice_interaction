@@ -116,24 +116,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
                 onInit: onRiveInit,
               ),
             ),
-            if (packageDetails != null)
-              PackageDetailsWidget(
-                data: packageDetails!.toJson(),
-                onDone: () => model.add(ClosePackageDetailsEvent()),
-              ),
-            if (state.connectionState == RealtimeConnectionState.connecting)
-              Positioned.fill(
-              child: Container(
-                color: Colors.black.withValues(alpha: 0.8),
-                child: const Center(
-                child: CircularProgressIndicator(color: Colors.white),
-                ),
-              ),
-              ),
             if (state.connectionState == RealtimeConnectionState.connected)
               Positioned(
-              bottom: 32,
-              right: 32,
+              bottom: 40,
+              right: 40,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -161,6 +147,20 @@ class _InteractionScreenState extends State<InteractionScreen> {
                   },
                 ),
                 ],
+              ),
+              ),
+            if (packageDetails != null)
+              PackageDetailsWidget(
+                data: packageDetails!.toJson(),
+                onDone: () => model.add(ClosePackageDetailsEvent()),
+              ),
+            if (state.connectionState == RealtimeConnectionState.connecting)
+              Positioned.fill(
+              child: Container(
+                color: Colors.black.withValues(alpha: 0.8),
+                child: const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+                ),
               ),
               ),
           ],
