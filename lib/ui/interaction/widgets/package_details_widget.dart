@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:voice_interaction/data/models/health_package.dart';
 
 class PackageDetailsWidget extends StatefulWidget {
-  final Map<String, dynamic> data;
+  final HealthPackage data;
   final VoidCallback onDone;
 
   const PackageDetailsWidget({
@@ -69,9 +70,6 @@ class _PackageDetailsWidgetState extends State<PackageDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final tests = List<String>.from(widget.data['tests'] ?? []);
-    final consultations = List<String>.from(widget.data['consultations'] ?? []);
-
     return AnimatedOpacity(
       opacity: _opacity,
       duration: const Duration(milliseconds: 300),
@@ -95,30 +93,30 @@ class _PackageDetailsWidgetState extends State<PackageDetailsWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.data['package'] ?? 'Package',
+                        widget.data.package,
                         style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        widget.data['description'] ?? '',
+                        widget.data.description,
                         style: const TextStyle(fontSize: 16, color: Colors.black),
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        'Price: ₹${widget.data['price'] ?? 0}',
+                        'Price: ₹${widget.data.price}',
                         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                       ),
-                      if (tests.isNotEmpty) ...[
+                      if (widget.data.tests.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         const Text(
                           'Tests Included:',
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 8),
-                        _buildGrid(tests),
+                        _buildGrid(widget.data.tests),
                       ],
-                      if (consultations.isNotEmpty) ...[
+                      if (widget.data.consultations.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         const Text(
                           'Consultations Included:',
@@ -126,7 +124,7 @@ class _PackageDetailsWidgetState extends State<PackageDetailsWidget> {
                         ),
                         const SizedBox(height: 8),
                         _buildGrid(
-                          consultations,
+                          widget.data.consultations,
                           icon: Icons.medical_services,
                           iconColor: Colors.blue,
                         ),

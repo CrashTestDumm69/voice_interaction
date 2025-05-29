@@ -75,7 +75,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
         if (state.speechState == SpeechState.idle) {
           if (speechState == SpeechState.speaking) {
             _handleTrigger(stopMouth);
-            Future.delayed(const Duration(milliseconds: 500), () => _handleTrigger(stillAgain));
+            Future.delayed(
+              const Duration(milliseconds: 500),
+              () => _handleTrigger(stillAgain),
+            );
           } else {
             _handleTrigger(stillAgain);
           }
@@ -118,50 +121,46 @@ class _InteractionScreenState extends State<InteractionScreen> {
             ),
             if (state.connectionState == RealtimeConnectionState.connected)
               Positioned(
-              bottom: 40,
-              right: 40,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                FloatingActionButton(
-                  heroTag: 'mic_toggle',
-                  backgroundColor: isMicMuted
-                    ? Colors.red
-                    : Colors.green,
-                  child: Icon(
-                    isMicMuted
-                    ? Icons.mic_off
-                    : Icons.mic,
-                  color: Colors.white,
-                  ),
-                  onPressed: () => model.add(ToggleMicrophoneEvent())
+                bottom: 40,
+                right: 40,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    FloatingActionButton(
+                      heroTag: 'mic_toggle',
+                      backgroundColor: isMicMuted ? Colors.red : Colors.green,
+                      child: Icon(
+                        isMicMuted ? Icons.mic_off : Icons.mic,
+                        color: Colors.white,
+                      ),
+                      onPressed: () => model.add(ToggleMicrophoneEvent()),
+                    ),
+                    const SizedBox(height: 16),
+                    FloatingActionButton(
+                      heroTag: 'end_session',
+                      backgroundColor: Colors.grey[800],
+                      child: const Icon(Icons.call_end, color: Colors.white),
+                      onPressed: () {
+                        model.add(EndApiSessionEvent());
+                      },
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                FloatingActionButton(
-                  heroTag: 'end_session',
-                  backgroundColor: Colors.grey[800],
-                  child: const Icon(Icons.call_end, color: Colors.white),
-                  onPressed: () {
-                  model.add(EndApiSessionEvent());
-                  },
-                ),
-                ],
-              ),
               ),
             if (packageDetails != null)
               PackageDetailsWidget(
-                data: packageDetails!.toJson(),
+                data: packageDetails!,
                 onDone: () => model.add(ClosePackageDetailsEvent()),
               ),
             if (state.connectionState == RealtimeConnectionState.connecting)
               Positioned.fill(
-              child: Container(
-                color: Colors.black.withValues(alpha: 0.8),
-                child: const Center(
-                child: CircularProgressIndicator(color: Colors.white),
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.8),
+                  child: const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
                 ),
-              ),
               ),
           ],
         );
