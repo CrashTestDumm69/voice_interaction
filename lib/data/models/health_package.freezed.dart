@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HealthPackage {
 
- String get package; int get price; List<String> get tests; List<String> get consultations; String get description;
+ String get package; String get price; List<String> get tests; List<String> get consultations; String get description;
 /// Create a copy of HealthPackage
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -47,7 +47,7 @@ abstract mixin class $HealthPackageCopyWith<$Res>  {
   factory $HealthPackageCopyWith(HealthPackage value, $Res Function(HealthPackage) _then) = _$HealthPackageCopyWithImpl;
 @useResult
 $Res call({
- String package, int price, List<String> tests, List<String> consultations, String description
+ String package, String price, List<String> tests, List<String> consultations, String description
 });
 
 
@@ -68,7 +68,7 @@ class _$HealthPackageCopyWithImpl<$Res>
   return _then(HealthPackage(
 package: null == package ? _self.package : package // ignore: cast_nullable_to_non_nullable
 as String,price: null == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
-as int,tests: null == tests ? _self.tests : tests // ignore: cast_nullable_to_non_nullable
+as String,tests: null == tests ? _self.tests : tests // ignore: cast_nullable_to_non_nullable
 as List<String>,consultations: null == consultations ? _self.consultations : consultations // ignore: cast_nullable_to_non_nullable
 as List<String>,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,

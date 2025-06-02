@@ -5,8 +5,6 @@ import 'package:rive/rive.dart';
 
 import 'package:voice_interaction/data/models/health_package.dart';
 import 'package:voice_interaction/data/services/realtime_api_service.dart';
-import 'package:voice_interaction/ui/interaction/view_model/interaction_event.dart';
-import 'package:voice_interaction/ui/interaction/view_model/interaction_state.dart';
 import 'package:voice_interaction/ui/interaction/view_model/interaction_view_model.dart';
 import 'package:voice_interaction/ui/interaction/widgets/language_selection_widget.dart';
 import 'package:voice_interaction/ui/interaction/widgets/package_details_widget.dart';
@@ -27,7 +25,8 @@ class _InteractionScreenState extends State<InteractionScreen> {
   SMITrigger? bringMouth;
   SMITrigger? stopMouth;
   SMITrigger? stillAgain;
-  bool isMicMuted = false;
+  bool _isMicMuted = false;
+  bool _isPackageDialogOpen = false;
 
   @override
   void initState() {
@@ -103,10 +102,40 @@ class _InteractionScreenState extends State<InteractionScreen> {
           setState(() {
             packageDetails = state.packageDetails;
           });
+
+          if (packageDetails != null && !_isPackageDialogOpen) {
+          _isPackageDialogOpen = true;
+
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return Dialog(
+                insetPadding: const EdgeInsets.all(24),
+                backgroundColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: PackageDetailsWidget(
+                  data: packageDetails!,
+                  onDone: () {
+                    Navigator.of(context).pop();
+                    model.add(ClosePackageDetailsEvent());
+                  },
+                ),
+              );
+            },
+          ).then((_) {
+            _isPackageDialogOpen = false;
+          });
+          } else if (packageDetails == null && _isPackageDialogOpen) {
+            Navigator.of(context, rootNavigator: true).pop();
+            _isPackageDialogOpen = false;
+          }
         }
-        if (isMicMuted != state.isMicMuted) {
+        if (_isMicMuted != state.isMicMuted) {
           setState(() {
-            isMicMuted = state.isMicMuted;
+            _isMicMuted = state.isMicMuted;
           });
         }
       },
@@ -131,9 +160,9 @@ class _InteractionScreenState extends State<InteractionScreen> {
                   children: [
                     FloatingActionButton(
                       heroTag: 'mic_toggle',
-                      backgroundColor: isMicMuted ? Colors.red : Colors.green,
+                      backgroundColor: _isMicMuted ? Colors.red : Colors.green,
                       child: Icon(
-                        isMicMuted ? Icons.mic_off : Icons.mic,
+                        _isMicMuted ? Icons.mic_off : Icons.mic,
                         color: Colors.white,
                       ),
                       onPressed: () => model.add(ToggleMicrophoneEvent()),
@@ -149,11 +178,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
                     ),
                   ],
                 ),
-              ),
-            if (packageDetails != null)
-              PackageDetailsWidget(
-                data: packageDetails!,
-                onDone: () => model.add(ClosePackageDetailsEvent()),
               ),
             if (state.connectionState == RealtimeConnectionState.connecting)
               Positioned.fill(

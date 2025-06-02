@@ -9,7 +9,7 @@ part of 'health_package.dart';
 HealthPackage _$HealthPackageFromJson(Map<String, dynamic> json) =>
     HealthPackage(
       package: json['package'] as String,
-      price: (json['price'] as num).toInt(),
+      price: json['price'] as String,
       tests: (json['tests'] as List<dynamic>).map((e) => e as String).toList(),
       consultations:
           (json['consultations'] as List<dynamic>)

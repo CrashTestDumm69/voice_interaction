@@ -1,0 +1,213 @@
+[
+    {
+        "department": "Anaesthesiology",
+        "doctors": [
+            "Dr. Balaji M",
+            "Dr.Devu S S",
+            "Dr.Krishnakumar M",
+            "Dr. Gokul S S"
+        ]
+    },
+    {
+        "department": "Cardiology",
+        "doctors": [
+            "Dr. Thanu S",
+            "Dr.Ajeeth Fera M"
+        ]
+    },
+    {
+        "department": "Critical Care",
+        "doctors": [
+            "Dr. Boban V",
+            "Dr.Nithin T",
+            "Dr.Nikhil Rajagopal"
+        ]
+    },
+    {
+        "department": "Dental/Oral & Maxillofacial",
+        "doctors": [
+            "Dr. Shine Manoj D J",
+            "Dr.Jenin N T",
+            "Dr.Karthik jayan"
+        ]
+    },
+    {
+        "department": "Dermatology",
+        "doctors": [
+            "Dr.Sunjanaa Dhepa R L"
+        ]
+    },
+    {
+        "department": "ENT",
+        "doctors": [
+            "Dr. Gautam Raghu"
+        ]
+    },
+    {
+        "department": "Emergency medicine",
+        "doctors": [
+            "Dr. Derin D",
+            "Dr. Prethesh Raaj T"
+        ]
+    },
+    {
+        "department": "Endocrinology",
+        "doctors": [
+            "Dr.Henith Raj"
+        ]
+    },
+    {
+        "department": "Gastroentrology - Medical",
+        "doctors": [
+            "Dr.Jai Paul",
+            "Dr.Amal Velse"
+        ]
+    },
+    {
+        "department": "Gastroentrology -Surgical",
+        "doctors": [
+            "Dr. Rejeesh Selvaganesan"
+        ]
+    },
+    {
+        "department": "General Medicine",
+        "doctors": [
+            "Dr. Stefy Joseph",
+            "Dr. Ramesh Gopi B",
+            "Dr.Josephine Antoniammal",
+            "Dr.John Bill Clinton"
+        ]
+    },
+    {
+        "department": "General Surgery",
+        "doctors": [
+            "Dr. Theodar Robinson S",
+            "Dr.Radhakrishnan Marimuthu",
+            "Dr.Vinayakhram K P S",
+            "Dr. Malavika Balachandran M"
+        ]
+    },
+    {
+        "department": "Infectious Disease",
+        "doctors": [
+            "Dr.Rajalakshmi",
+            "Dr.Mohammed Niyas V K"
+        ]
+    },
+    {
+        "department": "Nephrology",
+        "doctors": [
+            "Dr.Maria Alex Babu J"
+        ]
+    },
+    {
+        "department": "Neurology",
+        "doctors": [
+            "Dr. Jenix Nathan Y A",
+            "Dr.Ganesh.S"
+        ]
+    },
+    {
+        "department": "Neurosurgery",
+        "doctors": [
+            "Dr. Niban G M"
+        ]
+    },
+    {
+        "department": "Obstetrics & Gynaecology",
+        "doctors": [
+            "Dr. Jameela Ponmalar A R",
+            "Dr. Nancey",
+            "Dr. Mini S Kurup"
+        ]
+    },
+    {
+        "department": "Oncology - Surgical",
+        "doctors": [
+            "Dr.Lala G Anandarobin"
+        ]
+    },
+    {
+        "department": "Oncology -Medical",
+        "doctors": [
+            "Dr. Kumanan J"
+        ]
+    },
+    {
+        "department": "Ortho - Spine",
+        "doctors": [
+            "Dr.Chandhan"
+        ]
+    },
+    {
+        "department": "Orthopeaedics & Trauma",
+        "doctors": [
+            "Dr. Prabin Suthagar T S",
+            "Dr.Prajith A Solomon",
+            "Dr.Dalton John Rose"
+        ]
+    },
+    {
+        "department": "Paediatrics",
+        "doctors": [
+            "Dr. Aswin L",
+            "Dr. Gibeah H R Harriet",
+            "Dr.Jana Sababathi N"
+        ]
+    },
+    {
+        "department": "Paediatrics & Neonatology",
+        "doctors": [
+            "Dr.Vivek S"
+        ]
+    },
+    {
+        "department": "Paediatrics - Gastro",
+        "doctors": [
+            "Dr.Anu K Vasu"
+        ]
+    },
+    {
+        "department": "Paediatrics - Surgical / Urology",
+        "doctors": [
+            "Dr.Reju Joseph Thomas"
+        ]
+    },
+    {
+        "department": "Plastic-Micro-Reconstructive Surgery",
+        "doctors": [
+            "Dr.Felix Cordelia"
+        ]
+    },
+    {
+        "department": "Psychaitry & Behaviour Medicine",
+        "doctors": [
+            "Dr.Anshon A"
+        ]
+    },
+    {
+        "department": "Respiratory Medicine",
+        "doctors": [
+            "Dr. T K Ramesh",
+            "Dr.Nishanth P S"
+        ]
+    },
+    {
+        "department": "Rheumatology",
+        "doctors": [
+            "Dr. Krishnankutty K"
+        ]
+    },
+    {
+        "department": "Urology",
+        "doctors": [
+            "Dr.Sukhdev D B Singh"
+        ]
+    },
+    {
+        "department": "Vascular Surgeon",
+        "doctors": [
+            "Dr.Rajesh Kannaih"
+        ]
+    }
+]

@@ -268,11 +268,12 @@ class RealtimeApiService {
     _inactivityTimer = Timer(const Duration(seconds: 40), _handleInactivity);
   }
 
-  void _handleInactivity() async {
+  void _handleInactivity() {
     dispose();
   }
 
   void dispose() {
+    clearPackage();
     _speachStateController.add(SpeechState.idle);
     _connection?.close();
     _connection?.dispose();
@@ -280,6 +281,5 @@ class RealtimeApiService {
     _audioStream?.dispose();
     _inactivityTimer?.cancel();
     _connectionStateController.add(RealtimeConnectionState.disconnected);
-    _packageDetailsController.add(null);
   }
 }

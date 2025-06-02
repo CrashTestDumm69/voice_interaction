@@ -10,7 +10,7 @@ class HealthPackage with _$HealthPackage{
   final String package;
 
   @override
-  final int price;
+  final String price;
 
   @override
   final List<String> tests;

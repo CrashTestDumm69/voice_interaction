@@ -1,3 +1,5 @@
+part of 'interaction_view_model.dart';
+
 abstract class InteractionEvent {}
 
 class InitializeEvent extends InteractionEvent {}
@@ -13,3 +15,9 @@ class EndApiSessionEvent extends InteractionEvent {}
 class ClosePackageDetailsEvent extends InteractionEvent {}
 
 class ToggleMicrophoneEvent extends InteractionEvent {}
+
+class InteractionStateChanged extends InteractionEvent {
+  final InteractionState interactionState;
+
+  InteractionStateChanged({required this.interactionState});
+}
