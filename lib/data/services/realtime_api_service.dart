@@ -5,61 +5,24 @@ import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:voice_interaction/config/realtime_api_data.dart';
 import 'package:voice_interaction/config/realtime_api_response_types.dart';
-import 'package:voice_interaction/data/models/health_package.dart';
-import 'package:voice_interaction/data/services/package_handler_service.dart';
-import 'package:voice_interaction/utils/native_volume_handler.dart';
-
-enum RealtimeConnectionState {
-  connected,
-  disconnected,
-  connecting
-}
-
-enum SpeechState {
-  idle,
-  speaking,
-  listening
-}
 
 class RealtimeApiService {
-  late String apiKey;
   RTCPeerConnection? _connection;
   RTCDataChannel? _dataChannel;
   MediaStream? _audioStream;
   final Dio dio = Dio();
-  Timer? _inactivityTimer;
-  final PackageHandlerService _packageService = PackageHandlerService();
-  final NativeVolumeHandler _volumeHandler = NativeVolumeHandler();
 
-  bool _isMicMuted = true;
-  bool get isMicMuted => _isMicMuted;
-
-  final _connectionStateController = StreamController<RealtimeConnectionState>.broadcast();
-  Stream<RealtimeConnectionState> get connectionState => _connectionStateController.stream.asBroadcastStream();
-
-  final _speachStateController = StreamController<SpeechState>.broadcast();
-  Stream<SpeechState> get speechState => _speachStateController.stream.asBroadcastStream();
-
-  final _packageDetailsController = StreamController<HealthPackage?>.broadcast();
-  Stream<HealthPackage?> get packageDetails => _packageDetailsController.stream.asBroadcastStream();
-
-  Future<void> initConnection(String instruction) async {
-    _connectionStateController.add(RealtimeConnectionState.connecting);
-    
-    await dotenv.load(fileName: ".env");
-    apiKey = dotenv.env["OPENAI_API_KEY"] ?? "";
-    
-    _volumeHandler.setVolume(NativeVolumeHandler.maxVolume);
-
-    await _packageService.loadPackages();
-
+  Future<void> initConnection(String apiKey, String instruction) async {
     final config = {
       'iceServers': [
-        {'urls': ['stun:stun1.l.google.com:19302']}
+        {
+          'urls': [
+            'stun:stun1.l.google.com:19302'
+          ]
+        }
       ]
     };
     _connection = await createPeerConnection(config);
@@ -67,14 +30,11 @@ class RealtimeApiService {
     _connection!.onConnectionState = (state) {
       switch (state) {
         case RTCPeerConnectionState.RTCPeerConnectionStateConnected:
-          _connectionStateController.add(RealtimeConnectionState.connected);
           break;
         case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
         case RTCPeerConnectionState.RTCPeerConnectionStateFailed:
-          _connectionStateController.add(RealtimeConnectionState.disconnected);
           break;
         case RTCPeerConnectionState.RTCPeerConnectionStateConnecting:
-          _connectionStateController.add(RealtimeConnectionState.connecting);
           break;
         default:
           break;
@@ -124,23 +84,17 @@ class RealtimeApiService {
       _dataChannel?.onMessage = (msg) {
         final data = jsonDecode(msg.text);
         final String type = data["type"];
-        _resetInactivityTimer();
 
         if (type == RealtimeApiResponseTypes.sessionCreated) {
           debugPrint("Session created");
         } else if (type == RealtimeApiResponseTypes.outputAudioBufferStarted) {
           debugPrint("Robo Speaking");
-          _speachStateController.add(SpeechState.speaking);
-          _inactivityTimer?.cancel();
         } else if (type == RealtimeApiResponseTypes.outputAudioBufferStopped) {
           debugPrint("Robo done");
-          _speachStateController.add(SpeechState.listening);
-          _resetInactivityTimer();
         } else if (type == RealtimeApiResponseTypes.inputSpeechStarted) {
           debugPrint("User heard");
-          _speachStateController.add(SpeechState.listening);
         } else if (type == RealtimeApiResponseTypes.functionCallArgumentsDone) {
-          callFunction(data["name"] as String, data["arguments"] as String, data["call_id"] as String);
+          debugPrint("Function call arguments done");
         } else if (type == RealtimeApiResponseTypes.error) {
           debugPrint("Error - $data");
         }
@@ -179,107 +133,29 @@ class RealtimeApiService {
 
     final answer = RTCSessionDescription(response.data, "answer");
     await _connection!.setRemoteDescription(answer);
-
-    unmuteMic();
-
-    if(!_isMicMuted) {
-      _speachStateController.add(SpeechState.listening);
-    }
-  }
-
-  Future<void> callFunction(String functionName, String arguments, String callId) async {
-    final args = jsonDecode(arguments);
-
-    if (functionName == "get_healthcare_package") {
-      final String? packageName = args["package_name"];
-
-      if (packageName == null) {
-        debugPrint("Package name is null");
-        final msg = {
-          "type": "conversation.item.create",
-          "item": {
-            "type": "function_call_output",
-            "call_id": callId,
-            "output": {
-              "status": "failed",
-              "data": "No packages available"
-            }
-          }
-        };
-        RTCDataChannelMessage sendMsg = RTCDataChannelMessage(jsonEncode(msg));
-        await _dataChannel?.send(sendMsg);
-      } else if (_packageService.packageNames.contains(packageName)) {
-        final package = _packageService.packages.firstWhere((pkg) => pkg.package == packageName);
-        final msg = {
-          "type": "conversation.item.create",
-          "item": {
-            "type": "function_call_output",
-            "call_id": callId,
-            "output": jsonEncode({
-              "status": "success",
-              "data": package.toJson()
-            })
-          }
-        };
-        RTCDataChannelMessage sendMsg = RTCDataChannelMessage(jsonEncode(msg));
-        await _dataChannel?.send(sendMsg);
-
-        _packageDetailsController.add(package);
-      } else {
-        debugPrint("Package not found");
-        final msg = {
-          "type": "conversation.item.create",
-          "item": {
-            "type": "function_call_output",
-            "call_id": callId,
-            "output": {
-              "status": "failed",
-              "data": "Package not found",
-            }
-          }
-        };
-        RTCDataChannelMessage sendMsg = RTCDataChannelMessage(jsonEncode(msg));
-        await _dataChannel?.send(sendMsg);
-      }
-    }
-    await _dataChannel?.send(RTCDataChannelMessage(jsonEncode({"type": "response.create"})));
-  }
-
-  void clearPackage() {
-    _packageDetailsController.add(null);
   }
 
   void muteMic() {
     for (var track in _audioStream!.getTracks()) {
       track.enabled = false;
     }
-    _isMicMuted = true;
   }
 
   void unmuteMic() {
     for (var track in _audioStream!.getTracks()) {
       track.enabled = true;
     }
-    _isMicMuted = false;
   }
-
-  void _resetInactivityTimer() {
-    _inactivityTimer?.cancel();
-    _inactivityTimer = Timer(const Duration(seconds: 40), _handleInactivity);
-  }
-
-  void _handleInactivity() {
-    dispose();
+  
+  void close() {
+    _dataChannel?.close();
+    _audioStream?.dispose();
+    _connection?.close();
+    _connection?.dispose();
   }
 
   void dispose() {
-    clearPackage();
-    _speachStateController.add(SpeechState.idle);
-    _connection?.close();
-    _connection?.dispose();
-    _dataChannel?.close();
-    _audioStream?.dispose();
-    _inactivityTimer?.cancel();
-    _connectionStateController.add(RealtimeConnectionState.disconnected);
+    close();
+    dio.close();
   }
 }
