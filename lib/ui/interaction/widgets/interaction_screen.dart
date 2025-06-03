@@ -98,38 +98,38 @@ class _InteractionScreenState extends State<InteractionScreen> {
             speechState = state.speechState;
           });
         }
+
+        debugPrint("---------------------------------------\n\n${state.packageDetails.toString()}\n\n---------------------------------------");
         if (packageDetails != state.packageDetails) {
           setState(() {
             packageDetails = state.packageDetails;
           });
 
           if (packageDetails != null && !_isPackageDialogOpen) {
-          _isPackageDialogOpen = true;
+            _isPackageDialogOpen = true;
 
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return Dialog(
-                insetPadding: const EdgeInsets.all(24),
-                backgroundColor: Colors.transparent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: PackageDetailsWidget(
-                  data: packageDetails!,
-                  onDone: () {
-                    Navigator.of(context).pop();
-                    model.add(ClosePackageDetailsEvent());
-                  },
-                ),
-              );
-            },
-          ).then((_) {
-            _isPackageDialogOpen = false;
-          });
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return Dialog(
+                  insetPadding: const EdgeInsets.all(24),
+                  backgroundColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: PackageDetailsWidget(
+                    data: packageDetails!,
+                    onDone: () {
+                      Navigator.of(context).pop();
+                      model.add(ClosePackageDetailsEvent());
+                    },
+                  ),
+                );
+              },
+            );
           } else if (packageDetails == null && _isPackageDialogOpen) {
-            Navigator.of(context, rootNavigator: true).pop();
+            Navigator.of(context).pop();
             _isPackageDialogOpen = false;
           }
         }

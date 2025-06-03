@@ -105,7 +105,7 @@ class _PackageDetailsWidgetState extends State<PackageDetailsWidget> {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        'Price: ₹${widget.data.price}',
+                        'Price: ₹${widget.data.price.replaceAll(" Rupees", "")}',
                         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                       ),
                       if (widget.data.tests.isNotEmpty) ...[

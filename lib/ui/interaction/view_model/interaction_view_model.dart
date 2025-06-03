@@ -30,7 +30,6 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
 
     on<EndApiSessionEvent>((event, emit) {
       service.dispose();
-      emit(InteractionState.initial());
     });
 
     on<ToggleMicrophoneEvent>((event, emit) {

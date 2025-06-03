@@ -71,6 +71,15 @@ Keep all responses:
         },
         "required": ["package_name"],
       }
+    },
+    {
+      "type": "function",
+      "name": "hi_arm_command",
+      "description": "Send Hi command to arms when greeting user",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      }
     }
   ];
 
