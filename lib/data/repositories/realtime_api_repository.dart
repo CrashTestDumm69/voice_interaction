@@ -1,15 +1,17 @@
+import 'package:voice_interaction/data/services/dotenv_service.dart';
 import 'package:voice_interaction/data/services/realtime_api_service.dart';
 
 class RealtimeApiRepository {
   final RealtimeApiService _realtimeApiService;
 
-  RealtimeApiRepository({RealtimeApiService service})
-      : _realtimeApiService = service;
+  RealtimeApiRepository({required RealtimeApiService service})
+    : _realtimeApiService = service;
 
-  Future<void> startSession({
-    required String apiKey,
-    required String instruction,
-  }) async {
+  Stream<ConnectionStatus> get connectionStatusStream => _realtimeApiService.connectionStatusStream;
+  Stream<SpeechState> get speechStateStream => _realtimeApiService.speechStateStream;
+
+  Future<void> startSession({required String instruction}) async {
+    final apiKey = DotenvService.getApiKey();
     await _realtimeApiService.initConnection(apiKey, instruction);
   }
 

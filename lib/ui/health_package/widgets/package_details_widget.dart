@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:voice_interaction/data/models/health_package.dart';
+import 'package:voice_interaction/domain/models/health_package.dart';
 
 class PackageDetailsWidget extends StatefulWidget {
   final HealthPackage data;

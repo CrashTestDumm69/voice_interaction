@@ -1,56 +1,65 @@
-import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:voice_interaction/config/realtime_api_data.dart';
-import 'package:voice_interaction/data/models/health_package.dart';
+import 'package:voice_interaction/data/repositories/realtime_api_repository.dart';
 import 'package:voice_interaction/data/services/realtime_api_service.dart';
 
 part 'interaction_event.dart';
 part 'interaction_state.dart';
 
 class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
-  final RealtimeApiService service = RealtimeApiService();
-  StreamSubscription? _connectionState; 
-  StreamSubscription? _speechState;
-  StreamSubscription? _packageDetails;
+  final RealtimeApiRepository _realtimeApiRepository;
 
-  InteractionViewModel() : super(InteractionState.initial()) {
-    on<InteractionStateChanged>((event, emit) => emit(event.interactionState));
+  SpeechState _speechState = SpeechState.idle;
+  bool _isMicMuted = false;
 
-    on<InitializeEvent>((event, emit) {
-      _connectionState = service.connectionState.listen((connectionState) => add(InteractionStateChanged(interactionState: state.copyWith(connectionState: connectionState))));
-      _speechState = service.speechState.listen((speechState) => add(InteractionStateChanged(interactionState: state.copyWith(speechState: speechState))));
-      _packageDetails = service.packageDetails.listen((package) => add(InteractionStateChanged(interactionState: state.copyWith(packageDetails: package))));
-    });
-    
-    on<StartApiConnectionEvent>((event, emit) {
-      service.initConnection(event.language == "English" ? RealtimeApiData.englishInstructions : RealtimeApiData.tamilInstructions);
-    });
+  InteractionViewModel({required RealtimeApiRepository repository})
+    : _realtimeApiRepository = repository, super(InteractionInitial()) {
+      _realtimeApiRepository.connectionStatusStream.listen((state) => add(ConnectionStatusChanged(state)));
+      _realtimeApiRepository.speechStateStream.listen((state) => add(SpeechStateChanged(state)));
 
-    on<EndApiSessionEvent>((event, emit) {
-      service.dispose();
-    });
+      on<StartSession>((event, emit) {
+        _realtimeApiRepository.startSession(instruction: event.instruction);
+        emit(InteractionConnecting());
+      });
 
-    on<ToggleMicrophoneEvent>((event, emit) {
-      if(service.isMicMuted) {
-        service.unmuteMic();
-        emit(state.copyWith(isMicMuted: false));
-      } else {
-        service.muteMic();
-        emit(state.copyWith(isMicMuted: true));
-      }
-    });
+      on<ConnectionStatusChanged>((event, emit) {
+        if (event.status == ConnectionStatus.connected) {
+          _speechState = SpeechState.listening;
+          _isMicMuted = false;
+          emit(InteractionConnected(speechState: _speechState, micMuted: _isMicMuted));
+        } else if (event.status == ConnectionStatus.connecting) {
+          _speechState = SpeechState.idle;
+          emit(InteractionConnecting());
+        } else {
+          _speechState = SpeechState.idle;
+          emit(InteractionDisconnected());
+        }
+      });
 
-    on<ClosePackageDetailsEvent>((event, emit) {
-      service.clearPackage();
-    });
-  }
+      on<SpeechStateChanged>((event, emit) {
+        if (state is InteractionConnected) {
+          _speechState = event.speechState;
+          emit(InteractionConnected(speechState: _speechState, micMuted: _isMicMuted));
+        }
+      });
 
-  void dispose() {
-    _connectionState?.cancel();
-    _speechState?.cancel();
-    _packageDetails?.cancel();
-    service.dispose();
-  }
+      on<MuteMic>((event, emit) {
+        _realtimeApiRepository.muteMicrophone();
+        _isMicMuted = true;
+        emit(InteractionConnected(speechState: _speechState, micMuted: _isMicMuted));
+      });
+
+      on<UnmuteMic>((event, emit) {
+        _realtimeApiRepository.unmuteMicrophone();
+        _isMicMuted = false;
+        emit(InteractionConnected(speechState: _speechState, micMuted: _isMicMuted));
+      });
+
+      on<EndSession>((event, emit) {
+        _realtimeApiRepository.closeSession();
+        _speechState = SpeechState.idle;
+        _isMicMuted = false;
+        emit(InteractionDisconnected());
+      });
+    }
 }

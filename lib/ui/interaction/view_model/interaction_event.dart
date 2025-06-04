@@ -2,22 +2,26 @@ part of 'interaction_view_model.dart';
 
 abstract class InteractionEvent {}
 
-class InitializeEvent extends InteractionEvent {}
+class StartSession extends InteractionEvent {
+  final String instruction;
 
-class StartApiConnectionEvent extends InteractionEvent {
-  final String language;
-
-  StartApiConnectionEvent({required this.language});
+  StartSession({required this.instruction});
 }
 
-class EndApiSessionEvent extends InteractionEvent {}
+class ConnectionStatusChanged extends InteractionEvent {
+  final ConnectionStatus status;
 
-class ClosePackageDetailsEvent extends InteractionEvent {}
-
-class ToggleMicrophoneEvent extends InteractionEvent {}
-
-class InteractionStateChanged extends InteractionEvent {
-  final InteractionState interactionState;
-
-  InteractionStateChanged({required this.interactionState});
+  ConnectionStatusChanged(this.status);
 }
+
+class SpeechStateChanged extends InteractionEvent {
+  final SpeechState speechState;
+
+  SpeechStateChanged(this.speechState);
+}
+
+class MuteMic extends InteractionEvent {}
+
+class UnmuteMic extends InteractionEvent {}
+
+class EndSession extends InteractionEvent {}

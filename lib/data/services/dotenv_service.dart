@@ -1,8 +1,12 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DotenvService {  
-  static void loadEnv() {
-    dotenv.load();
+  DotenvService() {
+    _loadEnv();
+  }
+  
+  void _loadEnv() async {
+    await dotenv.load();
   }
 
   static String getApiKey() {

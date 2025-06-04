@@ -1,36 +1,16 @@
 part of 'interaction_view_model.dart';
 
-class InteractionState {
-  final RealtimeConnectionState connectionState;
+abstract class InteractionState {}
+
+class InteractionInitial extends InteractionState {}
+
+class InteractionConnecting extends InteractionState {}
+
+class InteractionConnected extends InteractionState {
   final SpeechState speechState;
-  final HealthPackage? packageDetails;
-  final bool isMicMuted;
+  final bool micMuted;
 
-  InteractionState({
-    required this.connectionState,
-    required this.speechState,
-    required this.packageDetails,
-    required this.isMicMuted,
-  });
-
-  factory InteractionState.initial() => InteractionState(
-        connectionState: RealtimeConnectionState.disconnected,
-        speechState: SpeechState.idle,
-        packageDetails: null,
-        isMicMuted: false,
-      );
-
-  InteractionState copyWith({
-    RealtimeConnectionState? connectionState,
-    SpeechState? speechState,
-    HealthPackage? packageDetails,
-    bool? isMicMuted,
-  }) {
-    return InteractionState(
-      connectionState: connectionState ?? this.connectionState,
-      speechState: speechState ?? this.speechState,
-      packageDetails: packageDetails ?? this.packageDetails,
-      isMicMuted: isMicMuted ?? this.isMicMuted,
-    );
-  }
+  InteractionConnected({required this.speechState, required this.micMuted});
 }
+
+class InteractionDisconnected extends InteractionState {}

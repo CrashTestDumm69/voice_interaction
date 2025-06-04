@@ -9,11 +9,49 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:voice_interaction/config/realtime_api_data.dart';
 import 'package:voice_interaction/config/realtime_api_response_types.dart';
 
+enum ConnectionStatus {
+  connecting,
+  connected,
+  disconnected,
+}
+
+enum SpeechState {
+  idle,
+  listening,
+  speaking,
+}
+
 class RealtimeApiService {
   RTCPeerConnection? _connection;
   RTCDataChannel? _dataChannel;
   MediaStream? _audioStream;
   final Dio dio = Dio();
+  final _connectionController = StreamController<ConnectionStatus>.broadcast();
+  final _speechController = StreamController<SpeechState>.broadcast();
+
+  Stream<ConnectionStatus> get connectionStatusStream => _connectionController.stream;
+  Stream<SpeechState> get speechStateStream => _speechController.stream;
+
+  ConnectionStatus _connectionState = ConnectionStatus.connecting;
+  SpeechState _speechState = SpeechState.idle;
+
+  void _setConnectionState(ConnectionStatus newState) {
+    if (_connectionState != newState) {
+      _connectionState = newState;
+      _connectionController.add(newState);
+      if (newState != ConnectionStatus.connected) {
+        _setSpeechState(SpeechState.idle);
+      }
+    }
+  }
+
+  void _setSpeechState(SpeechState newState) {
+    if (_connectionState == ConnectionStatus.connected &&
+        newState != _speechState) {
+      _speechState = newState;
+      _speechController.add(newState);
+    }
+  }
 
   Future<void> initConnection(String apiKey, String instruction) async {
     final config = {
@@ -29,12 +67,13 @@ class RealtimeApiService {
 
     _connection!.onConnectionState = (state) {
       switch (state) {
-        case RTCPeerConnectionState.RTCPeerConnectionStateConnected:
-          break;
         case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
         case RTCPeerConnectionState.RTCPeerConnectionStateFailed:
+        case RTCPeerConnectionState.RTCPeerConnectionStateClosed:
+          _setConnectionState(ConnectionStatus.disconnected);
           break;
         case RTCPeerConnectionState.RTCPeerConnectionStateConnecting:
+          _setConnectionState(ConnectionStatus.connecting);
           break;
         default:
           break;
@@ -44,7 +83,7 @@ class RealtimeApiService {
     _audioStream = await navigator.mediaDevices.getUserMedia({'audio': true});
 
     _audioStream!.getTracks().forEach((track) {
-      track.enabled = false;
+      track.enabled = true;
       debugPrint("Track - ${track.label}");
       debugPrint("Kind - ${track.kind}");
       debugPrint("ID - ${track.getSettings()}");
@@ -69,7 +108,7 @@ class RealtimeApiService {
         data: jsonEncode({
           "model": RealtimeApiData.realtimeAPIModelVersion,
           "voice": RealtimeApiData.voice,
-          "instructions": instruction,
+          "instructions": instruction == "English" ? RealtimeApiData.englishInstructions : RealtimeApiData.tamilInstructions,
           "turn_detection": {
             "type": "server_vad",
             "threshold": 0.8,
@@ -87,12 +126,16 @@ class RealtimeApiService {
 
         if (type == RealtimeApiResponseTypes.sessionCreated) {
           debugPrint("Session created");
+          _setConnectionState(ConnectionStatus.connected);
         } else if (type == RealtimeApiResponseTypes.outputAudioBufferStarted) {
           debugPrint("Robo Speaking");
+          _setSpeechState(SpeechState.speaking);
         } else if (type == RealtimeApiResponseTypes.outputAudioBufferStopped) {
           debugPrint("Robo done");
+          _setSpeechState(SpeechState.listening);
         } else if (type == RealtimeApiResponseTypes.inputSpeechStarted) {
           debugPrint("User heard");
+          _setSpeechState(SpeechState.listening);
         } else if (type == RealtimeApiResponseTypes.functionCallArgumentsDone) {
           debugPrint("Function call arguments done");
         } else if (type == RealtimeApiResponseTypes.error) {
