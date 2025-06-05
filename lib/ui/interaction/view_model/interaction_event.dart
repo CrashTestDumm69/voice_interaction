@@ -9,13 +9,13 @@ class StartSession extends InteractionEvent {
 }
 
 class ConnectionStatusChanged extends InteractionEvent {
-  final ConnectionStatus status;
+  final InteractionConnectionState status;
 
   ConnectionStatusChanged(this.status);
 }
 
 class SpeechStateChanged extends InteractionEvent {
-  final SpeechState speechState;
+  final InteractionSpeechState speechState;
 
   SpeechStateChanged(this.speechState);
 }

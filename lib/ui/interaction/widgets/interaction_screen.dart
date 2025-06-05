@@ -66,9 +66,9 @@ class _InteractionScreenState extends State<InteractionScreen> {
       listener: (context, state) {
         if (state is InteractionConnected) {
           _setRiveBool(_idleBool, false);
-          if (state.speechState == SpeechState.listening) {
+          if (state.speechState == InteractionSpeechState.listening) {
             _handleRiveTrigger(_listenTrigger);
-          } else if (state.speechState == SpeechState.speaking) {
+          } else if (state.speechState == InteractionSpeechState.speaking) {
             _handleRiveTrigger(_speakTrigger);
           }
         } else if (state is InteractionConnecting || state is InteractionDisconnected) {
