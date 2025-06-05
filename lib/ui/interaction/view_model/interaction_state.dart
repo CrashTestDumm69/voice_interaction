@@ -7,7 +7,7 @@ class InteractionInitial extends InteractionState {}
 class InteractionConnecting extends InteractionState {}
 
 class InteractionConnected extends InteractionState {
-  final SpeechState speechState;
+  final InteractionSpeechState speechState;
   final bool micMuted;
 
   InteractionConnected({required this.speechState, required this.micMuted});

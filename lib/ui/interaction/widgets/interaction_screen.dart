@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:rive/rive.dart';
 
-import 'package:voice_interaction/domain/models/health_package.dart';
-import 'package:voice_interaction/data/services/realtime_api_service.dart';
 import 'package:voice_interaction/ui/interaction/view_model/interaction_view_model.dart';
 import 'package:voice_interaction/ui/interaction/widgets/language_selection_widget.dart';
 import 'package:voice_interaction/utils/injection_container.dart';
@@ -18,12 +16,10 @@ class InteractionScreen extends StatefulWidget {
 }
 
 class _InteractionScreenState extends State<InteractionScreen> {
-  HealthPackage? packageDetails;
-  SpeechState speechState = SpeechState.idle;
-  StateMachineController? controller;
-  SMITrigger? listenTrigger;
-  SMITrigger? speakTrigger;
-  SMITrigger? idleTrigger;
+  StateMachineController? _riveController;
+  SMITrigger? _listenTrigger;
+  SMITrigger? _speakTrigger;
+  SMIBool? _idleBool;
 
   @override
   void initState() {
@@ -41,21 +37,25 @@ class _InteractionScreenState extends State<InteractionScreen> {
     }
   }
 
-  void onRiveInit(Artboard artboard) {
-    controller = StateMachineController.fromArtboard(
+  void _onRiveInit(Artboard artboard) {
+    _riveController = StateMachineController.fromArtboard(
       artboard,
       'State Machine (robot speaks)',
     );
 
-    if (controller != null) {
-      artboard.addController(controller!);
-      listenTrigger = controller!.getTriggerInput('listen');
-      speakTrigger = controller!.getTriggerInput('speak');
-      idleTrigger = controller!.getTriggerInput('idle');
+    if (_riveController != null) {
+      artboard.addController(_riveController!);
+      _listenTrigger = _riveController!.getTriggerInput('listen');
+      _speakTrigger = _riveController!.getTriggerInput('speak');
+      _idleBool = _riveController!.getBoolInput('idle');
     }
   }
 
-  void _handleTrigger(SMITrigger? trigger) {
+  void _setRiveBool(SMIBool? input, bool value) {
+    input?.change(value);
+  }
+
+  void _handleRiveTrigger(SMITrigger? trigger) {
     trigger?.fire();
   }
 
@@ -65,14 +65,15 @@ class _InteractionScreenState extends State<InteractionScreen> {
       bloc: sl<InteractionViewModel>(),
       listener: (context, state) {
         if (state is InteractionConnected) {
+          _setRiveBool(_idleBool, false);
           if (state.speechState == SpeechState.listening) {
-            _handleTrigger(listenTrigger);
+            _handleRiveTrigger(_listenTrigger);
           } else if (state.speechState == SpeechState.speaking) {
-            _handleTrigger(speakTrigger);
+            _handleRiveTrigger(_speakTrigger);
           }
         } else if (state is InteractionConnecting || state is InteractionDisconnected) {
-          _handleTrigger(listenTrigger);
-          Future.delayed(const Duration(milliseconds: 300), () => _handleTrigger(idleTrigger));
+          _handleRiveTrigger(_listenTrigger);
+          _setRiveBool(_idleBool, true);
         }
       },
       builder: (context, state) {
@@ -87,7 +88,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
               child: RiveAnimation.asset(
                 'assets/face.riv',
                 fit: BoxFit.contain,
-                onInit: onRiveInit,
+                onInit: _onRiveInit,
               ),
             ),
             if (state is InteractionConnected)

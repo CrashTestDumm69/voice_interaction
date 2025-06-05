@@ -8,45 +8,35 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 import 'package:voice_interaction/config/realtime_api_data.dart';
 import 'package:voice_interaction/config/realtime_api_response_types.dart';
-
-enum ConnectionStatus {
-  connecting,
-  connected,
-  disconnected,
-}
-
-enum SpeechState {
-  idle,
-  listening,
-  speaking,
-}
+import 'package:voice_interaction/domain/models/realtime_connection_state.dart';
+import 'package:voice_interaction/domain/models/realtime_speech_state.dart';
 
 class RealtimeApiService {
   RTCPeerConnection? _connection;
   RTCDataChannel? _dataChannel;
   MediaStream? _audioStream;
   final Dio dio = Dio();
-  final _connectionController = StreamController<ConnectionStatus>.broadcast();
-  final _speechController = StreamController<SpeechState>.broadcast();
+  final _connectionController = StreamController<RealtimeConnectionState>.broadcast();
+  final _speechController = StreamController<RealtimeSpeechState>.broadcast();
 
-  Stream<ConnectionStatus> get connectionStatusStream => _connectionController.stream;
-  Stream<SpeechState> get speechStateStream => _speechController.stream;
+  Stream<RealtimeConnectionState> get connectionStateStream => _connectionController.stream;
+  Stream<RealtimeSpeechState> get speechStateStream => _speechController.stream;
 
-  ConnectionStatus _connectionState = ConnectionStatus.connecting;
-  SpeechState _speechState = SpeechState.idle;
+  RealtimeConnectionState _connectionState = RealtimeConnectionState.connecting;
+  RealtimeSpeechState _speechState = RealtimeSpeechState.idle;
 
-  void _setConnectionState(ConnectionStatus newState) {
+  void _setConnectionState(RealtimeConnectionState newState) {
     if (_connectionState != newState) {
       _connectionState = newState;
       _connectionController.add(newState);
-      if (newState != ConnectionStatus.connected) {
-        _setSpeechState(SpeechState.idle);
+      if (newState != RealtimeConnectionState.connected) {
+        _setSpeechState(RealtimeSpeechState.idle);
       }
     }
   }
 
-  void _setSpeechState(SpeechState newState) {
-    if (_connectionState == ConnectionStatus.connected &&
+  void _setSpeechState(RealtimeSpeechState newState) {
+    if (_connectionState == RealtimeConnectionState.connected &&
         newState != _speechState) {
       _speechState = newState;
       _speechController.add(newState);
@@ -70,10 +60,10 @@ class RealtimeApiService {
         case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
         case RTCPeerConnectionState.RTCPeerConnectionStateFailed:
         case RTCPeerConnectionState.RTCPeerConnectionStateClosed:
-          _setConnectionState(ConnectionStatus.disconnected);
+          _setConnectionState(RealtimeConnectionState.disconnected);
           break;
         case RTCPeerConnectionState.RTCPeerConnectionStateConnecting:
-          _setConnectionState(ConnectionStatus.connecting);
+          _setConnectionState(RealtimeConnectionState.connecting);
           break;
         default:
           break;
@@ -126,16 +116,16 @@ class RealtimeApiService {
 
         if (type == RealtimeApiResponseTypes.sessionCreated) {
           debugPrint("Session created");
-          _setConnectionState(ConnectionStatus.connected);
+          _setConnectionState(RealtimeConnectionState.connected);
         } else if (type == RealtimeApiResponseTypes.outputAudioBufferStarted) {
           debugPrint("Robo Speaking");
-          _setSpeechState(SpeechState.speaking);
+          _setSpeechState(RealtimeSpeechState.speaking);
         } else if (type == RealtimeApiResponseTypes.outputAudioBufferStopped) {
           debugPrint("Robo done");
-          _setSpeechState(SpeechState.listening);
+          _setSpeechState(RealtimeSpeechState.listening);
         } else if (type == RealtimeApiResponseTypes.inputSpeechStarted) {
           debugPrint("User heard");
-          _setSpeechState(SpeechState.listening);
+          _setSpeechState(RealtimeSpeechState.listening);
         } else if (type == RealtimeApiResponseTypes.functionCallArgumentsDone) {
           debugPrint("Function call arguments done");
         } else if (type == RealtimeApiResponseTypes.error) {

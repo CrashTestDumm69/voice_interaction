@@ -7,9 +7,6 @@ class RealtimeApiRepository {
   RealtimeApiRepository({required RealtimeApiService service})
     : _realtimeApiService = service;
 
-  Stream<ConnectionStatus> get connectionStatusStream => _realtimeApiService.connectionStatusStream;
-  Stream<SpeechState> get speechStateStream => _realtimeApiService.speechStateStream;
-
   Future<void> startSession({required String instruction}) async {
     final apiKey = DotenvService.getApiKey();
     await _realtimeApiService.initConnection(apiKey, instruction);

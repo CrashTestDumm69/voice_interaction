@@ -6,10 +6,22 @@ import 'package:voice_interaction/data/services/realtime_api_service.dart';
 part 'interaction_event.dart';
 part 'interaction_state.dart';
 
+enum InteractionConnectionState {
+  connected,
+  connecting,
+  disconnected
+}
+
+enum InteractionSpeechState {
+  idle,
+  speaking,
+  listening
+}
+
 class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
   final RealtimeApiRepository _realtimeApiRepository;
 
-  SpeechState _speechState = SpeechState.idle;
+  InteractionSpeechState _speechState = InteractionSpeechState.idle;
   bool _isMicMuted = false;
 
   InteractionViewModel({required RealtimeApiRepository repository})
@@ -24,21 +36,20 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
 
       on<ConnectionStatusChanged>((event, emit) {
         if (event.status == ConnectionStatus.connected) {
-          _speechState = SpeechState.listening;
+          _speechState = InteractionSpeechState.listening;
           _isMicMuted = false;
           emit(InteractionConnected(speechState: _speechState, micMuted: _isMicMuted));
         } else if (event.status == ConnectionStatus.connecting) {
-          _speechState = SpeechState.idle;
+          _speechState = InteractionSpeechState.idle;
           emit(InteractionConnecting());
         } else {
-          _speechState = SpeechState.idle;
+          _speechState = InteractionSpeechState.idle;
           emit(InteractionDisconnected());
         }
       });
 
       on<SpeechStateChanged>((event, emit) {
         if (state is InteractionConnected) {
-          _speechState = event.speechState;
           emit(InteractionConnected(speechState: _speechState, micMuted: _isMicMuted));
         }
       });
@@ -57,7 +68,7 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
 
       on<EndSession>((event, emit) {
         _realtimeApiRepository.closeSession();
-        _speechState = SpeechState.idle;
+        _speechState = InteractionSpeechState.idle;
         _isMicMuted = false;
         emit(InteractionDisconnected());
       });

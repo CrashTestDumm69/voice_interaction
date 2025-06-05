@@ -2,21 +2,19 @@ import 'package:flutter/material.dart';
 
 import 'package:voice_interaction/domain/models/health_package.dart';
 
-class PackageDetailsWidget extends StatefulWidget {
+class PackageDetailsScreen extends StatefulWidget {
   final HealthPackage data;
-  final VoidCallback onDone;
 
-  const PackageDetailsWidget({
+  const PackageDetailsScreen({
     super.key,
     required this.data,
-    required this.onDone,
   });
 
   @override
-  State<PackageDetailsWidget> createState() => _PackageDetailsWidgetState();
+  State<PackageDetailsScreen> createState() => _PackageDetailsScreenState();
 }
 
-class _PackageDetailsWidgetState extends State<PackageDetailsWidget> {
+class _PackageDetailsScreenState extends State<PackageDetailsScreen> {
   double _opacity = 0.0;
 
   @override
@@ -140,7 +138,7 @@ class _PackageDetailsWidgetState extends State<PackageDetailsWidget> {
               right: 40,
               bottom: 40,
               child: FloatingActionButton(
-                onPressed: widget.onDone,
+                onPressed: () {},
                 child: const Text("Done"),
               ),
             ),
