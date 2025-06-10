@@ -90,8 +90,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
                   _showLanguageDialog();
                 }
               },
-              onLongPress: () => sl<InteractionViewModel>().add(DetailsRequested(request: 'General Surgery', type: 'department')),
-              onTap: () => sl<InteractionViewModel>().add(DetailsRequested(request: 'Master Health Check-up - Female', type: 'package')),
               child: RiveAnimation.asset(
                 'assets/face.riv',
                 fit: BoxFit.contain,

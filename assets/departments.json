@@ -50,7 +50,7 @@
         ]
     },
     {
-        "department": "Emergency medicine",
+        "department": "Emergency Medicine",
         "description": "Provides immediate treatment for acute illnesses and injuries.",
         "doctors": [
             "Dr. Derin D",
@@ -65,7 +65,7 @@
         ]
     },
     {
-        "department": "Gastroentrology - Medical",
+        "department": "Gastroenterology - Medical",
         "description": "Manages diseases of the digestive tract, liver, and pancreas using non-surgical methods.",
         "doctors": [
             "Dr.Jai Paul",
@@ -73,7 +73,7 @@
         ]
     },
     {
-        "department": "Gastroentrology -Surgical",
+        "department": "Gastroenterology - Surgical",
         "description": "Performs surgical interventions for gastrointestinal conditions.",
         "doctors": [
             "Dr. Rejeesh Selvaganesan"
@@ -100,7 +100,7 @@
         ]
     },
     {
-        "department": "Infectious Disease",
+        "department": "Infectious Diseases",
         "description": "Diagnoses and manages infections caused by bacteria, viruses, fungi, and parasites.",
         "doctors": [
             "Dr.Rajalakshmi",
@@ -146,21 +146,21 @@
         ]
     },
     {
-        "department": "Oncology -Medical",
+        "department": "Oncology - Medical",
         "description": "Treats cancer with chemotherapy, immunotherapy, and other medications.",
         "doctors": [
             "Dr. Kumanan J"
         ]
     },
     {
-        "department": "Ortho - Spine",
+        "department": "Orthopaedics - Spine",
         "description": "Specializes in the diagnosis and surgical treatment of spine disorders.",
         "doctors": [
             "Dr.Chandhan"
         ]
     },
     {
-        "department": "Orthopeaedics & Trauma",
+        "department": "Orthopaedics & Trauma",
         "description": "Deals with musculoskeletal injuries and conditions, including trauma care.",
         "doctors": [
             "Dr. Prabin Suthagar T S",
@@ -206,7 +206,7 @@
         ]
     },
     {
-        "department": "Psychaitry & Behaviour Medicine",
+        "department": "Psychiatry & Behaviour Medicine",
         "description": "Diagnoses and treats mental health and behavioral disorders.",
         "doctors": [
             "Dr.Anshon A"
@@ -235,7 +235,7 @@
         ]
     },
     {
-        "department": "Vascular Surgeon",
+        "department": "Vascular Surgery",
         "description": "Performs surgeries on arteries, veins, and the circulatory system.",
         "doctors": [
             "Dr.Rajesh Kannaih"

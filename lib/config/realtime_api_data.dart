@@ -74,11 +74,50 @@ Keep all responses:
     },
     {
       "type": "function",
-      "name": "hi_arm_command",
-      "description": "Send Hi command to arms when greeting user",
+      "name": "get_department_doctors",
+      "description": "Retrieve the list of doctors in a specific department. Tell the user to wait a moment while you fetch the details. If the result is a success, tell the user that the details are on the screen.",
       "parameters": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "department_name": {
+            "type": "string",
+            "enum": [
+              "Anaesthesiology",
+              "Cardiology",
+              "Critical Care",
+              "Dental/Oral & Maxillofacial",
+              "Dermatology",
+              "ENT",
+              "Emergency Medicine",
+              "Endocrinology",
+              "Gastroenterology - Medical",
+              "Gastroenterology - Surgical",
+              "General Medicine",
+              "General Surgery",
+              "Infectious Diseases",
+              "Nephrology",
+              "Neurology",
+              "Neurosurgery",
+              "Obstetrics & Gynaecology",
+              "Oncology - Medical",
+              "Oncology - Surgical",
+              "Orthopaedics - Spine",
+              "Orthopaedics & Trauma",
+              "Paediatrics",
+              "Paediatrics & Neonatology",
+              "Paediatrics - Gastro",
+              "Paediatrics - Surgical / Urology",
+              "Plastic-Micro-Reconstructive Surgery",
+              "Psychiatry & Behaviour Medicine",
+              "Respiratory Medicine",
+              "Rheumatology",
+              "Urology",
+              "Vascular Surgery"
+            ],
+            "description": "Exact name of the department"
+          }
+        },
+        "required": ["department_name"],
       }
     }
   ];

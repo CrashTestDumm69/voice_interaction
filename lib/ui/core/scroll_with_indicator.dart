@@ -71,7 +71,7 @@ class _ScrollWithIndicatorState extends State<ScrollWithIndicator> {
                         Colors.white.withValues(alpha: 0.7),
                         Colors.white.withValues(alpha: 0.6),
                         Colors.white.withValues(alpha: 0.4),
-                        Colors.white.withValues(alpha: 0.1),
+                        Colors.white.withValues(alpha: 0.15),
                         Colors.white.withValues(alpha: 0.0),
                       ],
                     ),

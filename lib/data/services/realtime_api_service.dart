@@ -43,7 +43,7 @@ class RealtimeApiService {
     }
   }
 
-  Future<void> initConnection(String apiKey, String instruction) async {
+  Future<void> initConnection(String apiKey, String instruction, {void Function(String functionName, String args)? onFuntionCall}) async {
     final config = {
       'iceServers': [
         {
