@@ -43,7 +43,7 @@ class RealtimeApiService {
     }
   }
 
-  Future<void> initConnection(String apiKey, String instruction, {void Function(String functionName, String args)? onFuntionCall}) async {
+  Future<void> initConnection(String apiKey, String instruction, {Map<String, dynamic> Function(String functionName, Map<String, dynamic> args)? onFuntionCall}) async {
     final config = {
       'iceServers': [
         {
@@ -128,6 +128,14 @@ class RealtimeApiService {
           _setSpeechState(RealtimeSpeechState.listening);
         } else if (type == RealtimeApiResponseTypes.functionCallArgumentsDone) {
           debugPrint("Function call arguments done");
+          if (onFuntionCall != null) {
+            final String functionName = data["name"];
+            final Map<String, dynamic> args = jsonDecode(data["arguments"]);
+            final returnData = onFuntionCall(functionName, args);
+            final returnJson = jsonEncode(returnData);
+            _dataChannel?.send(RTCDataChannelMessage(returnJson));
+            _dataChannel?.send(RTCDataChannelMessage(""));
+          }
         } else if (type == RealtimeApiResponseTypes.error) {
           debugPrint("Error - $data");
         }
