@@ -18,7 +18,7 @@ class PackageHandlerService {
       .toList());
   }
 
-  static HealthPackage getPackage(String package) {
+  HealthPackage getPackage(String package) {
     return _packages.firstWhere((pkg) => pkg.package == package);
   }
 }

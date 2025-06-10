@@ -10,10 +10,14 @@ class Department with _$Department {
   String department;
 
   @override
+  String description;
+
+  @override
   List<String> doctors;
 
   Department({
     required this.department,
+    required this.description,
     required this.doctors
   });
 

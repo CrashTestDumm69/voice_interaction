@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:rive/rive.dart';
 
 import 'package:voice_interaction/ui/interaction/view_model/interaction_view_model.dart';
+import 'package:voice_interaction/ui/interaction/widgets/department_details_widget.dart';
 import 'package:voice_interaction/ui/interaction/widgets/language_selection_widget.dart';
+import 'package:voice_interaction/ui/interaction/widgets/package_details_widget.dart';
+import 'package:voice_interaction/ui/models/department_details.dart';
+import 'package:voice_interaction/ui/models/package_detials.dart';
 import 'package:voice_interaction/utils/injection_container.dart';
 
 class InteractionScreen extends StatefulWidget {
@@ -85,6 +90,8 @@ class _InteractionScreenState extends State<InteractionScreen> {
                   _showLanguageDialog();
                 }
               },
+              onLongPress: () => sl<InteractionViewModel>().add(DetailsRequested(request: 'General Surgery', type: 'department')),
+              onTap: () => sl<InteractionViewModel>().add(DetailsRequested(request: 'Master Health Check-up - Female', type: 'package')),
               child: RiveAnimation.asset(
                 'assets/face.riv',
                 fit: BoxFit.contain,
@@ -92,39 +99,48 @@ class _InteractionScreenState extends State<InteractionScreen> {
               ),
             ),
             if (state is InteractionConnected)
-              Positioned(
-                bottom: 40,
-                right: 40,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    FloatingActionButton(
-                      heroTag: 'mic_toggle',
-                      backgroundColor: state.micMuted ? Colors.red : Colors.green,
-                      child: Icon(
-                        state.micMuted ? Icons.mic_off : Icons.mic,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        if (state.micMuted) {
-                          sl<InteractionViewModel>().add(UnmuteMic());
-                        } else {
-                          sl<InteractionViewModel>().add(MuteMic());
-                        }
-                      },
+              Stack(
+                children: [
+                  Positioned(
+                    bottom: 40,
+                    right: 40,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        FloatingActionButton(
+                          heroTag: 'mic_toggle',
+                          backgroundColor: state.micMuted ? Colors.red : Colors.green,
+                          child: Icon(
+                            state.micMuted ? Icons.mic_off : Icons.mic,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            if (state.micMuted) {
+                              sl<InteractionViewModel>().add(UnmuteMic());
+                            } else {
+                              sl<InteractionViewModel>().add(MuteMic());
+                            }
+                          },
+                        ),
+                        const Gap(16),
+                        FloatingActionButton(
+                          heroTag: 'end_session',
+                          backgroundColor: Colors.grey[800],
+                          child: const Icon(Icons.close, color: Colors.white),
+                          onPressed: () {
+                            sl<InteractionViewModel>().add(EndSession());
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    FloatingActionButton(
-                      heroTag: 'end_session',
-                      backgroundColor: Colors.grey[800],
-                      child: const Icon(Icons.close, color: Colors.white),
-                      onPressed: () {
-                        sl<InteractionViewModel>().add(EndSession());
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                  if (state.details != null)
+                    if (state.details is DepartmentDetails)
+                      DepartmentDetailsWidget(department: state.details as DepartmentDetails, onDone: () => sl<InteractionViewModel>().add(CloseDetails()))
+                    else if (state.details is PackageDetials)
+                      PackageDetailsWidget(package: state.details as PackageDetials, onDone: () => sl<InteractionViewModel>().add(CloseDetails()))
+                ],
               ),
             if (state is InteractionConnecting)
               Positioned.fill(

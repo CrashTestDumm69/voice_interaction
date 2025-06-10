@@ -1,6 +1,7 @@
 [
     {
         "department": "Anaesthesiology",
+        "description": "Specializes in providing anesthesia and pain management during surgical procedures.",
         "doctors": [
             "Dr. Balaji M",
             "Dr.Devu S S",
@@ -10,6 +11,7 @@
     },
     {
         "department": "Cardiology",
+        "description": "Deals with disorders of the heart and blood vessels.",
         "doctors": [
             "Dr. Thanu S",
             "Dr.Ajeeth Fera M"
@@ -17,6 +19,7 @@
     },
     {
         "department": "Critical Care",
+        "description": "Provides intensive care for patients with life-threatening conditions.",
         "doctors": [
             "Dr. Boban V",
             "Dr.Nithin T",
@@ -25,6 +28,7 @@
     },
     {
         "department": "Dental/Oral & Maxillofacial",
+        "description": "Focuses on oral health, teeth, jaws, and facial surgery.",
         "doctors": [
             "Dr. Shine Manoj D J",
             "Dr.Jenin N T",
@@ -33,18 +37,21 @@
     },
     {
         "department": "Dermatology",
+        "description": "Specializes in the diagnosis and treatment of skin, hair, and nail conditions.",
         "doctors": [
             "Dr.Sunjanaa Dhepa R L"
         ]
     },
     {
         "department": "ENT",
+        "description": "Manages diseases of the ear, nose, throat, head, and neck.",
         "doctors": [
             "Dr. Gautam Raghu"
         ]
     },
     {
         "department": "Emergency medicine",
+        "description": "Provides immediate treatment for acute illnesses and injuries.",
         "doctors": [
             "Dr. Derin D",
             "Dr. Prethesh Raaj T"
@@ -52,12 +59,14 @@
     },
     {
         "department": "Endocrinology",
+        "description": "Deals with hormonal imbalances and endocrine disorders such as diabetes and thyroid issues.",
         "doctors": [
             "Dr.Henith Raj"
         ]
     },
     {
         "department": "Gastroentrology - Medical",
+        "description": "Manages diseases of the digestive tract, liver, and pancreas using non-surgical methods.",
         "doctors": [
             "Dr.Jai Paul",
             "Dr.Amal Velse"
@@ -65,12 +74,14 @@
     },
     {
         "department": "Gastroentrology -Surgical",
+        "description": "Performs surgical interventions for gastrointestinal conditions.",
         "doctors": [
             "Dr. Rejeesh Selvaganesan"
         ]
     },
     {
         "department": "General Medicine",
+        "description": "Provides comprehensive care for adults, diagnosing and treating a wide range of conditions.",
         "doctors": [
             "Dr. Stefy Joseph",
             "Dr. Ramesh Gopi B",
@@ -80,6 +91,7 @@
     },
     {
         "department": "General Surgery",
+        "description": "Performs common surgical procedures involving the abdomen, skin, and other areas.",
         "doctors": [
             "Dr. Theodar Robinson S",
             "Dr.Radhakrishnan Marimuthu",
@@ -89,6 +101,7 @@
     },
     {
         "department": "Infectious Disease",
+        "description": "Diagnoses and manages infections caused by bacteria, viruses, fungi, and parasites.",
         "doctors": [
             "Dr.Rajalakshmi",
             "Dr.Mohammed Niyas V K"
@@ -96,12 +109,14 @@
     },
     {
         "department": "Nephrology",
+        "description": "Deals with kidney-related diseases and treatments including dialysis.",
         "doctors": [
             "Dr.Maria Alex Babu J"
         ]
     },
     {
         "department": "Neurology",
+        "description": "Manages diseases of the brain, spinal cord, and nervous system.",
         "doctors": [
             "Dr. Jenix Nathan Y A",
             "Dr.Ganesh.S"
@@ -109,12 +124,14 @@
     },
     {
         "department": "Neurosurgery",
+        "description": "Performs surgical treatment of neurological disorders.",
         "doctors": [
             "Dr. Niban G M"
         ]
     },
     {
         "department": "Obstetrics & Gynaecology",
+        "description": "Focuses on women's reproductive health, pregnancy, and childbirth.",
         "doctors": [
             "Dr. Jameela Ponmalar A R",
             "Dr. Nancey",
@@ -123,24 +140,28 @@
     },
     {
         "department": "Oncology - Surgical",
+        "description": "Provides surgical care for patients with cancer.",
         "doctors": [
             "Dr.Lala G Anandarobin"
         ]
     },
     {
         "department": "Oncology -Medical",
+        "description": "Treats cancer with chemotherapy, immunotherapy, and other medications.",
         "doctors": [
             "Dr. Kumanan J"
         ]
     },
     {
         "department": "Ortho - Spine",
+        "description": "Specializes in the diagnosis and surgical treatment of spine disorders.",
         "doctors": [
             "Dr.Chandhan"
         ]
     },
     {
         "department": "Orthopeaedics & Trauma",
+        "description": "Deals with musculoskeletal injuries and conditions, including trauma care.",
         "doctors": [
             "Dr. Prabin Suthagar T S",
             "Dr.Prajith A Solomon",
@@ -149,6 +170,7 @@
     },
     {
         "department": "Paediatrics",
+        "description": "Provides medical care for infants, children, and adolescents.",
         "doctors": [
             "Dr. Aswin L",
             "Dr. Gibeah H R Harriet",
@@ -157,36 +179,42 @@
     },
     {
         "department": "Paediatrics & Neonatology",
+        "description": "Focuses on the medical care of newborns and premature infants.",
         "doctors": [
             "Dr.Vivek S"
         ]
     },
     {
         "department": "Paediatrics - Gastro",
+        "description": "Treats digestive system disorders in children.",
         "doctors": [
             "Dr.Anu K Vasu"
         ]
     },
     {
         "department": "Paediatrics - Surgical / Urology",
+        "description": "Performs surgical procedures and treats urinary tract issues in children.",
         "doctors": [
             "Dr.Reju Joseph Thomas"
         ]
     },
     {
         "department": "Plastic-Micro-Reconstructive Surgery",
+        "description": "Focuses on reconstructive and cosmetic surgeries, including microsurgery.",
         "doctors": [
             "Dr.Felix Cordelia"
         ]
     },
     {
         "department": "Psychaitry & Behaviour Medicine",
+        "description": "Diagnoses and treats mental health and behavioral disorders.",
         "doctors": [
             "Dr.Anshon A"
         ]
     },
     {
         "department": "Respiratory Medicine",
+        "description": "Treats diseases of the lungs and respiratory system such as asthma and COPD.",
         "doctors": [
             "Dr. T K Ramesh",
             "Dr.Nishanth P S"
@@ -194,18 +222,21 @@
     },
     {
         "department": "Rheumatology",
+        "description": "Specializes in autoimmune and inflammatory diseases affecting the joints and muscles.",
         "doctors": [
             "Dr. Krishnankutty K"
         ]
     },
     {
         "department": "Urology",
+        "description": "Manages urinary tract diseases and male reproductive issues.",
         "doctors": [
             "Dr.Sukhdev D B Singh"
         ]
     },
     {
         "department": "Vascular Surgeon",
+        "description": "Performs surgeries on arteries, veins, and the circulatory system.",
         "doctors": [
             "Dr.Rajesh Kannaih"
         ]

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 
 class LanguageSelectionWidget extends StatelessWidget {
   const LanguageSelectionWidget({super.key});
@@ -11,7 +12,7 @@ class LanguageSelectionWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text('Choose Language'),
-          const SizedBox(height: 24),
+          const Gap(24),
           Row(
             children: [
               Expanded(

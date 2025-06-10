@@ -9,10 +9,18 @@ class DepartmentHandlerService {
 
   List<Department> get departments => _departments;
 
-  void loaddepartments() async {
+  DepartmentHandlerService() {
+    loadDepartments();
+  }
+
+  void loadDepartments() async {
     final departmentsJson = await rootBundle.loadString('assets/departments.json');
     _departments.addAll((jsonDecode(departmentsJson) as List)
       .map((e) => Department.fromJson(e))
       .toList());
+  }
+
+  Department getDepartment(String department) {
+    return _departments.firstWhere((dept) => dept.department == department);
   }
 }

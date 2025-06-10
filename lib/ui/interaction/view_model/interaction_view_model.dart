@@ -1,9 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:voice_interaction/data/repositories/realtime_api_repository.dart';
+import 'package:voice_interaction/data/services/department_handler_service.dart';
+import 'package:voice_interaction/data/services/package_handler_service.dart';
 import 'package:voice_interaction/domain/models/realtime_connection_state.dart';
 import 'package:voice_interaction/domain/models/realtime_speech_state.dart';
-import 'package:voice_interaction/ui/core/models/display_details.dart';
+import 'package:voice_interaction/ui/models/department_details.dart';
+import 'package:voice_interaction/ui/models/display_details.dart';
+import 'package:voice_interaction/ui/models/grid.dart';
+import 'package:voice_interaction/ui/models/package_detials.dart';
+import 'package:voice_interaction/utils/injection_container.dart';
 
 part 'interaction_event.dart';
 part 'interaction_state.dart';
@@ -31,26 +37,26 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
       _realtimeApiRepository.connectionStateStream.listen((state) {
         switch (state) {
           case RealtimeConnectionState.disconnected:
-            add(ConnectionStatusChanged(InteractionConnectionState.disconnected));
+            add(ConnectionStatusChanged(status: InteractionConnectionState.disconnected));
             break;
           case RealtimeConnectionState.connecting:
-            add(ConnectionStatusChanged(InteractionConnectionState.connecting));
+            add(ConnectionStatusChanged(status: InteractionConnectionState.connecting));
             break;
           case RealtimeConnectionState.connected:
-            add(ConnectionStatusChanged(InteractionConnectionState.connected));
+            add(ConnectionStatusChanged(status: InteractionConnectionState.connected));
             break;
         }
       });
       _realtimeApiRepository.speechStateStream.listen((state) {
         switch (state) {
           case RealtimeSpeechState.idle:
-            add(SpeechStateChanged(InteractionSpeechState.idle));
+            add(SpeechStateChanged(speechState: InteractionSpeechState.idle));
             break;
           case RealtimeSpeechState.listening:
-            add(SpeechStateChanged(InteractionSpeechState.listening));
+            add(SpeechStateChanged(speechState: InteractionSpeechState.listening));
             break;
           case RealtimeSpeechState.speaking:
-            add(SpeechStateChanged(InteractionSpeechState.speaking));
+            add(SpeechStateChanged(speechState: InteractionSpeechState.speaking));
             break;
         }
       });
@@ -60,7 +66,7 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
         emit(InteractionConnecting());
       });
 
-      on<ConnectionStatusChanged>((event, emit) {
+      on<ConnectionStatusChanged> ((event, emit) {
         if (event.status == InteractionConnectionState.connected) {
           _speechState = InteractionSpeechState.listening;
           _isMicMuted = false;
@@ -74,10 +80,38 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
         }
       });
 
-      on<SpeechStateChanged>((event, emit) {
+      on<SpeechStateChanged> ((event, emit) {
         if (state is InteractionConnected) {
           emit(InteractionConnected(speechState: _speechState, micMuted: _isMicMuted, details: null));
         }
+      });
+
+      on<DetailsRequested>((event, emit) {
+        if (event.type == "package") {
+          final packageDetails = sl<PackageHandlerService>().getPackage(event.request);
+          final details = PackageDetials(
+            heading: packageDetails.package,
+            description: packageDetails.description,
+            price: packageDetails.price,
+            tests: Grid(heading: "Tests", items: packageDetails.tests),
+            consultations: Grid(heading: "Consultations", items: packageDetails.consultations)
+          );
+
+          emit(InteractionConnected(speechState: _speechState, micMuted: _isMicMuted, details: details));
+        } else if (event.type == "department") {
+          final departmentDetails = sl<DepartmentHandlerService>().getDepartment(event.request);
+          final details = DepartmentDetails(
+            heading: departmentDetails.department,
+            description: departmentDetails.description,
+            doctors: Grid(heading: "Doctors", items: departmentDetails.doctors),
+          );
+
+          emit(InteractionConnected(speechState: _speechState, micMuted: _isMicMuted, details: details));
+        }
+      });
+
+      on<CloseDetails>((event, emit) {
+        emit(InteractionConnected(speechState: _speechState, micMuted: _isMicMuted, details: null));
       });
 
       on<MuteMic>((event, emit) {
