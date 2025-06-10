@@ -1,57 +1,38 @@
-import 'dart:async';
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 import 'package:voice_interaction/config/realtime_api_data.dart';
 import 'package:voice_interaction/config/realtime_api_response_types.dart';
-import 'package:voice_interaction/domain/models/realtime_connection_state.dart';
-import 'package:voice_interaction/domain/models/realtime_speech_state.dart';
 
 class RealtimeApiService {
   RTCPeerConnection? _connection;
   RTCDataChannel? _dataChannel;
   MediaStream? _audioStream;
   final Dio dio = Dio();
-  final _connectionController = StreamController<RealtimeConnectionState>.broadcast();
-  final _speechController = StreamController<RealtimeSpeechState>.broadcast();
 
-  Stream<RealtimeConnectionState> get connectionStateStream => _connectionController.stream;
-  Stream<RealtimeSpeechState> get speechStateStream => _speechController.stream;
-
-  RealtimeConnectionState _connectionState = RealtimeConnectionState.connecting;
-  RealtimeSpeechState _speechState = RealtimeSpeechState.idle;
-
-  void _setConnectionState(RealtimeConnectionState newState) {
-    if (_connectionState != newState) {
-      _connectionState = newState;
-      _connectionController.add(newState);
-      if (newState != RealtimeConnectionState.connected) {
-        _setSpeechState(RealtimeSpeechState.idle);
-      }
-    }
-  }
-
-  void _setSpeechState(RealtimeSpeechState newState) {
-    if (_connectionState == RealtimeConnectionState.connected &&
-        newState != _speechState) {
-      _speechState = newState;
-      _speechController.add(newState);
-    }
-  }
-
-  Future<void> initConnection(String apiKey, String instruction, {Map<String, dynamic> Function(String functionName, Map<String, dynamic> args)? onFuntionCall}) async {
+  Future<void> initConnection(
+    String apiKey,
+    String instruction, {
+    required void Function() onSpeak,
+    required void Function() onListen,
+    required void Function() onConnect,
+    required void Function() onDisconnect,
+    void Function(dynamic message)? onMessage,
+    void Function(dynamic error)? onError,
+    Map<String, dynamic> Function(
+      String functionName,
+      Map<String, dynamic> args,
+    )?
+    onFuntionCall,
+  }) async {
     final config = {
       'iceServers': [
         {
-          'urls': [
-            'stun:stun1.l.google.com:19302'
-          ]
-        }
-      ]
+          'urls': ['stun:stun1.l.google.com:19302'],
+        },
+      ],
     };
     _connection = await createPeerConnection(config);
 
@@ -60,10 +41,7 @@ class RealtimeApiService {
         case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
         case RTCPeerConnectionState.RTCPeerConnectionStateFailed:
         case RTCPeerConnectionState.RTCPeerConnectionStateClosed:
-          _setConnectionState(RealtimeConnectionState.disconnected);
-          break;
-        case RTCPeerConnectionState.RTCPeerConnectionStateConnecting:
-          _setConnectionState(RealtimeConnectionState.connecting);
+          onDisconnect();
           break;
         default:
           break;
@@ -74,14 +52,14 @@ class RealtimeApiService {
 
     _audioStream!.getTracks().forEach((track) {
       track.enabled = true;
-      debugPrint("Track - ${track.label}");
-      debugPrint("Kind - ${track.kind}");
-      debugPrint("ID - ${track.getSettings()}");
       _connection!.addTrack(track, _audioStream!);
     });
 
-    _dataChannel = await _connection!.createDataChannel('oai-events', RTCDataChannelInit());
-    
+    _dataChannel = await _connection!.createDataChannel(
+      'oai-events',
+      RTCDataChannelInit(),
+    );
+
     RTCSessionDescription offer = await _connection!.createOffer();
     await _connection!.setLocalDescription(offer);
 
@@ -98,7 +76,10 @@ class RealtimeApiService {
         data: jsonEncode({
           "model": RealtimeApiData.realtimeAPIModelVersion,
           "voice": RealtimeApiData.voice,
-          "instructions": instruction == "English" ? RealtimeApiData.englishInstructions : RealtimeApiData.tamilInstructions,
+          "instructions":
+              instruction == "English"
+                  ? RealtimeApiData.englishInstructions
+                  : RealtimeApiData.tamilInstructions,
           "turn_detection": {
             "type": "server_vad",
             "threshold": 0.8,
@@ -115,34 +96,42 @@ class RealtimeApiService {
         final String type = data["type"];
 
         if (type == RealtimeApiResponseTypes.sessionCreated) {
-          debugPrint("Session created");
-          _setConnectionState(RealtimeConnectionState.connected);
+          onConnect();
         } else if (type == RealtimeApiResponseTypes.outputAudioBufferStarted) {
-          debugPrint("Robo Speaking");
-          _setSpeechState(RealtimeSpeechState.speaking);
+          onSpeak();
         } else if (type == RealtimeApiResponseTypes.outputAudioBufferStopped) {
-          debugPrint("Robo done");
-          _setSpeechState(RealtimeSpeechState.listening);
+          onListen();
         } else if (type == RealtimeApiResponseTypes.inputSpeechStarted) {
-          debugPrint("User heard");
-          _setSpeechState(RealtimeSpeechState.listening);
+          onListen();
         } else if (type == RealtimeApiResponseTypes.functionCallArgumentsDone) {
-          debugPrint("Function call arguments done");
           if (onFuntionCall != null) {
             final String functionName = data["name"];
             final Map<String, dynamic> args = jsonDecode(data["arguments"]);
             final returnData = onFuntionCall(functionName, args);
-            final returnJson = jsonEncode(returnData);
-            _dataChannel?.send(RTCDataChannelMessage(returnJson));
-            _dataChannel?.send(RTCDataChannelMessage(""));
+            final msg = {
+              "type": "conversation.item.create",
+              "item": {
+                "type": "function_call_output",
+                "call_id": data["call_id"],
+                "output": jsonEncode(returnData),
+              },
+            };
+            returnFunctionCall(msg);
           }
         } else if (type == RealtimeApiResponseTypes.error) {
-          debugPrint("Error - $data");
+          if (onError != null) {
+            onError(data);
+          }
+        } else {
+          if (onMessage != null) {
+            onMessage(data);
+          }
         }
       };
     } catch (e) {
-      debugPrint("Failed to create session: $e");
-      debugPrint("Response - ${secretResponse.data}");
+      if (onError != null) {
+        onError(e);
+      }
       return;
     }
 
@@ -151,7 +140,9 @@ class RealtimeApiService {
       Map<String, dynamic> res = secretResponse.data;
       secret = res["client_secret"]["value"];
     } else {
-      debugPrint("Failed to get secret key: ${secretResponse.data}");
+      if (onError != null) {
+        onError("Failed to get secret key: ${secretResponse.data}");
+      }
       return;
     }
 
@@ -168,12 +159,21 @@ class RealtimeApiService {
         data: offer.sdp,
       );
     } catch (e) {
-      debugPrint("Failed to send offer: $e");
+      if (onError != null) {
+        onError(e);
+      }
       return;
     }
 
     final answer = RTCSessionDescription(response.data, "answer");
     await _connection!.setRemoteDescription(answer);
+  }
+
+  void returnFunctionCall(Map<String, dynamic> msg) async {
+    await _dataChannel?.send(RTCDataChannelMessage(jsonEncode(msg)));
+    await _dataChannel?.send(
+      RTCDataChannelMessage(jsonEncode({"type": "response.create"})),
+    );
   }
 
   void muteMic() {
@@ -187,7 +187,7 @@ class RealtimeApiService {
       track.enabled = true;
     }
   }
-  
+
   void close() {
     _dataChannel?.close();
     _audioStream?.dispose();

@@ -10,7 +10,6 @@ import 'package:voice_interaction/ui/interaction/widgets/language_selection_widg
 import 'package:voice_interaction/ui/interaction/widgets/package_details_widget.dart';
 import 'package:voice_interaction/ui/models/department_details.dart';
 import 'package:voice_interaction/ui/models/package_detials.dart';
-import 'package:voice_interaction/utils/injection_container.dart';
 
 class InteractionScreen extends StatefulWidget {
   final InteractionViewModel viewModel;
@@ -38,7 +37,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
     );
 
     if (selectedLanguage != null) {
-      sl<InteractionViewModel>().add(StartSession(instruction: selectedLanguage));
+      widget.viewModel.add(StartSession(instruction: selectedLanguage));
     }
   }
 
@@ -67,7 +66,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<InteractionViewModel, InteractionState>(
-      bloc: sl<InteractionViewModel>(),
+      bloc: widget.viewModel,
       listener: (context, state) {
         if (state is InteractionConnected) {
           _setRiveBool(_idleBool, false);
@@ -90,6 +89,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                   _showLanguageDialog();
                 }
               },
+              onLongPress: () => _handleRiveTrigger(_speakTrigger),
               child: RiveAnimation.asset(
                 'assets/face.riv',
                 fit: BoxFit.contain,
@@ -115,9 +115,9 @@ class _InteractionScreenState extends State<InteractionScreen> {
                           ),
                           onPressed: () {
                             if (state.micMuted) {
-                              sl<InteractionViewModel>().add(UnmuteMic());
+                              widget.viewModel.add(UnmuteMic());
                             } else {
-                              sl<InteractionViewModel>().add(MuteMic());
+                              widget.viewModel.add(MuteMic());
                             }
                           },
                         ),
@@ -127,7 +127,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                           backgroundColor: Colors.grey[800],
                           child: const Icon(Icons.close, color: Colors.white),
                           onPressed: () {
-                            sl<InteractionViewModel>().add(EndSession());
+                            widget.viewModel.add(EndSession());
                           },
                         ),
                       ],
@@ -135,9 +135,9 @@ class _InteractionScreenState extends State<InteractionScreen> {
                   ),
                   if (state.details != null)
                     if (state.details is DepartmentDetails)
-                      DepartmentDetailsWidget(department: state.details as DepartmentDetails, onDone: () => sl<InteractionViewModel>().add(CloseDetails()))
+                      DepartmentDetailsWidget(department: state.details as DepartmentDetails, onDone: () => widget.viewModel.add(CloseDetails()))
                     else if (state.details is PackageDetials)
-                      PackageDetailsWidget(package: state.details as PackageDetials, onDone: () => sl<InteractionViewModel>().add(CloseDetails()))
+                      PackageDetailsWidget(package: state.details as PackageDetials, onDone: () => widget.viewModel.add(CloseDetails()))
                 ],
               ),
             if (state is InteractionConnecting)

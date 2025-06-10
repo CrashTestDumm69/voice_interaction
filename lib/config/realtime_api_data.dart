@@ -39,6 +39,9 @@ Keep all responses:
 
   static const String voice = 'ash';
   
+  static const String getHealthcarPackageFunction = 'get_healthcare_package';
+  static const String getDepartmentDoctorsFunction = 'get_department_doctors';
+
   static const List<Map<String, dynamic>> tools = [
     {
       "type": "function",
@@ -122,9 +125,9 @@ Keep all responses:
     }
   ];
 
-  static const double turnDetectionThreshold = 0.8;
+  static const double turnDetectionThreshold = 0.7;
   static const int prefixPaddingMs = 300;
-  static const int silenceDurationMs = 500;
+  static const int silenceDurationMs = 400;
   static const int sampleRate = 24000;
 
   static const String realtimeAPIBaseUrl = 'https://api.openai.com/v1/realtime';
