@@ -19,7 +19,7 @@ void main() async {
     systemNavigationBarIconBrightness: Brightness.light
   ));  
 
-  initializeDeps();
+  await initializeDeps();
 
   runApp(const MyApp());
 }

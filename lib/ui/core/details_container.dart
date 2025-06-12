@@ -14,7 +14,7 @@ class DetailsContainer extends StatelessWidget {
     this.onClose,
     this.maxContentWidth = DetailsWidgetTheme.maxContentWidth,
     this.maxContentHeight = DetailsWidgetTheme.maxContentHeight,
-    this.borderRadius = 15.0,
+    this.borderRadius = 15.0
   });
 
   @override

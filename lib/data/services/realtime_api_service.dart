@@ -3,14 +3,19 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
-import 'package:voice_interaction/config/realtime_api_data.dart';
+import 'package:voice_interaction/config/realtime_api_config.dart';
 import 'package:voice_interaction/config/realtime_api_response_types.dart';
+import 'package:voice_interaction/data/services/realtime_api_tools_service.dart';
 
 class RealtimeApiService {
   RTCPeerConnection? _connection;
   RTCDataChannel? _dataChannel;
   MediaStream? _audioStream;
   final Dio dio = Dio();
+  final RealtimeApiToolsService _realtimeApiToolsService;
+
+  RealtimeApiService({required RealtimeApiToolsService realtimeApiToolsService})
+      : _realtimeApiToolsService = realtimeApiToolsService;
 
   Future<void> initConnection(
     String apiKey,
@@ -66,7 +71,7 @@ class RealtimeApiService {
     late final Response secretResponse;
     try {
       secretResponse = await dio.post(
-        RealtimeApiData.realtimeAPISessionsUrl,
+        RealtimeApiConfig.realtimeAPISessionsUrl,
         options: Options(
           headers: {
             "Authorization": "Bearer $apiKey",
@@ -74,18 +79,18 @@ class RealtimeApiService {
           },
         ),
         data: jsonEncode({
-          "model": RealtimeApiData.realtimeAPIModelVersion,
-          "voice": RealtimeApiData.voice,
+          "model": RealtimeApiConfig.realtimeAPIModelVersion,
+          "voice": RealtimeApiConfig.voice,
           "instructions":
               instruction == "English"
-                  ? RealtimeApiData.englishInstructions
-                  : RealtimeApiData.tamilInstructions,
+                  ? RealtimeApiConfig.englishInstructions
+                  : RealtimeApiConfig.tamilInstructions,
           "turn_detection": {
             "type": "server_vad",
             "threshold": 0.8,
             "silence_duration_ms": 1000,
           },
-          "tools": RealtimeApiData.tools,
+          "tools": _realtimeApiToolsService.tools.map((tool) => tool.toJson()).toList(),
           "tool_choice": "auto",
           "max_response_output_tokens": 4096,
         }),
@@ -149,7 +154,7 @@ class RealtimeApiService {
     late final Response response;
     try {
       response = await dio.post(
-        "${RealtimeApiData.realtimeAPIBaseUrl}?model=${RealtimeApiData.realtimeAPIModelVersion}",
+        "${RealtimeApiConfig.realtimeAPIBaseUrl}?model=${RealtimeApiConfig.realtimeAPIModelVersion}",
         options: Options(
           headers: {
             "Authorization": "Bearer $secret",

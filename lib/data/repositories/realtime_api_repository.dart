@@ -3,9 +3,11 @@ import 'package:voice_interaction/data/services/realtime_api_service.dart';
 
 class RealtimeApiRepository {
   final RealtimeApiService _realtimeApiService;
+  final DotenvService _dotenvService;
 
-  RealtimeApiRepository({required RealtimeApiService service})
-    : _realtimeApiService = service;
+  RealtimeApiRepository({required RealtimeApiService realtimeApiService, required DotenvService dotenvService})
+      : _realtimeApiService = realtimeApiService,
+        _dotenvService = dotenvService;
 
   Future<void> startSession({
     required String instruction,
@@ -17,7 +19,7 @@ class RealtimeApiRepository {
     void Function(dynamic error)? onError,
     required Map<String, dynamic> Function(String functionName, Map<String, dynamic> arguments) onFuntionCall
   }) async {
-    final apiKey = DotenvService.getApiKey();
+    final apiKey = _dotenvService.getApiKey();
     await _realtimeApiService.initConnection(
       apiKey, instruction,
       onConnect: onConnect,
