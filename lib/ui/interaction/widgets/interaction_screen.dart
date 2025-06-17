@@ -109,6 +109,15 @@ class _InteractionScreenState extends State<InteractionScreen> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         FloatingActionButton(
+                          heroTag: 'toggle_volume_slider',
+                          backgroundColor: Colors.grey.shade800,
+                          child: Icon(Icons.volume_up, color: Colors.white),
+                          onPressed: () {
+                            widget.viewModel.add(VolumeChangePressed());
+                          }
+                        ),
+                        const Gap(16),
+                        FloatingActionButton(
                           heroTag: 'mic_toggle',
                           backgroundColor: state.micMuted ? Colors.red : Colors.green,
                           child: Icon(
@@ -126,7 +135,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                         const Gap(16),
                         FloatingActionButton(
                           heroTag: 'end_session',
-                          backgroundColor: Colors.grey[800],
+                          backgroundColor: Colors.grey.shade800,
                           child: const Icon(Icons.close, color: Colors.white),
                           onPressed: () {
                             widget.viewModel.add(EndSession());

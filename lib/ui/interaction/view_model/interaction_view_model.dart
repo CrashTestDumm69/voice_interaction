@@ -6,6 +6,7 @@ import 'package:voice_interaction/data/repositories/doctor_repository.dart';
 import 'package:voice_interaction/data/repositories/package_repository.dart';
 
 import 'package:voice_interaction/data/repositories/realtime_api_repository.dart';
+import 'package:voice_interaction/data/repositories/volume_repositroy.dart';
 import 'package:voice_interaction/ui/models/department_details.dart';
 import 'package:voice_interaction/ui/models/display_details.dart';
 import 'package:voice_interaction/ui/models/doctors_details.dart';
@@ -24,6 +25,7 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
   final PackageRepository _packageRepository;
   final DepartmentRepository _departmentRepository;
   final DoctorRepository _doctorRepository;
+  final VolumeRepositroy _volumeRepository;
 
   InteractionSpeechState _speechState = InteractionSpeechState.idle;
   bool _isMicMuted = false;
@@ -34,15 +36,17 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
     required PackageRepository packageRepository,
     required DepartmentRepository departmentRepository,
     required DoctorRepository doctorRepository,
+    required VolumeRepositroy volumeRepository,
   }) : _realtimeApiRepository = realtimeApiRepository,
        _packageRepository = packageRepository,
        _departmentRepository = departmentRepository,
        _doctorRepository = doctorRepository,
+       _volumeRepository = volumeRepository,
        super(InteractionInitial()) {
     on<StartSession>((event, emit) {
       emit(InteractionConnecting());
 
-      onFunctionCall(functionName, arguments) {
+      onFunctionCall(functionName, arguments) async {
         debugPrint("Function called: $functionName with arguments: $arguments");
         if (functionName == RealtimeApiTools.getHealthCarePackageToolName) {
           final packageName = arguments['package_name'];
@@ -88,6 +92,14 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
             )
           );
           return {"success": true, "data": "Doctors are on the screen"};
+        } else if (functionName == RealtimeApiTools.changeVolumeToolName) {
+          final volume = arguments['volume'] as int;
+          volume.clamp(0, 15);
+          await _volumeRepository.setVolume(volume);
+          return {"success": true, "data": "Volume set to $volume"};
+        } else if (functionName == RealtimeApiTools.getCurrentVolumeToolName) {
+          final currentVolume = await _volumeRepository.getVolume();
+          return {"success": true, "data": currentVolume};
         } else {
           return {"success": false, "error": "Unknown function: $functionName"};
         }
@@ -135,7 +147,7 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
         onListen: onListen,
         onMessage: onMessage,
         onError: onError,
-        onFuntionCall: onFunctionCall,
+        onFunctionCall: onFunctionCall,
       );
     });
 
@@ -170,6 +182,11 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
           ),
         );
       }
+    });
+
+    on<VolumeChangePressed>((event, emit) async {
+      final currentVolume = await _volumeRepository.getVolume();
+      await _volumeRepository.setVolume(currentVolume);
     });
 
     on<DetailsRequested>((event, emit) {

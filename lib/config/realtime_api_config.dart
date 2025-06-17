@@ -37,7 +37,7 @@ Keep all responses:
 - சுருக்கமாகவும் தெளிவாகவும் இருக்கட்டும்
 """;
 
-  static const String voice = 'ash';
+  static const String voice = 'sage';
 
   static const double turnDetectionThreshold = 0.7;
   static const int prefixPaddingMs = 300;

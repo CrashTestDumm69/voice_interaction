@@ -29,6 +29,8 @@ class DetailsRequested extends InteractionEvent {
 
 class CloseDetails extends InteractionEvent {}
 
+class VolumeChangePressed extends InteractionEvent {}
+
 class MuteMic extends InteractionEvent {}
 
 class UnmuteMic extends InteractionEvent {}

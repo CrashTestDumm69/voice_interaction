@@ -26,11 +26,11 @@ class RealtimeApiService {
     required void Function() onDisconnect,
     void Function(dynamic message)? onMessage,
     void Function(dynamic error)? onError,
-    Map<String, dynamic> Function(
+    Future<Map<String, dynamic>> Function(
       String functionName,
       Map<String, dynamic> args,
     )?
-    onFuntionCall,
+    onFunctionCall,
   }) async {
     final config = {
       'iceServers': [
@@ -96,7 +96,7 @@ class RealtimeApiService {
         }),
       );
 
-      _dataChannel?.onMessage = (msg) {
+      _dataChannel?.onMessage = (msg) async {
         final data = jsonDecode(msg.text);
         final String type = data["type"];
 
@@ -109,10 +109,10 @@ class RealtimeApiService {
         } else if (type == RealtimeApiResponseTypes.inputSpeechStarted) {
           onListen();
         } else if (type == RealtimeApiResponseTypes.functionCallArgumentsDone) {
-          if (onFuntionCall != null) {
+          if (onFunctionCall != null) {
             final String functionName = data["name"];
             final Map<String, dynamic> args = jsonDecode(data["arguments"]);
-            final returnData = onFuntionCall(functionName, args);
+            final returnData = await onFunctionCall(functionName, args);
             final msg = {
               "type": "conversation.item.create",
               "item": {
@@ -183,13 +183,13 @@ class RealtimeApiService {
 
   void muteMic() {
     for (var track in _audioStream!.getTracks()) {
-      track.enabled = false;
+      Helper.setMicrophoneMute(true, track);
     }
   }
 
   void unmuteMic() {
     for (var track in _audioStream!.getTracks()) {
-      track.enabled = true;
+      Helper.setMicrophoneMute(false, track);
     }
   }
 

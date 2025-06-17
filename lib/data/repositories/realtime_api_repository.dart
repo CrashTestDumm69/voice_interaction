@@ -17,7 +17,7 @@ class RealtimeApiRepository {
     required void Function() onDisconnect,
     void Function(dynamic message)? onMessage,
     void Function(dynamic error)? onError,
-    required Map<String, dynamic> Function(String functionName, Map<String, dynamic> arguments) onFuntionCall
+    required Future<Map<String, dynamic>> Function(String functionName, Map<String, dynamic> arguments) onFunctionCall
   }) async {
     final apiKey = _dotenvService.getApiKey();
     await _realtimeApiService.initConnection(
@@ -28,7 +28,7 @@ class RealtimeApiRepository {
       onListen: onListen,
       onMessage: onMessage,
       onError: onError,
-      onFuntionCall: onFuntionCall
+      onFunctionCall: onFunctionCall
     );
   }
 

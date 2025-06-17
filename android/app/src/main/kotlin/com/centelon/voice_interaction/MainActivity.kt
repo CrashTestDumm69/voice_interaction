@@ -22,15 +22,19 @@ class MainActivity : FlutterActivity() {
                     audioManager.setStreamVolume(
                         AudioManager.STREAM_VOICE_CALL,
                         level,
-                        0
+                        AudioManager.FLAG_SHOW_UI
                     )
                     result.success(null)
                 }
 
-                "getCallVolume" -> {
+                "getCurrentCallVolume" -> {
                     val current = audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+                    result.success(current)
+                }
+
+                "getMaxCallVolume" -> {
                     val max = audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
-                    result.success(mapOf("current" to current, "max" to max))
+                    result.success(max)
                 }
 
                 else -> result.notImplemented()
