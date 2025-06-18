@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:voice_interaction/routing/routes.dart';
 import 'package:voice_interaction/ui/interaction/widgets/interaction_screen.dart';
+import 'package:voice_interaction/ui/update/widgets/update_screen.dart';
 import 'package:voice_interaction/utils/injection_container.dart';
 
 GoRouter router() => GoRouter(
@@ -11,6 +12,12 @@ GoRouter router() => GoRouter(
       path: Routes.interaction,
       builder: (context, state) {
         return InteractionScreen(viewModel: sl());
+      }
+    ),
+    GoRoute(
+      path: Routes.update,
+      builder: (context, state) {
+        return UpdateScreen(viewModel: sl());
       }
     )
   ]

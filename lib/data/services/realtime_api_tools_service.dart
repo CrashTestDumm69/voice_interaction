@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:voice_interaction/config/realtime_api_tools.dart';
 import 'package:voice_interaction/data/services/department_handler_service.dart';
 import 'package:voice_interaction/data/services/package_handler_service.dart';
@@ -103,11 +102,5 @@ class RealtimeApiToolsService {
     _tools.add(getAllDoctorsTool);
     _tools.add(changeVolumeTool);
     _tools.add(getCurrentVolumeTool);
-
-    debugPrint(getHealthCarePackageTool.toJson().toString());
-    debugPrint(getDepartmentDoctorsTool.toJson().toString());
-    debugPrint(getAllDoctorsTool.toJson().toString());
-    debugPrint(getCurrentVolumeTool.toJson().toString());
-    debugPrint(changeVolumeTool.toJson().toString());
   }
 }
