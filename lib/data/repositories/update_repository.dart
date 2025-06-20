@@ -1,25 +1,35 @@
+import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
 import 'package:voice_interaction/data/services/update_service.dart';
-import 'package:voice_interaction/domain/models/version_info.dart';
+import 'package:voice_interaction/domain/models/version.dart';
 
 class UpdateRepository {
   final UpdateService _updateService;
 
   UpdateRepository({required UpdateService updateService}) : _updateService = updateService;
 
-  Future<bool> checkForUpdate() async {
+  Future<Version?> checkForUpdate() async {
     try {
-      final VersionInfo latestVersion = await _updateService.getLatestVersion();
+      final Version latestVersion = await _updateService.getLatestVersion();
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      final currentVersion = packageInfo.version;
-      return latestVersion.tagName.replaceAll("v", '') != currentVersion;
+      final currentVersion = Version.parse(packageInfo.version);
+      return latestVersion > currentVersion ? latestVersion : null;
     } catch (e) {
-      return false;
+      debugPrint("Error: $e");
+      return null;
     }
   }
 
-  Future<void> updateApp({void Function(int count, int total)? onProgress}) async {
-    final VersionInfo latestVersion = await _updateService.getLatestVersion();
-    await _updateService.downloadAndInstall( latestVersion, onProgress: onProgress);
+  Future<void> downloadUpdate({void Function(int count, int total)? onProgress}) async {
+    try {
+      await _updateService.downloadLatest(onProgress: onProgress);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateApp() async {
+    await _updateService.installLatest();
   }
 }

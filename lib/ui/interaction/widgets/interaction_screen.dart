@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rive/rive.dart';
-import 'package:voice_interaction/routing/router.dart';
 import 'package:voice_interaction/routing/routes.dart';
 
 import 'package:voice_interaction/ui/interaction/view_model/interaction_view_model.dart';
@@ -94,7 +93,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                   _showLanguageDialog();
                 }
               },
-              onLongPress: () => context.go(Routes.update),
+              onLongPress: () => context.push(Routes.update),
               child: RiveAnimation.asset(
                 'assets/face.riv',
                 fit: BoxFit.contain,

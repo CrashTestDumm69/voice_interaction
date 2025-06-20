@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:voice_interaction/routing/router.dart';
-import 'package:voice_interaction/routing/routes.dart';
-import 'package:voice_interaction/ui/update/view_model/update_view_model.dart';
 import 'package:voice_interaction/utils/injection_container.dart';
 
 void main() async {
@@ -24,8 +21,6 @@ void main() async {
 
   await initializeDeps();
 
-  sl<UpdateViewModel>().add(StartUpdateCheck());
-
   runApp(const MyApp());
 }
 
@@ -34,17 +29,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UpdateViewModel, UpdateState>(
-      bloc: sl(),
-      listenWhen: (prev, curr) => curr is UpdateAvailable,
-      listener: (context, state) {
-        if (state is UpdateAvailable) {
-          context.go(Routes.update);
-        }
-      },
-      child: MaterialApp.router(
-        routerConfig: router()
-      )
+    return MaterialApp.router(
+      routerConfig: router()
     );
   }
 }
