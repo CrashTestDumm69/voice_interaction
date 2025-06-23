@@ -6,11 +6,11 @@ import 'package:go_router/go_router.dart';
 import 'package:rive/rive.dart';
 import 'package:voice_interaction/routing/routes.dart';
 
-import 'package:voice_interaction/ui/interaction/view_model/interaction_view_model.dart';
-import 'package:voice_interaction/ui/interaction/widgets/department_details_widget.dart';
-import 'package:voice_interaction/ui/interaction/widgets/doctors_details_widget.dart';
-import 'package:voice_interaction/ui/interaction/widgets/language_selection_widget.dart';
-import 'package:voice_interaction/ui/interaction/widgets/package_details_widget.dart';
+import 'package:voice_interaction/ui/features/interaction/view_model/interaction_view_model.dart';
+import 'package:voice_interaction/ui/features/interaction/widgets/department_details_widget.dart';
+import 'package:voice_interaction/ui/features/interaction/widgets/doctors_details_widget.dart';
+import 'package:voice_interaction/ui/features/interaction/widgets/language_selection_widget.dart';
+import 'package:voice_interaction/ui/features/interaction/widgets/package_details_widget.dart';
 import 'package:voice_interaction/ui/models/department_details.dart';
 import 'package:voice_interaction/ui/models/doctors_details.dart';
 import 'package:voice_interaction/ui/models/package_detials.dart';

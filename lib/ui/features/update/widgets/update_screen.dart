@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
-import 'package:voice_interaction/ui/update/view_model/update_view_model.dart';
+import 'package:voice_interaction/ui/features/update/view_model/update_view_model.dart';
 
 class UpdateScreen extends StatelessWidget {
   final UpdateViewModel _viewModel;

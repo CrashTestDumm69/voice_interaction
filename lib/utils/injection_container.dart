@@ -14,8 +14,8 @@ import 'package:voice_interaction/data/services/package_handler_service.dart';
 import 'package:voice_interaction/data/services/realtime_api_service.dart';
 import 'package:voice_interaction/data/services/realtime_api_tools_service.dart';
 import 'package:voice_interaction/data/services/update_service.dart';
-import 'package:voice_interaction/ui/interaction/view_model/interaction_view_model.dart';
-import 'package:voice_interaction/ui/update/view_model/update_view_model.dart';
+import 'package:voice_interaction/ui/features/interaction/view_model/interaction_view_model.dart';
+import 'package:voice_interaction/ui/features/update/view_model/update_view_model.dart';
 
 final GetIt sl = GetIt.instance;
 

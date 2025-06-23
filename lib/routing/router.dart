@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:voice_interaction/routing/routes.dart';
-import 'package:voice_interaction/ui/interaction/widgets/interaction_screen.dart';
-import 'package:voice_interaction/ui/update/widgets/update_screen.dart';
+import 'package:voice_interaction/ui/features/interaction/widgets/interaction_screen.dart';
+import 'package:voice_interaction/ui/features/update/widgets/update_screen.dart';
 import 'package:voice_interaction/utils/injection_container.dart';
 
 GoRouter router() => GoRouter(
