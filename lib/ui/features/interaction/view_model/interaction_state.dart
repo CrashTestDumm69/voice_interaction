@@ -9,9 +9,8 @@ class InteractionConnecting extends InteractionState {}
 class InteractionConnected extends InteractionState {
   final InteractionSpeechState speechState;
   final bool micMuted;
-  final DisplayDetails? details;
 
-  InteractionConnected({required this.speechState, required this.micMuted, required this.details});
+  InteractionConnected({required this.speechState, required this.micMuted});
 }
 
 class InteractionDisconnected extends InteractionState {}

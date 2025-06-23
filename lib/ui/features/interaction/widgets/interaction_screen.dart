@@ -7,13 +7,7 @@ import 'package:rive/rive.dart';
 import 'package:voice_interaction/routing/routes.dart';
 
 import 'package:voice_interaction/ui/features/interaction/view_model/interaction_view_model.dart';
-import 'package:voice_interaction/ui/features/interaction/widgets/department_details_widget.dart';
-import 'package:voice_interaction/ui/features/interaction/widgets/doctors_details_widget.dart';
 import 'package:voice_interaction/ui/features/interaction/widgets/language_selection_widget.dart';
-import 'package:voice_interaction/ui/features/interaction/widgets/package_details_widget.dart';
-import 'package:voice_interaction/ui/models/department_details.dart';
-import 'package:voice_interaction/ui/models/doctors_details.dart';
-import 'package:voice_interaction/ui/models/package_detials.dart';
 
 class InteractionScreen extends StatefulWidget {
   final InteractionViewModel viewModel;
@@ -146,13 +140,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
                       ],
                     ),
                   ),
-                  if (state.details != null)
-                    if (state.details is DepartmentDetails)
-                      DepartmentDetailsWidget(department: state.details as DepartmentDetails, onDone: () => widget.viewModel.add(CloseDetails()))
-                    else if (state.details is PackageDetials)
-                      PackageDetailsWidget(package: state.details as PackageDetials, onDone: () => widget.viewModel.add(CloseDetails()))
-                    else if (state.details is DoctorsDetails)
-                      DoctorsDetailsWidget(doctors: state.details as DoctorsDetails, onDone: () => widget.viewModel.add(CloseDetails()))
                 ],
               ),
             if (state is InteractionConnecting)

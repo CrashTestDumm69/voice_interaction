@@ -6,13 +6,15 @@ class VolumeRepositroy {
   VolumeRepositroy({required NativeVolumeHandlerService nativeVolumeHandlerService})
       : _nativeVolumeHandlerService = nativeVolumeHandlerService;
 
+  int get maxVolume => _nativeVolumeHandlerService.maxVolume;
+
   Future<int> getVolume() async {
     final int currentVolume = await _nativeVolumeHandlerService.getCurrentVolume();
     return currentVolume;
   }
 
   Future<void> setVolume(int level) async {
-    level.clamp(0, 15);
+    level.clamp(0, maxVolume);
     await _nativeVolumeHandlerService.setVolume(level);
   }
 }
