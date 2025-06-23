@@ -2,13 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:voice_interaction/routing/routes.dart';
+import 'package:voice_interaction/ui/features/home/widgets/home_screen.dart';
 import 'package:voice_interaction/ui/features/interaction/widgets/interaction_screen.dart';
 import 'package:voice_interaction/ui/features/update/widgets/update_screen.dart';
 import 'package:voice_interaction/utils/injection_container.dart';
 
 GoRouter router() => GoRouter(
-  initialLocation: Routes.interaction,
+  initialLocation: Routes.home,
   routes: [
+    GoRoute(
+      path: Routes.home,
+      builder: (context, state) {
+        return HomeScreen();
+      },
+    ),
     GoRoute(
       path: Routes.interaction,
       pageBuilder: (context, state) {
