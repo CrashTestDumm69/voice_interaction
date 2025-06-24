@@ -4,12 +4,14 @@ class MenuTileWidget extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final Color? color;
   
   const MenuTileWidget({
     super.key,
     required this.icon,
     required this.label,
     required this.onTap,
+    this.color
   });
 
   @override
@@ -26,14 +28,14 @@ class MenuTileWidget extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 48,
-                color: Colors.white,
+                size: 64,
+                color: color ?? Colors.white,
               ),
               const SizedBox(height: 8),
               Text(
                 label,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: color ?? Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),

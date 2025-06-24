@@ -65,107 +65,83 @@ class _InteractionScreenState extends State<InteractionScreen> {
         }
       },
       builder: (context, state) {
-        return Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.black,
-                    Colors.deepPurple.withValues(alpha: 0.2),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter
-                )
-              ),
-              height: double.maxFinite,
-              width: double.maxFinite,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 500,
-                      height: 500,
-                      child: Image.asset(
-                        "assets/centelon_logo.png"
-                      ),
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: Stack(
+            children: [
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    if (state is InteractionDisconnected || state is InteractionInitial) { 
+                      widget.viewModel.add(StartSession());
+                    }
+                  },
+                  child: SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: RiveAnimation.asset(
+                      'assets/mic.riv',
+                      fit: BoxFit.contain,
+                      onInit: _onRiveInit,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        if (state is InteractionDisconnected || state is InteractionInitial) { 
-                          widget.viewModel.add(StartSession());
-                        }
-                      },
-                      child: SizedBox(
-                        width: 200,
-                        height: 200,
-                        child: RiveAnimation.asset(
-                          'assets/mic.riv',
-                          fit: BoxFit.contain,
-                          onInit: _onRiveInit,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if (state is InteractionConnected)
-              Positioned(
-                bottom: 40,
-                right: 40,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    FloatingActionButton(
-                      heroTag: 'toggle_volume_slider',
-                      backgroundColor: Colors.grey.shade800,
-                      child: Icon(Icons.volume_up, color: Colors.white),
-                      onPressed: () {
-                        widget.viewModel.add(VolumeChangePressed());
-                      }
-                    ),
-                    const Gap(16),
-                    FloatingActionButton(
-                      heroTag: 'mic_toggle',
-                      backgroundColor: state.micMuted ? Colors.red : Colors.green,
-                      child: Icon(
-                        state.micMuted ? Icons.mic_off : Icons.mic,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        if (state.micMuted) {
-                          widget.viewModel.add(UnmuteMic());
-                        } else {
-                          widget.viewModel.add(MuteMic());
-                        }
-                      },
-                    ),
-                    const Gap(16),
-                    FloatingActionButton(
-                      heroTag: 'end_session',
-                      backgroundColor: Colors.grey.shade800,
-                      child: const Icon(Icons.close, color: Colors.white),
-                      onPressed: () {
-                        widget.viewModel.add(EndSession());
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            if (state is InteractionConnecting)
-              Positioned.fill(
-                child: Container(
-                 color: Colors.black.withValues(alpha: 0.8),
-                  child: const Center(
-                    child: CircularProgressIndicator(color: Colors.white),
                   ),
                 ),
               ),
-          ],
+              if (state is InteractionConnected)
+                Positioned(
+                  bottom: 40,
+                  right: 40,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      FloatingActionButton(
+                        heroTag: 'toggle_volume_slider',
+                        backgroundColor: Colors.grey.shade800,
+                        child: Icon(Icons.volume_up, color: Colors.white),
+                        onPressed: () {
+                          widget.viewModel.add(VolumeChangePressed());
+                        }
+                      ),
+                      const Gap(16),
+                      FloatingActionButton(
+                        heroTag: 'mic_toggle',
+                        backgroundColor: state.micMuted ? Colors.red : Colors.green,
+                        child: Icon(
+                          state.micMuted ? Icons.mic_off : Icons.mic,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          if (state.micMuted) {
+                            widget.viewModel.add(UnmuteMic());
+                          } else {
+                            widget.viewModel.add(MuteMic());
+                          }
+                        },
+                      ),
+                      const Gap(16),
+                      FloatingActionButton(
+                        heroTag: 'end_session',
+                        backgroundColor: Colors.grey.shade800,
+                        child: const Icon(Icons.close, color: Colors.white),
+                        onPressed: () {
+                          widget.viewModel.add(EndSession());
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              if (state is InteractionConnecting)
+                Positioned.fill(
+                  child: Container(
+                   color: Colors.black.withValues(alpha: 0.8),
+                    child: const Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         );
       }
     );

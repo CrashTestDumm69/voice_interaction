@@ -12,10 +12,10 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Define list of MenuTileWidgets
     final List<MenuTileWidget> menuItems = [
-      MenuTileWidget(icon: Icons.mic_rounded, label: "Interaction", onTap: () => context.push(Routes.interaction)),
-      MenuTileWidget(icon: Icons.search, label: "Tile 2", onTap: () {}),
-      MenuTileWidget(icon: Icons.settings, label: "Tile 3", onTap: () {}),
-      MenuTileWidget(icon: Icons.info, label: "Tile 4", onTap: () {}),
+      MenuTileWidget(icon: Icons.mic_rounded, label: "Interaction", color: Colors.red, onTap: () => context.push(Routes.interaction)),
+      MenuTileWidget(icon: Icons.search, label: "Tile 2", color: Colors.deepPurple, onTap: () {}),
+      MenuTileWidget(icon: Icons.settings, label: "Tile 3", color: Colors.yellow.shade700, onTap: () {}),
+      MenuTileWidget(icon: Icons.info, label: "Tile 4", color: Colors.blueAccent, onTap: () {}),
     ];
 
     return Scaffold(
@@ -26,11 +26,11 @@ class HomeScreen extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.deepPurple.withAlpha(50),
               Colors.black,
+              Colors.deepPurple.withAlpha(50),
             ],
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: Column(

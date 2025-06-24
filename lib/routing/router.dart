@@ -44,16 +44,24 @@ CustomTransitionPage _buildSlideUpPage({
   return CustomTransitionPage(
     key: key,
     child: child,
-    transitionDuration: const Duration(milliseconds: 400),
+    transitionDuration: const Duration(milliseconds: 500),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final offsetTween = Tween<Offset>(
-        begin: const Offset(0, 1),
+      final curvedAnimation = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutBack,
+      );
+
+      final slideTween = Tween<Offset>(
+        begin: const Offset(0, 0.5),
         end: Offset.zero,
-      ).chain(CurveTween(curve: Curves.easeOut));
+      );
 
       return SlideTransition(
-        position: animation.drive(offsetTween),
-        child: child,
+        position: curvedAnimation.drive(slideTween),
+        child: ScaleTransition(
+          scale: curvedAnimation,
+          child: child,
+        ),
       );
     },
   );
