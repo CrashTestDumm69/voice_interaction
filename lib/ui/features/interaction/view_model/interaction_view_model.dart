@@ -78,7 +78,6 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
       }
 
       _realtimeApiRepository.startSession(
-        instruction: event.instruction,
         onSpeak: onSpeak,
         onConnect: onConnect,
         onDisconnect: onDisconnect,

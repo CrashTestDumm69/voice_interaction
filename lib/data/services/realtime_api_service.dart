@@ -18,8 +18,7 @@ class RealtimeApiService {
       : _realtimeApiToolsService = realtimeApiToolsService;
 
   Future<void> initConnection(
-    String apiKey,
-    String instruction, {
+    String apiKey, {
     required void Function() onSpeak,
     required void Function() onListen,
     required void Function() onConnect,
@@ -81,10 +80,7 @@ class RealtimeApiService {
         data: jsonEncode({
           "model": RealtimeApiConfig.realtimeAPIModelVersion,
           "voice": RealtimeApiConfig.voice,
-          "instructions":
-              instruction == "English"
-                  ? RealtimeApiConfig.englishInstructions
-                  : RealtimeApiConfig.tamilInstructions,
+          "instructions": RealtimeApiConfig.instructions,
           "turn_detection": {
             "type": "server_vad",
             "threshold": 0.8,
