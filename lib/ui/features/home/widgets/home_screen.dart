@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
+import 'package:voice_interaction/routing/routes.dart';
 
 import 'package:voice_interaction/ui/features/home/widgets/menu_tile_widget.dart';
 
@@ -10,7 +12,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Define list of MenuTileWidgets
     final List<MenuTileWidget> menuItems = [
-      MenuTileWidget(icon: Icons.home, label: "Tile 1", onTap: () {}),
+      MenuTileWidget(icon: Icons.mic_rounded, label: "Interaction", onTap: () => context.push(Routes.interaction)),
       MenuTileWidget(icon: Icons.search, label: "Tile 2", onTap: () {}),
       MenuTileWidget(icon: Icons.settings, label: "Tile 3", onTap: () {}),
       MenuTileWidget(icon: Icons.info, label: "Tile 4", onTap: () {}),

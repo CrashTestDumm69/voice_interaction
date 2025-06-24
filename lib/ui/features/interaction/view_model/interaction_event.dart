@@ -2,11 +2,7 @@ part of 'interaction_view_model.dart';
 
 abstract class InteractionEvent {}
 
-class StartSession extends InteractionEvent {
-  final String instruction;
-
-  StartSession({required this.instruction});
-}
+class StartSession extends InteractionEvent {}
 
 class ConnectionStatusChanged extends InteractionEvent {
   final InteractionConnectionState status;

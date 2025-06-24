@@ -14,11 +14,11 @@ class MenuTileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      color: Colors.white.withValues(alpha: 0.1),
-      child: GestureDetector(
-        onTap: onTap,
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        elevation: 4,
+        color: Colors.white.withValues(alpha: 0.1),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

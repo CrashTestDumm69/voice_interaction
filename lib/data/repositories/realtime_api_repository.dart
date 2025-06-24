@@ -10,7 +10,6 @@ class RealtimeApiRepository {
         _dotenvService = dotenvService;
 
   Future<void> startSession({
-    required String instruction,
     required void Function() onSpeak,
     required void Function() onListen,
     required void Function() onConnect,
@@ -21,7 +20,7 @@ class RealtimeApiRepository {
   }) async {
     final apiKey = _dotenvService.getApiKey();
     await _realtimeApiService.initConnection(
-      apiKey, instruction,
+      apiKey,
       onConnect: onConnect,
       onDisconnect: onDisconnect,
       onSpeak: onSpeak,

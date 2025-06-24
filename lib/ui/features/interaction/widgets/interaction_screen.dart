@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
-import 'package:rive/rive.dart';
-import 'package:voice_interaction/routing/routes.dart';
+import 'package:rive/rive.dart' show StateMachineController, SMITrigger, SMIBool, RiveAnimation, Artboard ;
 
 import 'package:voice_interaction/ui/features/interaction/view_model/interaction_view_model.dart';
-import 'package:voice_interaction/ui/features/interaction/widgets/language_selection_widget.dart';
 
 class InteractionScreen extends StatefulWidget {
   final InteractionViewModel viewModel;
@@ -28,21 +25,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
     super.initState();
   }
 
-  void _showLanguageDialog() async {
-    final selectedLanguage = await showModalBottomSheet<String>(
-      context: context,
-      builder: (_) => LanguageSelectionWidget(),
-    );
-
-    if (selectedLanguage != null) {
-      widget.viewModel.add(StartSession(instruction: selectedLanguage));
-    }
-  }
-
   void _onRiveInit(Artboard artboard) {
     _riveController = StateMachineController.fromArtboard(
       artboard,
-      'State Machine (robot speaks)',
+      'State Machine 1',
     );
 
     if (_riveController != null) {
@@ -81,66 +67,94 @@ class _InteractionScreenState extends State<InteractionScreen> {
       builder: (context, state) {
         return Stack(
           children: [
-            GestureDetector(
-              onDoubleTap: () {
-                if (state is InteractionDisconnected || state is InteractionInitial) { 
-                  _showLanguageDialog();
-                }
-              },
-              onLongPress: () => context.push(Routes.update),
-              child: RiveAnimation.asset(
-                'assets/face.riv',
-                fit: BoxFit.contain,
-                onInit: _onRiveInit,
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.black,
+                    Colors.deepPurple.withValues(alpha: 0.2),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter
+                )
+              ),
+              height: double.maxFinite,
+              width: double.maxFinite,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 500,
+                      height: 500,
+                      child: Image.asset(
+                        "assets/centelon_logo.png"
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        if (state is InteractionDisconnected || state is InteractionInitial) { 
+                          widget.viewModel.add(StartSession());
+                        }
+                      },
+                      child: SizedBox(
+                        width: 200,
+                        height: 200,
+                        child: RiveAnimation.asset(
+                          'assets/mic.riv',
+                          fit: BoxFit.contain,
+                          onInit: _onRiveInit,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             if (state is InteractionConnected)
-              Stack(
-                children: [
-                  Positioned(
-                    bottom: 40,
-                    right: 40,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        FloatingActionButton(
-                          heroTag: 'toggle_volume_slider',
-                          backgroundColor: Colors.grey.shade800,
-                          child: Icon(Icons.volume_up, color: Colors.white),
-                          onPressed: () {
-                            widget.viewModel.add(VolumeChangePressed());
-                          }
-                        ),
-                        const Gap(16),
-                        FloatingActionButton(
-                          heroTag: 'mic_toggle',
-                          backgroundColor: state.micMuted ? Colors.red : Colors.green,
-                          child: Icon(
-                            state.micMuted ? Icons.mic_off : Icons.mic,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            if (state.micMuted) {
-                              widget.viewModel.add(UnmuteMic());
-                            } else {
-                              widget.viewModel.add(MuteMic());
-                            }
-                          },
-                        ),
-                        const Gap(16),
-                        FloatingActionButton(
-                          heroTag: 'end_session',
-                          backgroundColor: Colors.grey.shade800,
-                          child: const Icon(Icons.close, color: Colors.white),
-                          onPressed: () {
-                            widget.viewModel.add(EndSession());
-                          },
-                        ),
-                      ],
+              Positioned(
+                bottom: 40,
+                right: 40,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    FloatingActionButton(
+                      heroTag: 'toggle_volume_slider',
+                      backgroundColor: Colors.grey.shade800,
+                      child: Icon(Icons.volume_up, color: Colors.white),
+                      onPressed: () {
+                        widget.viewModel.add(VolumeChangePressed());
+                      }
                     ),
-                  ),
-                ],
+                    const Gap(16),
+                    FloatingActionButton(
+                      heroTag: 'mic_toggle',
+                      backgroundColor: state.micMuted ? Colors.red : Colors.green,
+                      child: Icon(
+                        state.micMuted ? Icons.mic_off : Icons.mic,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        if (state.micMuted) {
+                          widget.viewModel.add(UnmuteMic());
+                        } else {
+                          widget.viewModel.add(MuteMic());
+                        }
+                      },
+                    ),
+                    const Gap(16),
+                    FloatingActionButton(
+                      heroTag: 'end_session',
+                      backgroundColor: Colors.grey.shade800,
+                      child: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () {
+                        widget.viewModel.add(EndSession());
+                      },
+                    ),
+                  ],
+                ),
               ),
             if (state is InteractionConnecting)
               Positioned.fill(
