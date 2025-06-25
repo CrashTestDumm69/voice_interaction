@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
 import 'package:rive/rive.dart' show StateMachineController, SMITrigger, SMIBool, RiveAnimation, Artboard ;
-import 'package:voice_interaction/routing/routes.dart';
 
 import 'package:voice_interaction/ui/features/interaction/view_model/interaction_view_model.dart';
 
@@ -69,51 +67,48 @@ class _InteractionScreenState extends State<InteractionScreen> {
       builder: (context, state) {
         return Stack(
           children: [
-            GestureDetector(
-              onLongPress: () {},
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.black,
-                      Colors.deepPurple.withValues(alpha: 0.2),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter
-                  )
-                ),
-                height: double.maxFinite,
-                width: double.maxFinite,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 500,
-                        height: 500,
-                        child: Image.asset(
-                          "assets/logo.png"
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.black,
+                    Colors.deepPurple.withValues(alpha: 0.2),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter
+                )
+              ),
+              height: double.maxFinite,
+              width: double.maxFinite,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 900,
+                      height: 500,
+                      child: Image.asset(
+                        "assets/logo.png"
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        if (state is InteractionDisconnected || state is InteractionInitial) { 
+                          widget.viewModel.add(StartSession());
+                        }
+                      },
+                      child: SizedBox(
+                        width: 200,
+                        height: 100,
+                        child: RiveAnimation.asset(
+                          'assets/mic.riv',
+                          fit: BoxFit.contain,
+                          onInit: _onRiveInit,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          if (state is InteractionDisconnected || state is InteractionInitial) { 
-                            widget.viewModel.add(StartSession());
-                          }
-                        },
-                        child: SizedBox(
-                          width: 200,
-                          height: 200,
-                          child: RiveAnimation.asset(
-                            'assets/mic.riv',
-                            fit: BoxFit.contain,
-                            onInit: _onRiveInit,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
