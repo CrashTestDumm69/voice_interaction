@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:voice_interaction/domain/models/version.dart';
+import 'package:voice_interaction/domain/models/version/version.dart';
 
 class UpdateService {
   Future<Version> getLatestVersion() async {

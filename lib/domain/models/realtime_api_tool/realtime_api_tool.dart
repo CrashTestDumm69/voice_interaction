@@ -1,4 +1,4 @@
-import 'package:voice_interaction/domain/models/realtime_api_tool_param.dart';
+import 'package:voice_interaction/domain/models/realtime_api_tool/realtime_api_tool_param.dart';
 
 class RealtimeApiTool {
   final String name;

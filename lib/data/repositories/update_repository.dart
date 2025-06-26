@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:voice_interaction/data/services/update_service.dart';
-import 'package:voice_interaction/domain/models/version.dart';
+import 'package:voice_interaction/domain/models/version/version.dart';
 
 class UpdateRepository {
   final UpdateService _updateService;

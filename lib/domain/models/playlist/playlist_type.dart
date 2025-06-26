@@ -1,0 +1,4 @@
+enum PlaylistType {
+  playlist,
+  announcement
+}

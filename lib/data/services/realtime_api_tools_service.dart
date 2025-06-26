@@ -1,7 +1,7 @@
 import 'package:voice_interaction/config/realtime_api_tools.dart';
 import 'package:voice_interaction/data/services/native_volume_handler_service.dart';
-import 'package:voice_interaction/domain/models/realtime_api_tool.dart';
-import 'package:voice_interaction/domain/models/realtime_api_tool_param.dart';
+import 'package:voice_interaction/domain/models/realtime_api_tool/realtime_api_tool.dart';
+import 'package:voice_interaction/domain/models/realtime_api_tool/realtime_api_tool_param.dart';
 
 class RealtimeApiToolsService {
   final List<RealtimeApiTool> _tools = [];
