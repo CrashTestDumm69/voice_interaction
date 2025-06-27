@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:voice_interaction/data/repositories/realtime_api_repository.dart';
@@ -14,7 +15,9 @@ import 'package:voice_interaction/ui/features/update/view_model/update_view_mode
 final GetIt sl = GetIt.instance;
 
 Future<void> initializeDeps() async {
-  sl.registerSingleton(UpdateService());
+  sl.registerSingleton(Dio());
+
+  sl.registerSingleton(UpdateService(dio: sl()));
   sl.registerSingleton(UpdateRepository(updateService: sl()));
   sl.registerSingleton(UpdateViewModel(updateRepository: sl()));
 
@@ -27,7 +30,7 @@ Future<void> initializeDeps() async {
   sl.registerSingleton(RealtimeApiToolsService(volumeHandlerService: sl()));
   sl<RealtimeApiToolsService>().loadTools();
 
-  sl.registerSingleton(RealtimeApiService(realtimeApiToolsService: sl()));
+  sl.registerSingleton(RealtimeApiService(realtimeApiToolsService: sl(), dio: sl()));
   sl.registerSingleton(RealtimeApiRepository(realtimeApiService: sl(), dotenvService: sl()));
 
   sl.registerSingleton(

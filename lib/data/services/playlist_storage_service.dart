@@ -14,6 +14,11 @@ class PlaylistStorageService {
 
   late final Box _playlistBox;
 
+  final Dio _dio;
+
+  PlaylistStorageService({required Dio dio}) : _dio = dio;
+
+
   Future<void> initService() async {
     final directory = await getApplicationSupportDirectory();
     Hive
@@ -33,18 +38,16 @@ class PlaylistStorageService {
       await _playlistBox.put(_announcementBoxKey, playlist);
     }
     
-    final Dio dio = Dio();
     for (PlaylistFile file in playlist.files) {
       final localFile = File(file.filePath);
       if (!(await localFile.exists())) {
-        await dio.download(file.fileUrl, file.filePath);
+        await _dio.download(file.fileUrl, file.filePath);
       }
 
       if (file.type == 'audio' && file.imageUrl != null) {
-        await dio.download(file.imageUrl!, file.imageFilePath);
+        await _dio.download(file.imageUrl!, file.imageFilePath);
       }
     }
-    dio.close();
   }
 
   Future<Playlist?> getCurrentPlaylist() async {

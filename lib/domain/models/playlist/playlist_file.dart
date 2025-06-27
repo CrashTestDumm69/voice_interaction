@@ -1,6 +1,6 @@
 import 'package:hive_ce/hive.dart';
 
-import 'package:voice_interaction/config/platform_data.dart';
+import 'package:voice_interaction/config/platform_api_data.dart';
 
 class PlaylistFile extends HiveObject {
   String fileUrl;
@@ -29,13 +29,13 @@ class PlaylistFile extends HiveObject {
     final backgroundImage = json["backgroundImage"] as String?;
 
     return PlaylistFile(
-      fileUrl: "${PlatformData.baseUrl}$path",
+      fileUrl: "${PlatformApiData.baseUrl}$path",
       displayOrder: displayOrder,
       delay: delay,
-      filePath: "${PlatformData.playlistPath}/${path.split("/").last}",
+      filePath: "${PlatformApiData.playlistPath}/${path.split("/").last}",
       type: type,
-      imageUrl: type == 'video' || backgroundImage == null ? null : "${PlatformData.baseUrl}$backgroundImage",
-      imageFilePath: type == 'video' || backgroundImage == null ? null : "${PlatformData.playlistPath}/${backgroundImage.split("/").last}"
+      imageUrl: type == 'video' || backgroundImage == null ? null : "${PlatformApiData.baseUrl}$backgroundImage",
+      imageFilePath: type == 'video' || backgroundImage == null ? null : "${PlatformApiData.playlistPath}/${backgroundImage.split("/").last}"
     );
   }
 }

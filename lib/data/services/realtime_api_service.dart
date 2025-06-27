@@ -11,11 +11,12 @@ class RealtimeApiService {
   RTCPeerConnection? _connection;
   RTCDataChannel? _dataChannel;
   MediaStream? _audioStream;
-  final Dio dio = Dio();
+  final Dio _dio;
   final RealtimeApiToolsService _realtimeApiToolsService;
 
-  RealtimeApiService({required RealtimeApiToolsService realtimeApiToolsService})
-      : _realtimeApiToolsService = realtimeApiToolsService;
+  RealtimeApiService({required RealtimeApiToolsService realtimeApiToolsService, required Dio dio})
+      : _realtimeApiToolsService = realtimeApiToolsService,
+        _dio = dio;
 
   Future<void> initConnection(
     String apiKey, {
@@ -69,7 +70,7 @@ class RealtimeApiService {
 
     late final Response secretResponse;
     try {
-      secretResponse = await dio.post(
+      secretResponse = await _dio.post(
         RealtimeApiConfig.realtimeAPISessionsUrl,
         options: Options(
           headers: {
@@ -149,7 +150,7 @@ class RealtimeApiService {
 
     late final Response response;
     try {
-      response = await dio.post(
+      response = await _dio.post(
         "${RealtimeApiConfig.realtimeAPIBaseUrl}?model=${RealtimeApiConfig.realtimeAPIModelVersion}",
         options: Options(
           headers: {
@@ -194,10 +195,5 @@ class RealtimeApiService {
     _audioStream?.dispose();
     _connection?.close();
     _connection?.dispose();
-  }
-
-  void dispose() {
-    close();
-    dio.close();
   }
 }

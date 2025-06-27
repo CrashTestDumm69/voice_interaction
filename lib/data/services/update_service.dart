@@ -6,10 +6,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:voice_interaction/domain/models/version/version.dart';
 
 class UpdateService {
+  final Dio _dio;
+
+  UpdateService({required Dio dio}) : _dio = dio;
+
   Future<Version> getLatestVersion() async {
     try {
-      final Dio dio = Dio();
-      final response = await dio.get("https://api.github.com/repos/crashtestdumm69/flutter-releases/releases/latest");
+      final response = await _dio.get("https://api.github.com/repos/crashtestdumm69/flutter-releases/releases/latest");
     
       if (response.statusCode == 200) {
         final version = (response.data["tag_name"] as String).replaceAll("v", "");
@@ -23,15 +26,14 @@ class UpdateService {
   }
 
   Future<void> downloadLatest({void Function(int count, int total)? onProgress}) async {
-    final Dio dio = Dio();
     final fileDir = await getApplicationSupportDirectory();
     debugPrint(fileDir.toString());
     final filePath = "${fileDir.path}/releases/latest.apk";
-    final response = await dio.get("https://api.github.com/repos/crashtestdumm69/flutter-releases/releases/latest");
+    final response = await _dio.get("https://api.github.com/repos/crashtestdumm69/flutter-releases/releases/latest");
     throwIf(response.statusCode != 200, "Update failed");
     final asset = (response.data["assets"] as List<dynamic>).first;
     final downloadUrl = asset["browser_download_url"];
-    await dio.download(downloadUrl, filePath, onReceiveProgress: onProgress);
+    await _dio.download(downloadUrl, filePath, onReceiveProgress: onProgress);
   }
 
   Future<void> installLatest() async {

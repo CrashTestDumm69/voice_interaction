@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import 'package:voice_interaction/config/platform_data.dart';
+import 'package:voice_interaction/config/platform_api_data.dart';
 import 'package:voice_interaction/domain/models/announcement_id_api/announcement_id_api.dart';
 import 'package:voice_interaction/domain/models/playlist_api/playlist_api.dart';
 import 'package:voice_interaction/domain/models/playlist_id_api/playlist_id_api.dart';
@@ -13,7 +13,7 @@ class PlaylistApiService {
   }) : _dio = dio;
 
   Future<PlaylistIdApi?> getCurrentPlaylistId() async {
-    final response = await _dio.get("${PlatformData.baseUrl}/api/device-playlists/serialNumber?serialNumber=${PlatformData.serialNumber}");
+    final response = await _dio.get(PlatformApiData.getPlaylistIdUrl);
     if (response.statusCode == 200) {
       final data = response.data;
       final currentPlaylist = data["currentPlaylist"];
@@ -23,7 +23,7 @@ class PlaylistApiService {
   }
 
   Future<AnnouncementIdApi?> getCurrentAnnouncementId() async {
-    final response = await _dio.get("${PlatformData.baseUrl}/api/device-playlists/serialNumber?serialNumber=${PlatformData.serialNumber}");
+    final response = await _dio.get(PlatformApiData.getPlaylistIdUrl);
     if (response.statusCode == 200) {
       final data = response.data;
       final currentAnnouncement = data["currentAnnouncement"];
@@ -33,7 +33,7 @@ class PlaylistApiService {
   }
 
   Future<PlaylistApi?> getPlaylist(String id) async {
-    final response = await _dio.get("${PlatformData.baseUrl}/api/get-playlist?id=$id");
+    final response = await _dio.get(PlatformApiData.getPlaylistUrl(id));
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = response.data;
       if (data["success"]) {

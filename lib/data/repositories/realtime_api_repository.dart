@@ -44,6 +44,6 @@ class RealtimeApiRepository {
   }
 
   void dispose() {
-    _realtimeApiService.dispose();
+    closeSession();
   }
 }
