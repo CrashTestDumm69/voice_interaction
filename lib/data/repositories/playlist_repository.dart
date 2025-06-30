@@ -22,21 +22,19 @@ class PlaylistRepository {
   bool _playlistUpdateAvailable = false;
   bool _announcementUpdateAvailable = false;
 
-  Future<void> init() async {
-    await _playlistStorageService.initService();
-  }
+  Playlist? _currentPlaylist;
+  Playlist? _currentAnnouncement;
 
-  Future<void> close() async {
-    await _playlistStorageService.close();
-  }
+  Playlist? get currentPlaylist => _currentPlaylist;
+  Playlist? get currentAnnouncement => _currentAnnouncement;
 
   Future<bool> checkForUpdate() async {
     try {
       final PlaylistIdApi? remotePlaylistId = await _playlistApiService.getCurrentPlaylistId();
-      final Playlist? localPlaylist = await _playlistStorageService.getCurrentPlaylist();
+      final Playlist? localPlaylist = currentPlaylist;
 
       final AnnouncementIdApi? remoteAnnouncementId = await _playlistApiService.getCurrentAnnouncementId();
-      final Playlist? localAnnouncement = await _playlistStorageService.getCurrentAnnouncement();
+      final Playlist? localAnnouncement = currentAnnouncement;
 
       if (remotePlaylistId != null && localPlaylist == null) {
         _playlistUpdateAvailable = true;
@@ -90,6 +88,8 @@ class PlaylistRepository {
         final Playlist playlist = Playlist.fromJson(remotePlaylist.toJson());
         await _playlistStorageService.store(playlist);
 
+        _currentPlaylist = playlist;
+
         _playlistUpdateAvailable = false;
       }
 
@@ -107,8 +107,10 @@ class PlaylistRepository {
           throw Exception("Failed to get playlist");
         }
 
-        final Playlist playlist = Playlist.fromJson(remoteAnnouncement.toJson());
-        await _playlistStorageService.store(playlist);
+        final Playlist announcement = Playlist.fromJson(remoteAnnouncement.toJson());
+        await _playlistStorageService.store(announcement);
+
+        _currentAnnouncement = announcement;
 
         _playlistUpdateAvailable = false;
       }
@@ -130,11 +132,8 @@ class PlaylistRepository {
     }
   }
 
-  Future<Playlist?> getCurrentPlaylist() async {
-    return await _playlistStorageService.getCurrentPlaylist();
-  }
-
-  Future<Playlist?> getCurrentAnnouncement() async {
-    return await _playlistStorageService.getCurrentAnnouncement();
+  Future<void> loadPlaylists() async {
+    _currentPlaylist = await _playlistStorageService.getCurrentPlaylist();
+    _currentAnnouncement = await _playlistStorageService.getCurrentAnnouncement();
   }
 }
