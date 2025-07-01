@@ -8,11 +8,13 @@ import 'package:voice_interaction/utils/hive_adapters.dart';
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(PlaylistAdapter());
+    registerAdapter(PlaylistFileAdapter());
   }
 }
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
     registerAdapter(PlaylistAdapter());
+    registerAdapter(PlaylistFileAdapter());
   }
 }

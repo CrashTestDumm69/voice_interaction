@@ -41,6 +41,7 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
     _audioPlayer?.dispose();
     _audioPlayer = null;
     _isVideoInitialized = false;
+    widget.viewModel.reset();
   }
 
   Future<void> _setupVideoPlayer(String filePath) async {

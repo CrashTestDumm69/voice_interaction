@@ -94,8 +94,6 @@ class PlaylistRepository {
         final Playlist playlist = Playlist.fromJson(remotePlaylist.toJson());
         await _playlistStorageService.store(playlist);
 
-        _currentPlaylist = playlist;
-
         _playlistUpdateAvailable = false;
       }
 
@@ -116,10 +114,12 @@ class PlaylistRepository {
         final Playlist announcement = Playlist.fromJson(remoteAnnouncement.toJson());
         await _playlistStorageService.store(announcement);
 
-        _currentAnnouncement = announcement;
-
         _announcementUpdateAvailable = false;
       }
+
+      debugPrint("Updates done");
+
+      await loadPlaylists();
 
     } catch (e) {
       debugPrint("Error downloading updates: ${e.toString()}");
@@ -127,10 +127,10 @@ class PlaylistRepository {
     }
   }
 
-  Future<bool> checkDirectoryFiles() async {
+  Future<bool> checkMissingFiles() async {
     try {
-      _playlistUpdateAvailable = await _playlistStorageService.checkPlaylistFiles();
-      _announcementUpdateAvailable = await _playlistStorageService.checkAnnouncementFiles();
+      _playlistUpdateAvailable = await _playlistStorageService.checkMissingPlaylistFiles();
+      _announcementUpdateAvailable = await _playlistStorageService.checkMissingAnnouncementFiles();
 
       return (_playlistUpdateAvailable || _announcementUpdateAvailable);
     } catch (e) {

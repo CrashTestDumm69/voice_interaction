@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:voice_interaction/domain/models/playlist/playlist.dart';
 import 'package:voice_interaction/domain/models/playlist/playlist_file.dart';
-import 'package:voice_interaction/domain/models/playlist/playlist_type.dart';
 import 'package:voice_interaction/utils/hive_registrar.g.dart';
 
 class PlaylistStorageService {
@@ -31,20 +31,22 @@ class PlaylistStorageService {
   }
 
   Future<void> store(Playlist playlist) async {
-    if (playlist.contentType == PlaylistType.playlist) {
+    if (playlist.isPlaylist) {
       await _playlistBox.put(_playlistBoxKey, playlist);
-    } else {
+    } else if (playlist.isAnnouncement) {
       await _playlistBox.put(_announcementBoxKey, playlist);
+    } else {
+      return;
     }
     
     for (PlaylistFile file in playlist.files) {
       final localFile = File(file.filePath);
       if (!(await localFile.exists())) {
-        await _dio.download(file.fileUrl, file.filePath);
+        await _dio.download(file.fileUrl, file.filePath, onReceiveProgress: (count, total) => debugPrint((count / total).toString()));
       }
 
-      if (file.type == 'audio' && file.imageUrl != null) {
-        await _dio.download(file.imageUrl!, file.imageFilePath);
+      if (file.isAudio && file.hasBackgroundImage) {
+        await _dio.download(file.imageUrl!, file.imageFilePath, onReceiveProgress: (count, total) => debugPrint((count / total).toString()));
       }
     }
   }
@@ -93,49 +95,49 @@ class PlaylistStorageService {
     await _playlistBox.delete(_announcementBoxKey);
   }
 
-  Future<bool> checkPlaylistFiles() async {
+  Future<bool> checkMissingPlaylistFiles() async {
     final Playlist? playlist = await getCurrentPlaylist();
 
     if (playlist == null) {
-      return true;
+      return false;
     }
 
     for (PlaylistFile file in playlist.files) {
       final localFile = File(file.filePath);
       if (!await localFile.exists()) {
-        return false;
+        return true;
       }
 
-      if (file.type == "audio" && file.imageFilePath != null) {
+      if (file.isAudio && file.hasBackgroundImage) {
         if(!await File(file.imageFilePath!).exists()) {
-          return false;
+          return true;
         }
       }
     }
 
-    return true;
+    return false;
   }
 
-  Future<bool> checkAnnouncementFiles() async {
+  Future<bool> checkMissingAnnouncementFiles() async {
     final Playlist? announcement = await getCurrentAnnouncement();
 
     if (announcement == null) {
-      return true;
+      return false;
     }
 
     for (PlaylistFile file in announcement.files) {
       final localFile = File(file.filePath);
       if (!await localFile.exists()) {
-        return false;
+        return true;
       }
 
-      if (file.type == "audio" && file.imageFilePath != null) {
+      if (file.isAudio && file.hasBackgroundImage) {
         if(!await File(file.imageFilePath!).exists()) {
-          return false;
+          return true;
         }
       }
     }
 
-    return true;
+    return false;
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voice_interaction/routing/routes.dart';
 
@@ -35,19 +34,8 @@ class HomeScreen extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // AppBar that scrolls with content
-            AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              actions: [
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.menu_rounded, color: Colors.white)
-                )
-              ],
-            ),
-            const Gap(16),
             Image.asset("assets/centelon_logo.png"),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 100.0),

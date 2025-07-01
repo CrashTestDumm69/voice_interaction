@@ -1,15 +1,13 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:voice_interaction/domain/models/playlist_file_api/playlist_file_api.dart';
 
-import 'package:voice_interaction/domain/models/playlist/playlist_type.dart';
-
 part 'playlist_api.g.dart';
 
 @JsonSerializable()
 class PlaylistApi {
   final String id;
   final String versionId;
-  final PlaylistType contentType;
+  final String contentType;
   final List<PlaylistFileApi> files;
 
   PlaylistApi({

@@ -1,12 +1,11 @@
 import 'package:hive_ce/hive.dart';
 
 import 'package:voice_interaction/domain/models/playlist/playlist_file.dart';
-import 'package:voice_interaction/domain/models/playlist/playlist_type.dart';
 
 class Playlist extends HiveObject {
   final String id;
   final String versionId;
-  final PlaylistType contentType;
+  final String contentType;
   final List<PlaylistFile> files;
 
   Playlist({
@@ -16,10 +15,13 @@ class Playlist extends HiveObject {
     required this.files,
   });
 
+  bool get isPlaylist => contentType == "playlist";
+  bool get isAnnouncement => contentType == "announcement";
+
   factory Playlist.fromJson(Map<String, dynamic> json) {
     final id = json["id"] as String;
     final versionId = json["versionId"] as String;
-    final contentType = (json["contentType"] as String) == "announcement" ? PlaylistType.announcement : PlaylistType.playlist;
+    final contentType = (json["contentType"] as String);
     final files = json["files"] as List<dynamic>;
     
     return Playlist(

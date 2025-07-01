@@ -47,5 +47,6 @@ Future<void> initializeDeps() async {
   sl.registerSingleton(PlaylistStorageService(dio: sl()));
   await sl<PlaylistStorageService>().initService();
   sl.registerSingleton(PlaylistRepository(playlistApiService: sl(), playlistStorageService: sl()));
+  await sl<PlaylistRepository>().loadPlaylists();
   sl.registerSingleton(MediaPlayerViewModel(playlistRepository: sl()));
 }
