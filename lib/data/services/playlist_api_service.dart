@@ -35,7 +35,7 @@ class PlaylistApiService {
   Future<PlaylistApi?> getPlaylist(String id) async {
     final response = await _dio.get(PlatformApiData.getPlaylistUrl(id));
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = response.data;
+      final data = response.data;
       if (data["success"]) {
         final playlistData = data["playlistData"];
         return PlaylistApi.fromJson(playlistData);

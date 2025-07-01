@@ -32,4 +32,9 @@ class Playlist extends HiveObject {
           ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder))
     );
   }
+
+  @override
+  String toString() {
+    return "ID - $id, Version ID - $versionId";
+  }
 }

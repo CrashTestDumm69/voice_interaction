@@ -21,7 +21,9 @@ Map<String, dynamic> _$PlaylistApiToJson(PlaylistApi instance) =>
       'id': instance.id,
       'versionId': instance.versionId,
       'contentType': _$PlaylistTypeEnumMap[instance.contentType]!,
-      'files': instance.files,
+      'files': instance.files
+          .map((e) => e.toJson())
+          .toList(),
     };
 
 const _$PlaylistTypeEnumMap = {

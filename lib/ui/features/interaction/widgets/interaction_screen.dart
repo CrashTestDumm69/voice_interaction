@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:rive/rive.dart' show StateMachineController, SMITrigger, SMIBool, RiveAnimation, Artboard ;
+import 'package:voice_interaction/ui/core/animated_overlay.dart';
 
 import 'package:voice_interaction/ui/features/interaction/view_model/interaction_view_model.dart';
 
@@ -45,6 +46,12 @@ class _InteractionScreenState extends State<InteractionScreen> {
 
   void _handleRiveTrigger(SMITrigger? trigger) {
     trigger?.fire();
+  }
+
+  @override
+  void dispose() {
+    widget.viewModel.add(EndSession());
+    super.dispose();
   }
 
   @override
@@ -131,15 +138,17 @@ class _InteractionScreenState extends State<InteractionScreen> {
                     ],
                   ),
                 ),
-              if (state is InteractionConnecting)
-                Positioned.fill(
-                  child: Container(
-                   color: Colors.black.withValues(alpha: 0.8),
-                    child: const Center(
-                      child: CircularProgressIndicator(color: Colors.white),
-                    ),
+              AnimatedOverlay(
+                condition: state is InteractionConnecting,
+                child: Container(
+                  width: double.maxFinite,
+                  height: double.maxFinite,
+                  color: Colors.black,
+                  child: const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
                   ),
                 ),
+              )
             ],
           ),
         );

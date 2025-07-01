@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:voice_interaction/data/repositories/update_repository.dart';
 
-part 'update_states.dart';
-part 'update_events.dart';
+part 'update_state.dart';
+part 'update_event.dart';
 
 class UpdateViewModel extends Bloc<UpdateEvent, UpdateState> {
   final UpdateRepository _updateRepository;

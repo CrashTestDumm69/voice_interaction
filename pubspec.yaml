@@ -48,6 +48,8 @@ dependencies:
   package_info_plus: ^8.3.0
   android_package_installer: ^0.0.3
   hive_ce: ^2.11.3
+  video_player: ^2.10.0
+  audioplayers: ^6.5.0
 
 dev_dependencies:
   flutter_test:

@@ -18,7 +18,6 @@ class PlaylistStorageService {
 
   PlaylistStorageService({required Dio dio}) : _dio = dio;
 
-
   Future<void> initService() async {
     final directory = await getApplicationSupportDirectory();
     Hive

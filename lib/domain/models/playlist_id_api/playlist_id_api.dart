@@ -15,4 +15,9 @@ class PlaylistIdApi {
   factory PlaylistIdApi.fromJson(Map<String, dynamic> json) => _$PlaylistIdApiFromJson(json);
 
   Map<String, dynamic> toJson() => _$PlaylistIdApiToJson(this);
+
+  @override
+  String toString() {
+    return "Playlist ID - $playlistId, Version ID - $versionId";
+  }
 }

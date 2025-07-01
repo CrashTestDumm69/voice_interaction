@@ -33,6 +33,9 @@ class PlaylistRepository {
       final PlaylistIdApi? remotePlaylistId = await _playlistApiService.getCurrentPlaylistId();
       final Playlist? localPlaylist = currentPlaylist;
 
+      debugPrint(remotePlaylistId.toString());
+      debugPrint(localPlaylist.toString());
+
       final AnnouncementIdApi? remoteAnnouncementId = await _playlistApiService.getCurrentAnnouncementId();
       final Playlist? localAnnouncement = currentAnnouncement;
 
@@ -60,6 +63,8 @@ class PlaylistRepository {
         _announcementUpdateAvailable = true;
       }
 
+      debugPrint((_playlistUpdateAvailable || _announcementUpdateAvailable).toString());
+
       return (_playlistUpdateAvailable || _announcementUpdateAvailable);
 
     } catch (e) {
@@ -70,6 +75,7 @@ class PlaylistRepository {
   }
 
   Future<void> downloadUpdates() async {
+    debugPrint("Starting download");
     try {
       if (_playlistUpdateAvailable) {
         await _playlistStorageService.deletePlaylist();
@@ -112,11 +118,12 @@ class PlaylistRepository {
 
         _currentAnnouncement = announcement;
 
-        _playlistUpdateAvailable = false;
+        _announcementUpdateAvailable = false;
       }
 
     } catch (e) {
-      debugPrint("Error downloading updates: $e");
+      debugPrint("Error downloading updates: ${e.toString()}");
+      rethrow;
     }
   }
 

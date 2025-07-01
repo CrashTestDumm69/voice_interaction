@@ -21,6 +21,10 @@ class PlaylistFile extends HiveObject {
     this.imageFilePath,
   });
 
+  bool get isVideo => type == "video";
+  bool get isAudio => type == "audio";
+  bool get hasBackgroundImage => imageFilePath != null && imageFilePath!.isNotEmpty;
+
   factory PlaylistFile.fromJson(Map<String, dynamic> json) {
     final path = json["path"] as String;
     final displayOrder = (json["displayOrder"] as num).toInt();

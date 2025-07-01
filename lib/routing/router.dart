@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:voice_interaction/routing/routes.dart';
 import 'package:voice_interaction/ui/features/home/widgets/home_screen.dart';
 import 'package:voice_interaction/ui/features/interaction/widgets/interaction_screen.dart';
+import 'package:voice_interaction/ui/features/playlist/widgets/media_player_screen.dart';
 import 'package:voice_interaction/ui/features/update/widgets/update_screen.dart';
 import 'package:voice_interaction/utils/injection_container.dart';
 
@@ -31,6 +32,15 @@ GoRouter router() => GoRouter(
         return _buildSlideUpPage(
           key: state.pageKey,
           child: UpdateScreen(viewModel: sl())
+        );
+      }
+    ),
+    GoRoute(
+      path: Routes.mediaPlayer,
+      pageBuilder: (context, state) {
+        return _buildSlideUpPage(
+          key: state.pageKey,
+          child: MediaPlayerScreen(viewModel: sl())
         );
       }
     )

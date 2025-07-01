@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
-import 'package:voice_interaction/data/repositories/playlist_repository.dart';
 
+import 'package:voice_interaction/data/repositories/playlist_repository.dart';
 import 'package:voice_interaction/data/repositories/realtime_api_repository.dart';
 import 'package:voice_interaction/data/repositories/update_repository.dart';
 import 'package:voice_interaction/data/repositories/volume_repositroy.dart';
@@ -13,6 +13,7 @@ import 'package:voice_interaction/data/services/realtime_api_service.dart';
 import 'package:voice_interaction/data/services/realtime_api_tools_service.dart';
 import 'package:voice_interaction/data/services/update_service.dart';
 import 'package:voice_interaction/ui/features/interaction/view_model/interaction_view_model.dart';
+import 'package:voice_interaction/ui/features/playlist/view_model/media_player_view_model.dart';
 import 'package:voice_interaction/ui/features/update/view_model/update_view_model.dart';
 
 final GetIt sl = GetIt.instance;
@@ -46,4 +47,5 @@ Future<void> initializeDeps() async {
   sl.registerSingleton(PlaylistStorageService(dio: sl()));
   await sl<PlaylistStorageService>().initService();
   sl.registerSingleton(PlaylistRepository(playlistApiService: sl(), playlistStorageService: sl()));
+  sl.registerSingleton(MediaPlayerViewModel(playlistRepository: sl()));
 }
