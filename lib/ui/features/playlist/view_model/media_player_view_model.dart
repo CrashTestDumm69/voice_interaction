@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:voice_interaction/data/repositories/playlist_repository.dart';
@@ -27,8 +26,6 @@ class MediaPlayerViewModel extends Bloc<MediaPlayerEvent, MediaPlayerState> {
         return;
       }
       _currentMediaIndex++;
-      debugPrint(_currentMediaIndex.toString());
-      debugPrint(_playlist!.files.length.toString());
       if (_currentMediaIndex >= _playlist!.files.length) {
         _currentMediaIndex = 0;
       }
@@ -66,9 +63,5 @@ class MediaPlayerViewModel extends Bloc<MediaPlayerEvent, MediaPlayerState> {
         emit(MediaError(message: "Download corrupted"));
       }
     });
-  }
-
-  void reset() {
-    _currentMediaIndex = -1;
   }
 }

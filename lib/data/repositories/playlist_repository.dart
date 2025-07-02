@@ -142,5 +142,7 @@ class PlaylistRepository {
   Future<void> loadPlaylists() async {
     _currentPlaylist = await _playlistStorageService.getCurrentPlaylist();
     _currentAnnouncement = await _playlistStorageService.getCurrentAnnouncement();
+
+    debugPrint(currentPlaylist.toString());
   }
 }

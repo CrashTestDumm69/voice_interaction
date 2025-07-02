@@ -42,4 +42,9 @@ class PlaylistFile extends HiveObject {
       imageFilePath: type == 'video' || backgroundImage == null ? null : "${PlatformApiData.playlistPath}/${backgroundImage.split("/").last}"
     );
   }
+
+  @override
+  String toString() {
+    return "File - $fileUrl";
+  }
 }

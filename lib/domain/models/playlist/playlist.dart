@@ -37,6 +37,6 @@ class Playlist extends HiveObject {
 
   @override
   String toString() {
-    return "ID - $id, Version ID - $versionId";
+    return "ID - $id, Version ID - $versionId, Files - ${files.map((e) => e.toString())}";
   }
 }
