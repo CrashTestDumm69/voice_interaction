@@ -215,7 +215,7 @@ class UpdateScreen extends StatelessWidget {
     switch (state.runtimeType) {
       case const (UpdateInitial):
         return SizedBox(
-          width: double.infinity,
+          width: double.maxFinite,
           child: ElevatedButton(
             onPressed: () => _viewModel.add(CheckForUpdate()),
             style: ElevatedButton.styleFrom(
@@ -232,7 +232,7 @@ class UpdateScreen extends StatelessWidget {
 
       case const (UpdateAvailable):
         return SizedBox(
-          width: double.infinity,
+          width: double.maxFinite,
           child: ElevatedButton(
             onPressed: () => _viewModel.add(PerformUpdate()),
             style: ElevatedButton.styleFrom(
@@ -249,7 +249,7 @@ class UpdateScreen extends StatelessWidget {
 
       case const (UpdateNotAvailable):
         return SizedBox(
-          width: double.infinity,
+          width: double.maxFinite,
           child: OutlinedButton(
             onPressed: () => _viewModel.add(CheckForUpdate()),
             style: OutlinedButton.styleFrom(
@@ -266,7 +266,7 @@ class UpdateScreen extends StatelessWidget {
 
       case const (UpdateCompleted):
         return SizedBox(
-          width: double.infinity,
+          width: double.maxFinite,
           child: ElevatedButton(
             onPressed: () => _viewModel.add(InstallUpdate()),
             style: ElevatedButton.styleFrom(
@@ -283,7 +283,7 @@ class UpdateScreen extends StatelessWidget {
 
       case const (UpdateFailed):
         return SizedBox(
-          width: double.infinity,
+          width: double.maxFinite,
           child: ElevatedButton(
             onPressed: () => _viewModel.add(CheckForUpdate()),
             style: ElevatedButton.styleFrom(

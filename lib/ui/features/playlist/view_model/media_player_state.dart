@@ -1,12 +1,38 @@
 part of 'media_player_view_model.dart';
 
+class MediaFile {
+  final String filePath;
+  final String? imageFilePath;
+  final bool isVideo;
+  final bool isAudio;
+  final bool hasImage;
+  final int delay;
+  
+  MediaFile({
+    required this.filePath,
+    this.imageFilePath,
+    required this.isVideo,
+    required this.isAudio,
+    required this.hasImage,
+    required this.delay,
+  });
+}
+
 abstract class MediaPlayerState {}
 
 class MediaPlayerInitial extends MediaPlayerState {}
 
-class MediaDownloading extends MediaPlayerState {}
+class MediaDownloading extends MediaPlayerState {
+  final int curFile;
+  final int totalFiles;
+  final double? percent;
 
-class MediaDelay extends MediaPlayerState {}
+  MediaDownloading({
+    required this.curFile,
+    required this.totalFiles,
+    required this.percent,
+  });
+}
 
 class MediaError extends MediaPlayerState {
   final String message;
@@ -16,27 +42,10 @@ class MediaError extends MediaPlayerState {
   });
 }
 
-abstract class PlayMedia extends MediaPlayerState {
-  final String filePath;
+class MediaReady extends MediaPlayerState {
+  final List<MediaFile> files;
 
-  PlayMedia({
-    required this.filePath
-  });
-}
-
-class PlayVideo extends PlayMedia {
-  PlayVideo({
-    required super.filePath
-  });
-}
-
-class PlayAudio extends PlayMedia {
-  final String backgroundImagePath;
-  final bool hasImage;
-  
-  PlayAudio({
-    required super.filePath,
-    required this.backgroundImagePath,
-    required this.hasImage
+  MediaReady({
+    required this.files
   });
 }

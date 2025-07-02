@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:voice_interaction/domain/models/playlist/playlist.dart';
@@ -30,7 +29,11 @@ class PlaylistStorageService {
     await _playlistBox.close();
   }
 
-  Future<void> store(Playlist playlist) async {
+  // Updated store function with simple progress callbacks
+  Future<void> store(
+    Playlist playlist, {
+    Function(int currentFile, int totalFiles, double percent)? onProgress,
+  }) async {
     if (playlist.isPlaylist) {
       await _playlistBox.put(_playlistBoxKey, playlist);
     } else if (playlist.isAnnouncement) {
@@ -38,15 +41,58 @@ class PlaylistStorageService {
     } else {
       return;
     }
+
+    // Calculate total files to download
+    final List<String> filesToDownload = [];
     
     for (PlaylistFile file in playlist.files) {
       final localFile = File(file.filePath);
       if (!(await localFile.exists())) {
-        await _dio.download(file.fileUrl, file.filePath, onReceiveProgress: (count, total) => debugPrint((count / total).toString()));
+        filesToDownload.add(file.filePath);
+      }
+      
+      if (file.isAudio && file.hasBackgroundImage) {
+        final imageFile = File(file.imageFilePath!);
+        if (!(await imageFile.exists())) {
+          filesToDownload.add(file.imageFilePath!);
+        }
+      }
+    }
+
+    final totalFiles = filesToDownload.length;
+    if (totalFiles == 0) return;
+
+    int currentFile = 0;
+    
+    for (PlaylistFile file in playlist.files) {
+      // Download main file
+      final localFile = File(file.filePath);
+      if (!(await localFile.exists())) {
+        currentFile++;
+        await _dio.download(
+          file.fileUrl, 
+          file.filePath,
+          onReceiveProgress: (count, total) {
+            final percent = ((count / total) * 100);
+            onProgress?.call(currentFile, totalFiles, percent);
+          }
+        );
       }
 
+      // Download image file if needed
       if (file.isAudio && file.hasBackgroundImage) {
-        await _dio.download(file.imageUrl!, file.imageFilePath, onReceiveProgress: (count, total) => debugPrint((count / total).toString()));
+        final imageFile = File(file.imageFilePath!);
+        if (!(await imageFile.exists())) {
+          currentFile++;
+          await _dio.download(
+            file.imageUrl!, 
+            file.imageFilePath,
+            onReceiveProgress: (count, total) {
+              final percent = ((count / total) * 100);
+              onProgress?.call(currentFile, totalFiles, percent);
+            }
+          );
+        }
       }
     }
   }

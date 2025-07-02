@@ -1,15 +1,16 @@
+import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:video_player/video_player.dart';
 import 'package:audioplayers/audioplayers.dart';
-
 import 'package:voice_interaction/ui/features/playlist/view_model/media_player_view_model.dart';
+
 
 class MediaPlayerScreen extends StatefulWidget {
   final MediaPlayerViewModel viewModel;
+
   const MediaPlayerScreen({super.key, required this.viewModel});
 
   @override
@@ -19,59 +20,120 @@ class MediaPlayerScreen extends StatefulWidget {
 class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
   VideoPlayerController? _videoController;
   AudioPlayer? _audioPlayer;
-  bool _isVideoInitialized = false;
+  int _currentIndex = 0;
+  Timer? _playbackTimer;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.viewModel.add(CheckForUpdate());
-    });
     super.initState();
+    widget.viewModel.add(StartUpdateCheck());
   }
 
   @override
   void dispose() {
-    _cleanupControllers();
+    // Stop update check when view is disposed
+    widget.viewModel.add(StopUpdateCheck());
+    _disposeControllers();
+    _playbackTimer?.cancel();
     super.dispose();
   }
 
-  void _cleanupControllers() {
+  void _disposeControllers() {
     _videoController?.dispose();
     _videoController = null;
     _audioPlayer?.dispose();
     _audioPlayer = null;
-    _isVideoInitialized = false;
   }
 
-  Future<void> _setupVideoPlayer(String filePath) async {
-    _cleanupControllers();
-    
-    _videoController = VideoPlayerController.file(File(filePath));
+  Future<void> _playMediaFile(MediaFile file) async {
+    _disposeControllers();
+
+    if (file.delay > 0) {
+      await Future.delayed(Duration(seconds: file.delay));
+    }
+
+    if (file.isVideo) {
+      await _playVideo(file);
+    } else if (file.isAudio) {
+      await _playAudio(file);
+    }
+  }
+
+  Future<void> _playVideo(MediaFile file) async {
+    _videoController = VideoPlayerController.file(File(file.filePath));
     await _videoController!.initialize();
-    
-    setState(() {
-      _isVideoInitialized = true;
-    });
-    
-    _videoController!.play();
-    
+    setState(() {});
+    await _videoController!.play();
+
     _videoController!.addListener(() {
       if (_videoController!.value.position >= _videoController!.value.duration) {
-        widget.viewModel.add(PlayNextMedia());
+        _playNextFile();
       }
     });
   }
 
-  Future<void> _setupAudioPlayer(String filePath) async {
-    _cleanupControllers();
-    
+  Future<void> _playAudio(MediaFile file) async {
     _audioPlayer = AudioPlayer();
-    await _audioPlayer!.play(DeviceFileSource(filePath));
+    await _audioPlayer!.play(DeviceFileSource(file.filePath));
     
     // Listen for audio completion
     _audioPlayer!.onPlayerComplete.listen((_) {
-      widget.viewModel.add(PlayNextMedia());
+      _playNextFile();
     });
+  }
+
+  void _playNextFile() {
+    final state = widget.viewModel.state;
+    if (state is MediaReady) {
+      _currentIndex = (_currentIndex + 1) % state.files.length;
+      _playMediaFile(state.files[_currentIndex]);
+    }
+  }
+
+  Widget _buildVideoPlayer() {
+    if (_videoController == null || !_videoController!.value.isInitialized) {
+      return Container(
+        color: Colors.black,
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+    
+    return Center(
+      child: AspectRatio(
+        aspectRatio: _videoController!.value.aspectRatio,
+        child: VideoPlayer(_videoController!),
+      ),
+    );
+  }
+
+  Widget _buildAudioPlayer(MediaFile file) {
+    if (file.hasImage && file.imageFilePath != null) {
+      return Image.file(
+        File(file.imageFilePath!),
+        fit: BoxFit.cover,
+        width: double.maxFinite,
+        height: double.maxFinite,
+      );
+    } else {
+      return Container(
+        color: Colors.grey.shade900,
+        width: double.maxFinite,
+        height: double.maxFinite,
+        child: Icon(Icons.volume_up_outlined, size: 80, color: Colors.grey.shade600),
+      );
+    }
+  }
+
+  Widget _buildMediaContent(List<MediaFile> files) {
+    if (files.isEmpty) return Container();
+    
+    final currentFile = files[_currentIndex];
+    
+    if (currentFile.isVideo) {
+      return _buildVideoPlayer();
+    } else {
+      return _buildAudioPlayer(currentFile);
+    }
   }
 
   @override
@@ -80,149 +142,69 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
       backgroundColor: Colors.black,
       body: BlocConsumer<MediaPlayerViewModel, MediaPlayerState>(
         bloc: widget.viewModel,
-        listener: (context, state) async {
-          if (state is PlayVideo) {
-            await _setupVideoPlayer(state.filePath);
-          } else if (state is PlayAudio) {
-            await _setupAudioPlayer(state.filePath);
+        listenWhen: (previous, current) => previous.runtimeType != current.runtimeType,
+        listener: (context, state) {
+          if (state is MediaReady) {
+            _currentIndex = 0;
+            _playMediaFile(state.files[0]);
+          } else {
+            _disposeControllers();
           }
         },
         builder: (context, state) {
-          return Stack(
-            children: [
-              _buildMainContent(state),
-              
-              if (state is MediaDownloading || state is MediaDelay)
-                _buildStatusOverlay(state),
-              
-              if (state is MediaError)
-                _buildErrorOverlay(state),
-            ],
-          );
+          if (state is MediaPlayerInitial) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          
+          if (state is MediaDownloading) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: Colors.white,
+                    value: state.percent == null ? null : (state.percent! / 100),
+                  ),
+                  Gap(16),
+                  Text(
+                    '${state.curFile} / ${state.totalFiles}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                  ),
+                  Text(
+                    '${state.percent != null ? state.percent!.round() : 0}%',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+          
+          if (state is MediaError) {
+            return Center(
+              child: Text(
+                'Error: ${state.message}',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 18,
+                ),
+              ),
+            );
+          }
+          
+          if (state is MediaReady) {
+            return _buildMediaContent(state.files);
+          }
+          
+          return Container();
         },
-      ),
-    );
-  }
-
-  Widget _buildMainContent(MediaPlayerState state) {
-    if (state is PlayVideo && _isVideoInitialized && _videoController != null) {
-      return SizedBox.expand(
-        child: FittedBox(
-          fit: BoxFit.cover,
-          child: SizedBox(
-            width: _videoController!.value.size.width,
-            height: _videoController!.value.size.height,
-            child: VideoPlayer(_videoController!),
-          ),
-        ),
-      );
-    } else if (state is PlayAudio) {
-      if (state.hasImage && state.backgroundImagePath.isNotEmpty) {
-        return SizedBox.expand(
-          child: Image.file(
-            File(state.backgroundImagePath),
-            fit: BoxFit.cover,
-          ),
-        );
-      } else {
-        // Show red screen for audio without image
-        return Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: Colors.red,
-        );
-      }
-    }
-    
-    // Default black screen
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: Colors.black,
-    );
-  }
-
-  Widget _buildStatusOverlay(MediaPlayerState state) {
-    String message;
-    if (state is MediaDownloading) {
-      message = 'Downloading updates...';
-    } else if (state is MediaDelay) {
-      message = 'Loading...';
-    } else {
-      message = 'Please wait...';
-    }
-
-    return Container(
-      color: Colors.black54,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              message,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildErrorOverlay(MediaError state) {
-    return Container(
-      color: Colors.black87,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.error_outline,
-                color: Colors.red,
-                size: 64,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Error',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                state.message,
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 16,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  widget.viewModel.add(PlayNextMedia());
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

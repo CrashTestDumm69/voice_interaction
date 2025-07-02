@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
+
 class MenuTileWidget extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -31,7 +33,7 @@ class MenuTileWidget extends StatelessWidget {
                 size: 64,
                 color: color ?? Colors.white,
               ),
-              const SizedBox(height: 8),
+              const Gap(8),
               Text(
                 label,
                 style: TextStyle(

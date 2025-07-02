@@ -32,7 +32,7 @@ class LanguageSelectionWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+              const Gap(16),
               Expanded(
                 child: GestureDetector(
                   onTap: () => Navigator.of(context).pop("Tamil"),

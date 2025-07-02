@@ -74,7 +74,7 @@ class PlaylistRepository {
     return false;
   }
 
-  Future<void> downloadUpdates() async {
+  Future<void> downloadUpdates({Function(int currentFile, int totalFiles, double percent)? onProgress}) async {
     debugPrint("Starting download");
     try {
       if (_playlistUpdateAvailable) {
@@ -92,7 +92,7 @@ class PlaylistRepository {
         }
 
         final Playlist playlist = Playlist.fromJson(remotePlaylist.toJson());
-        await _playlistStorageService.store(playlist);
+        await _playlistStorageService.store(playlist, onProgress: onProgress);
 
         _playlistUpdateAvailable = false;
       }
