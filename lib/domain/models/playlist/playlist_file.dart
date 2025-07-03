@@ -33,12 +33,12 @@ class PlaylistFile extends HiveObject {
     final backgroundImage = json["backgroundImage"] as String?;
 
     return PlaylistFile(
-      fileUrl: "${PlatformApiData.baseUrl}$path",
+      fileUrl: path,
       displayOrder: displayOrder,
       delay: delay,
       filePath: "${PlatformApiData.playlistPath}/${path.split("/").last}",
       type: type,
-      imageUrl: type == 'video' || backgroundImage == null ? null : "${PlatformApiData.baseUrl}$backgroundImage",
+      imageUrl: type == 'video' || backgroundImage == null ? null : backgroundImage,
       imageFilePath: type == 'video' || backgroundImage == null ? null : "${PlatformApiData.playlistPath}/${backgroundImage.split("/").last}"
     );
   }

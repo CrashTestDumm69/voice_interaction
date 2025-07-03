@@ -11,6 +11,7 @@ class MediaPlayerViewModel extends Bloc<MediaPlayerEvent, MediaPlayerState> {
   final PlaylistRepository _playlistRepository;
 
   Playlist? _playlist;
+  Playlist? _announcement;
   Timer? _updateCheckTimer;
 
   MediaPlayerViewModel({
@@ -19,6 +20,7 @@ class MediaPlayerViewModel extends Bloc<MediaPlayerEvent, MediaPlayerState> {
        super(MediaPlayerInitial()) {
 
     _playlist = _playlistRepository.currentPlaylist;
+    _announcement = _playlistRepository.currentAnnouncement;
 
     on<StartUpdateCheck>((event, emit) {
       _startPeriodicUpdateCheck();
@@ -38,16 +40,8 @@ class MediaPlayerViewModel extends Bloc<MediaPlayerEvent, MediaPlayerState> {
         if (state is! MediaReady && _playlist != null) {
           emit(
             MediaReady(
-              files: _playlist!.files
-                .map((e) => MediaFile(
-                  filePath: e.filePath,
-                  isVideo: e.isVideo,
-                  isAudio: e.isAudio,
-                  hasImage: e.hasBackgroundImage,
-                  imageFilePath: e.imageFilePath,
-                  delay: e.delay
-                ))
-                .toList()
+              playlistFiles: _convertToMediaFiles(_playlist)!,
+              announcementFiles: _convertToMediaFiles(_announcement)
             )
           );
         }
@@ -80,16 +74,8 @@ class MediaPlayerViewModel extends Bloc<MediaPlayerEvent, MediaPlayerState> {
         } else {
           emit(
             MediaReady(
-              files: _playlist!.files
-                .map((e) => MediaFile(
-                  filePath: e.filePath,
-                  isVideo: e.isVideo,
-                  isAudio: e.isAudio,
-                  hasImage: e.hasBackgroundImage,
-                  imageFilePath: e.imageFilePath,
-                  delay: e.delay
-                ))
-                .toList()
+              playlistFiles: _convertToMediaFiles(_playlist)!,
+              announcementFiles: _convertToMediaFiles(_announcement)
             )
           );
         }
@@ -109,6 +95,19 @@ class MediaPlayerViewModel extends Bloc<MediaPlayerEvent, MediaPlayerState> {
         )
       );
     });
+  }
+
+  List<MediaFile>? _convertToMediaFiles(Playlist? playlist) {
+    if (playlist != null) {
+      return playlist.files.map((e) => MediaFile(
+        filePath: e.filePath,
+        isVideo: e.isVideo,
+        isAudio: e.isAudio,
+        hasImage: e.hasBackgroundImage,
+        delay: e.delay)).toList();
+    } else {
+      return null;
+    }
   }
 
   void _startPeriodicUpdateCheck() {

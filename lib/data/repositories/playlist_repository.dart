@@ -77,6 +77,12 @@ class PlaylistRepository {
   Future<void> downloadUpdates({Function(int currentFile, int totalFiles, double percent)? onProgress}) async {
     debugPrint("Starting download");
     try {
+      int totalFiles = 0;
+      int currentFileCount = 0;
+      
+      Playlist? playlist;
+      Playlist? announcement;
+
       if (_playlistUpdateAvailable) {
         await _playlistStorageService.deletePlaylist();
 
@@ -91,8 +97,8 @@ class PlaylistRepository {
           throw Exception("Failed to get playlist");
         }
 
-        final Playlist playlist = Playlist.fromJson(remotePlaylist.toJson());
-        await _playlistStorageService.store(playlist, onProgress: onProgress);
+        playlist = Playlist.fromJson(remotePlaylist.toJson());
+        totalFiles += playlist.files.length;
 
         _playlistUpdateAvailable = false;
       }
@@ -111,10 +117,24 @@ class PlaylistRepository {
           throw Exception("Failed to get playlist");
         }
 
-        final Playlist announcement = Playlist.fromJson(remoteAnnouncement.toJson());
-        await _playlistStorageService.store(announcement);
+        announcement = Playlist.fromJson(remoteAnnouncement.toJson());
+        totalFiles += announcement.files.length;
 
         _announcementUpdateAvailable = false;
+      }
+
+      if (playlist != null) {
+        await _playlistStorageService.store(playlist, onProgress: (currentFile, _, percent) {
+          currentFileCount = currentFile;
+          onProgress?.call(currentFileCount, totalFiles, percent);
+        });
+      }
+
+      if (announcement != null) {
+        await _playlistStorageService.store(announcement, onProgress: (currentFile, _, percent) {
+          final adjustedCount = currentFileCount + currentFile;
+          onProgress?.call(adjustedCount, totalFiles, percent);
+        });
       }
 
       debugPrint("Updates done");

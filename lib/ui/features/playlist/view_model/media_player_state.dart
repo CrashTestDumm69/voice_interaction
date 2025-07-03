@@ -43,9 +43,11 @@ class MediaError extends MediaPlayerState {
 }
 
 class MediaReady extends MediaPlayerState {
-  final List<MediaFile> files;
+  final List<MediaFile> playlistFiles;
+  final List<MediaFile>? announcementFiles;
 
   MediaReady({
-    required this.files
+    required this.playlistFiles,
+    this.announcementFiles
   });
 }
