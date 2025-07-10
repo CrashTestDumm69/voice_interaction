@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:voice_interaction/data/services/face_detector_service.dart';
 import 'package:voice_interaction/routing/routes.dart';
 
 import 'package:voice_interaction/ui/features/home/widgets/menu_tile_widget.dart';
+import 'package:voice_interaction/utils/injection_container.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -13,8 +15,8 @@ class HomeScreen extends StatelessWidget {
     final List<MenuTileWidget> menuItems = [
       MenuTileWidget(icon: Icons.mic_rounded, label: "Interaction", color: Colors.red, onTap: () => context.push(Routes.interaction)),
       MenuTileWidget(icon: Icons.search, label: "Playlists", color: Colors.deepPurple, onTap: () => context.push(Routes.mediaPlayer)),
-      MenuTileWidget(icon: Icons.settings, label: "Tile 3", color: Colors.yellow.shade700, onTap: () {}),
-      MenuTileWidget(icon: Icons.info, label: "Tile 4", color: Colors.blueAccent, onTap: () {}),
+      MenuTileWidget(icon: Icons.settings, label: "Start detection", color: Colors.yellow.shade700, onTap: () => sl<FaceDetectorService>().startDetection()),
+      MenuTileWidget(icon: Icons.info, label: "Stop detection", color: Colors.blueAccent, onTap: () => sl<FaceDetectorService>().stopDetection()),
     ];
 
     return Scaffold(

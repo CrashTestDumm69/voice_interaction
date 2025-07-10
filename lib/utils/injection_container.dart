@@ -6,6 +6,7 @@ import 'package:voice_interaction/data/repositories/realtime_api_repository.dart
 import 'package:voice_interaction/data/repositories/update_repository.dart';
 import 'package:voice_interaction/data/repositories/volume_repositroy.dart';
 import 'package:voice_interaction/data/services/dotenv_service.dart';
+import 'package:voice_interaction/data/services/face_detector_service.dart';
 import 'package:voice_interaction/data/services/native_volume_handler_service.dart';
 import 'package:voice_interaction/data/services/playlist_api_service.dart';
 import 'package:voice_interaction/data/services/playlist_storage_service.dart';
@@ -21,6 +22,9 @@ final GetIt sl = GetIt.instance;
 Future<void> initializeDeps() async {
   // Dio
   sl.registerSingleton(Dio());
+
+  // Face detector
+  sl.registerSingleton(FaceDetectorService());
 
   // Update
   sl.registerSingleton(UpdateService(dio: sl()));
