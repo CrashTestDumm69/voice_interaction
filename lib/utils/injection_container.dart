@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:voice_interaction/data/repositories/face_detector_repository.dart';
 import 'package:voice_interaction/data/repositories/playlist_repository.dart';
 import 'package:voice_interaction/data/repositories/realtime_api_repository.dart';
 import 'package:voice_interaction/data/repositories/update_repository.dart';
@@ -25,6 +26,8 @@ Future<void> initializeDeps() async {
 
   // Face detector
   sl.registerSingleton(FaceDetectorService());
+  sl.registerSingleton(FaceDetectorRepository(faceDetectorService: sl()));
+  await sl<FaceDetectorRepository>().init();
 
   // Update
   sl.registerSingleton(UpdateService(dio: sl()));

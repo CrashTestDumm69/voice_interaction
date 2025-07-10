@@ -20,10 +20,10 @@ class RealtimeApiService {
 
   Future<void> initConnection(
     String apiKey, {
-    required void Function() onSpeak,
-    required void Function() onListen,
-    required void Function() onConnect,
-    required void Function() onDisconnect,
+    required void Function()? onSpeak,
+    required void Function()? onListen,
+    required void Function()? onConnect,
+    required void Function()? onDisconnect,
     void Function(dynamic message)? onMessage,
     void Function(dynamic error)? onError,
     Future<Map<String, dynamic>> Function(
@@ -46,7 +46,7 @@ class RealtimeApiService {
         case RTCPeerConnectionState.RTCPeerConnectionStateDisconnected:
         case RTCPeerConnectionState.RTCPeerConnectionStateFailed:
         case RTCPeerConnectionState.RTCPeerConnectionStateClosed:
-          onDisconnect();
+          onDisconnect?.call();
           break;
         default:
           break;
@@ -98,13 +98,13 @@ class RealtimeApiService {
         final String type = data["type"];
 
         if (type == RealtimeApiResponseTypes.sessionCreated) {
-          onConnect();
+          onConnect?.call();
         } else if (type == RealtimeApiResponseTypes.outputAudioBufferStarted) {
-          onSpeak();
+          onSpeak?.call();
         } else if (type == RealtimeApiResponseTypes.outputAudioBufferStopped) {
-          onListen();
+          onListen?.call();
         } else if (type == RealtimeApiResponseTypes.inputSpeechStarted) {
-          onListen();
+          onListen?.call();
         } else if (type == RealtimeApiResponseTypes.functionCallArgumentsDone) {
           if (onFunctionCall != null) {
             final String functionName = data["name"];

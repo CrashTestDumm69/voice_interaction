@@ -14,15 +14,13 @@ class FaceDetectorService {
 
   FaceDetectorService() : _faceDetector = FaceDetector(options: FaceDetectorOptions());
 
-  /// Initialize camera
-  Future<bool> initializeCamera() async {
-    if (_isInitialized) return true;
+  Future<void> initializeCamera() async {
+    if (_isInitialized) return;
 
     try {
       final cameras = await availableCameras();
-      if (cameras.isEmpty) return false;
+      if (cameras.isEmpty) throw Exception('No cameras available');
 
-      // Use front camera only
       final camera = cameras.firstWhere(
         (camera) => camera.lensDirection == CameraLensDirection.front,
       );
@@ -37,42 +35,35 @@ class FaceDetectorService {
       await _cameraController!.initialize();
       _isInitialized = true;
       debugPrint('Camera initialized successfully');
-      return true;
     } catch (e) {
-      debugPrint('Error initializing camera: $e');
-      return false;
+      rethrow;
     }
   }
 
-  /// Start face detection from camera feed
-  Future<bool> startDetection() async {
+  Future<void> startDetection() async {
     if (_isDetecting) {
-      debugPrint('Detection already running');
-      return true;
+      return;
     }
-
-    if (!_isInitialized) {
-      final initialized = await initializeCamera();
-      if (!initialized) {
-        debugPrint('Failed to initialize camera');
-        return false;
+    
+    try {
+    
+      if (!_isInitialized) {
+        await initializeCamera();
       }
+
+      _isDetecting = true;
+      debugPrint('Starting face detection...');
+
+      await _cameraController!.startImageStream((CameraImage image) {
+        if (!_isDetecting) return;
+        
+        _processCameraImage(image);
+      });
+    } catch (e) {
+      rethrow;
     }
-
-    _isDetecting = true;
-    debugPrint('Starting face detection...');
-
-    // Start image stream
-    await _cameraController!.startImageStream((CameraImage image) {
-      if (!_isDetecting) return;
-      
-      _processCameraImage(image);
-    });
-
-    return true;
   }
 
-  /// Stop face detection
   Future<void> stopDetection() async {
     if (!_isDetecting) {
       debugPrint('Detection not running');
@@ -89,7 +80,6 @@ class FaceDetectorService {
     debugPrint('Face detection stopped');
   }
 
-  /// Process camera image for face detection
   void _processCameraImage(CameraImage image) async {
     if (!_isDetecting) return;
 
@@ -105,11 +95,10 @@ class FaceDetectorService {
         debugPrint('Faces detected: ${faces.length}');
       }
     } catch (e) {
-      debugPrint('Error processing camera image: $e');
+      rethrow;
     }
   }
 
-  /// Convert CameraImage to InputImage (fixed for landscapeLeft)
   InputImage? _convertCameraImageToInputImage(CameraImage image) {
     if (_cameraController == null) {
       debugPrint("Null controller, skipping processing");
@@ -119,7 +108,6 @@ class FaceDetectorService {
     final camera = _cameraController!.description;
     final sensorOrientation = camera.sensorOrientation;
 
-    // Fixed rotation for landscapeLeft
     InputImageRotation? rotation;
     int rotationCompensation = (sensorOrientation + 90) % 360;
     rotation = InputImageRotationValue.fromRawValue(rotationCompensation);
@@ -129,7 +117,7 @@ class FaceDetectorService {
     }
 
     final format = InputImageFormatValue.fromRawValue(image.format.raw);
-    if (format == null || format != InputImageFormat.nv21) {
+    if (format == null) {
       debugPrint("Null format - ${format.toString()}, skipping processing");
       return null;
     }
@@ -151,14 +139,9 @@ class FaceDetectorService {
     );
   }
 
-  /// Check if detection is running
-  bool get isDetecting => _isDetecting;
-
-  /// Dispose resources
   void dispose() {
     stopDetection();
     _cameraController?.dispose();
     _faceDetector.close();
-    debugPrint('FaceDetectorService disposed');
   }
 }
