@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:voice_interaction/config/platform_api_data.dart';
 
 import 'package:voice_interaction/routing/router.dart';
@@ -7,6 +8,7 @@ import 'package:voice_interaction/utils/injection_container.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MediaKit.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   
   SystemChrome.setPreferredOrientations([

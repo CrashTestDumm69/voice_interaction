@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:video_player/video_player.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 
 import 'package:voice_interaction/ui/features/playlist/view_model/media_player_view_model.dart';
 
@@ -19,162 +19,214 @@ class MediaPlayerScreen extends StatefulWidget {
 }
 
 class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
-  VideoPlayerController? _videoController;
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  final AudioPlayer _announcementPlayer = AudioPlayer();
-  int _currentPlaylistIndex = 0;
-  int _currentAnnouncementIndex = 0;
-  Timer? _playlistTimer;
+  late final _playlistPlayer = Player();
+  late final _announcementPlayer = Player();
+  late final _videoController = VideoController(_playlistPlayer, configuration: VideoControllerConfiguration(enableHardwareAcceleration: false));
+  
+  List<MediaFile> _playlistFiles = [];
+  List<MediaFile> _announcementFiles = [];
+
   Timer? _announcementTimer;
   bool _isPlayingAnnouncement = false;
+  StreamSubscription? _playlistSubscription;
+  StreamSubscription? _announcementSubscription;
+
+  // UI state variables
+  bool _isLoading = true;
+  bool _isDownloading = false;
+  String? _errorMessage;
+  int _downloadCurFile = 0;
+  int _downloadTotalFiles = 0;
+  double? _downloadPercent;
+
+  int _currentPlaylistIndex = 0;
+  int _currentAnnouncementIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    widget.viewModel.add(StartUpdateCheck());
-    
-    _announcementPlayer.onPlayerComplete.listen((_) {
-      _unmuteCurrentMedia();
-      _playNextAnnouncement();
+
+    _playlistSubscription = _playlistPlayer.stream.completed.listen((completed) {
+      if (completed) {
+        setState(() {
+          _currentPlaylistIndex = (_currentPlaylistIndex + 1) % _playlistFiles.length;
+        });
+        _playNextPlaylistFile();
+      }
     });
 
-    _audioPlayer.onPlayerComplete.listen((_) {
-      _playNextFile();
+    _announcementSubscription = _announcementPlayer.stream.completed.listen((completed) async {
+      if (completed) {
+        setState(() {
+          _isPlayingAnnouncement = false;
+          _currentAnnouncementIndex = (_currentAnnouncementIndex + 1) % _announcementFiles.length;
+        });
+        await _increasePlaylistVolume();
+        _playNextAnnouncementFile();
+      }
     });
+
+    widget.viewModel.add(StartUpdateCheck());
   }
 
   @override
   void dispose() {
-    // Stop update check when view is disposed
     widget.viewModel.add(StopUpdateCheck());
-    _disposeControllers();
-    _playlistTimer?.cancel();
     _announcementTimer?.cancel();
+    _playlistSubscription?.cancel();
+    _announcementSubscription?.cancel();
+    _playlistPlayer.dispose();
+    _announcementPlayer.dispose();
     super.dispose();
   }
 
-  void _disposeControllers() {
-    _videoController?.dispose();
-    _videoController = null;
-    _audioPlayer.release();
-  }
+  Future<void> _setupPlaylist() async {
+    if (_playlistFiles.isEmpty) return;
+    
+    try {
+      final medias = _playlistFiles.map((file) => Media(file.filePath)).toList();
+      await _playlistPlayer.open(Playlist(medias), play: false);
 
-  Future<void> _playMediaFile(MediaFile file) async {
-    _disposeControllers();
-
-    if (file.delay > 0) {
-      await Future.delayed(Duration(seconds: file.delay));
-    }
-
-    if (file.isVideo) {
-      await _playVideo(file);
-    } else if (file.isAudio) {
-      await _playAudio(file);
+      _playNextPlaylistFile();
+    } catch (e) {
+      debugPrint('Error setting up playlist: $e');
     }
   }
 
-  Future<void> _playVideo(MediaFile file) async {
-    _videoController = VideoPlayerController.file(File(file.filePath));
-    await _videoController!.initialize();
-    setState(() {});
-    await _videoController!.play();
-
-    _videoController!.addListener(() {
-      if (_videoController!.value.position >= _videoController!.value.duration) {
-        _playNextFile();
-      }
-    });
-  }
-
-  Future<void> _playAudio(MediaFile file) async {
-    await _audioPlayer.setSource(DeviceFileSource(file.filePath));
-    await _audioPlayer.resume();
-  }
-
-  void _playNextFile() {
-    final state = widget.viewModel.state;
-    if (state is MediaReady) {
-      _currentPlaylistIndex = (_currentPlaylistIndex + 1) % state.playlistFiles.length;
-      _playMediaFile(state.playlistFiles[_currentPlaylistIndex]);
+  Future<void> _setupAnnouncementPlaylist() async {
+    if (_announcementFiles.isEmpty) return;
+    
+    try {
+      final medias = _announcementFiles.map((file) => Media(file.filePath)).toList();
+      await _announcementPlayer.open(Playlist(medias), play: false);
+      
+      _playNextAnnouncementFile();
+    } catch (e) {
+      debugPrint('Error setting up announcement playlist: $e');
     }
   }
 
-  Future<void> _playAnnouncement(MediaFile announcementFile) async {
+  Future<void> _playNextPlaylistFile() async {    
+    final currentFile = _playlistFiles[_currentPlaylistIndex];
+    
+    
+    if (currentFile.delay > 0) {
+      await Future.delayed(Duration(seconds: currentFile.delay));
+    }
+    
+    try {
+      await _playlistPlayer.jump(_currentPlaylistIndex);
+      debugPrint('Playing playlist file: ${currentFile.filePath}');
+    } catch (e) {
+      debugPrint('Error playing playlist file: $e');
+    }
+  }
+
+  Future<void> _playNextAnnouncementFile() async {
+    final currentFile = _announcementFiles[_currentAnnouncementIndex];
+    
+
+    if (currentFile.delay > 0) {
+      await Future.delayed(Duration(seconds: currentFile.delay));
+    }
+
     setState(() {
       _isPlayingAnnouncement = true;
     });
 
-    await _muteCurrentMedia();
+    await _lowerPlaylistVolume();
 
-    if (announcementFile.delay > 0) {
-      await Future.delayed(Duration(seconds: announcementFile.delay));
+    try {
+      await _announcementPlayer.jump(_currentAnnouncementIndex);
+      debugPrint('Playing announcement: ${currentFile.filePath}');
+    } catch (e) {
+      debugPrint('Error playing announcement: $e');
     }
-
-    await _announcementPlayer.setSource(DeviceFileSource(announcementFile.filePath));
-    await _announcementPlayer.resume();
   }
 
-  Future<void> _muteCurrentMedia() async {
-    if (_videoController != null && _videoController!.value.isInitialized) {
-      await _videoController!.setVolume(0.2);
+  Future<void> _lowerPlaylistVolume() async {
+    const duration = Duration(milliseconds: 500);
+    const double from = 100.0;
+    const double to = 60.0;
+    const int steps = 10;
+
+    final stepDuration = duration ~/ steps;
+    final stepSize = (from - to) / steps;
+
+    for (int i = 0; i < steps; i++) {
+      final vol = from - stepSize * i;
+      try {
+        await _playlistPlayer.setVolume(vol.clamp(60.0, 100.0));
+      } catch (_) {}
+      await Future.delayed(stepDuration);
     }
-    await _audioPlayer.setVolume(0.2);
+
+    try {
+      await _playlistPlayer.setVolume(to);
+    } catch (_) {}
   }
 
-  Future<void> _unmuteCurrentMedia() async {
-    if (_videoController != null && _videoController!.value.isInitialized) {
-      await _videoController!.setVolume(1.0);
+  Future<void> _increasePlaylistVolume() async {
+    const duration = Duration(milliseconds: 500);
+    const double from = 60.0;
+    const double to = 100.0;
+    const int steps = 10;
+
+    final stepDuration = duration ~/ steps;
+    final stepSize = (to - from) / steps;
+
+    for (int i = 0; i < steps; i++) {
+      final vol = from + stepSize * i;
+      try {
+        await _playlistPlayer.setVolume(vol.clamp(60.0, 100.0));
+      } catch (_) {}
+      await Future.delayed(stepDuration);
     }
-    
-    await _audioPlayer.setVolume(1.0);
-  }
 
-  void _playNextAnnouncement() async {
-    _announcementPlayer.release();
-
-    setState(() {
-      _isPlayingAnnouncement = false;
-    });
-
-    final state = widget.viewModel.state;
-    if (state is MediaReady && state.announcementFiles != null) {
-      _currentAnnouncementIndex = (_currentAnnouncementIndex + 1) % state.announcementFiles!.length;
-      _playAnnouncement(state.announcementFiles![_currentAnnouncementIndex]);
-    }
+    try {
+      await _playlistPlayer.setVolume(to);
+    } catch (_) {}
   }
 
   Widget _buildVideoPlayer() {
-    if (_videoController == null || !_videoController!.value.isInitialized) {
-      return Container(
-        color: Colors.black,
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-    
     return Center(
-      child: AspectRatio(
-        aspectRatio: _videoController!.value.aspectRatio,
-        child: VideoPlayer(_videoController!),
+      child: Video(
+        controller: _videoController,
+        controls: NoVideoControls,
       ),
     );
   }
 
-  Widget _buildAudioPlayer(MediaFile file) {
+  Widget _buildAudioPlayer() {
+    final file = _playlistFiles[_currentPlaylistIndex];
+    debugPrint('Building audio player for: ${file.hasImage} - ${file.imageFilePath}');
     if (file.hasImage && file.imageFilePath != null) {
       return Image.file(
         File(file.imageFilePath!),
         fit: BoxFit.cover,
         width: double.maxFinite,
         height: double.maxFinite,
+        errorBuilder: (context, error, stackTrace) {
+          debugPrint('Error loading image: $error');
+          return _buildDefaultAudioDisplay();
+        },
       );
     } else {
-      return Container(
-        color: Colors.grey.shade900,
-        width: double.maxFinite,
-        height: double.maxFinite,
-        child: Icon(Icons.volume_up_outlined, size: 80, color: Colors.grey.shade600),
-      );
+      return _buildDefaultAudioDisplay();
     }
+  }
+
+  Widget _buildDefaultAudioDisplay() {
+    return Container(
+      color: Colors.grey.shade900,
+      width: double.maxFinite,
+      height: double.maxFinite,
+      child: Icon(
+        Icons.volume_up_outlined, 
+        size: 80, 
+        color: Colors.grey.shade600
+      ),
+    );
   }
 
   Widget _buildAnnouncementOverlay() {
@@ -206,105 +258,170 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
     );
   }
 
-  Widget _buildMediaContent(List<MediaFile> files) {
-    if (files.isEmpty) return Container();
+  Widget _buildMediaContent() {
+    if (_playlistFiles.isEmpty) {
+      return Center(
+        child: Text(
+          'No media files available',
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
+      );
+    }
     
-    final currentFile = files[_currentPlaylistIndex];
+    final currentFile = _playlistFiles[_currentPlaylistIndex];
     
     Widget mainContent;
     if (currentFile.isVideo) {
       mainContent = _buildVideoPlayer();
     } else {
-      mainContent = _buildAudioPlayer(currentFile);
+      mainContent = _buildAudioPlayer();
     }
 
-    if (_isPlayingAnnouncement) {
-      return Stack(
-        children: [
-          mainContent,
-          _buildAnnouncementOverlay(),
-        ],
+    return Stack(
+      children: [
+        mainContent,
+        IgnorePointer(
+          ignoring: _isPlayingAnnouncement,
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 500),
+            opacity: _isPlayingAnnouncement ? 1.0 : 0.0,
+            child: _buildAnnouncementOverlay()
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCurrentState() {
+    if (_isLoading) {
+      return Center(
+        child: CircularProgressIndicator(color: Colors.white),
       );
     }
-
-    return mainContent;
+    
+    if (_isDownloading) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              color: Colors.white,
+              value: _downloadPercent == null ? null : (_downloadPercent! / 100),
+            ),
+            Gap(16),
+            Text(
+              '$_downloadCurFile / $_downloadTotalFiles',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
+            ),
+            Text(
+              '${_downloadPercent != null ? _downloadPercent!.round() : 0}%',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
+            )
+          ],
+        ),
+      );
+    }
+    
+    if (_errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              color: Colors.red,
+              size: 64,
+            ),
+            Gap(16),
+            Text(
+              'Error: $_errorMessage',
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 18,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+    
+    return _buildMediaContent();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: BlocConsumer<MediaPlayerViewModel, MediaPlayerState>(
+      body: BlocListener<MediaPlayerViewModel, MediaPlayerState>(
         bloc: widget.viewModel,
-        listenWhen: (previous, current) => previous.runtimeType != current.runtimeType,
         listener: (context, state) {
           if (state is MediaReady) {
-            _currentPlaylistIndex = 0;
-            _playMediaFile(state.playlistFiles[_currentPlaylistIndex]);
+            setState(() {
+              _isLoading = false;
+              _isDownloading = false;
+              _errorMessage = null;
             
-            if (state.announcementFiles != null && state.announcementFiles!.isNotEmpty) {
+              _playlistFiles = state.playlistFiles;
+              _announcementFiles = state.announcementFiles;
+              
+              _currentPlaylistIndex = 0;
               _currentAnnouncementIndex = 0;
-              _playAnnouncement(state.announcementFiles![_currentAnnouncementIndex]);
+            });
+
+            if (_playlistFiles.isNotEmpty) {
+              _setupPlaylist();
             }
-          } else {
-            _disposeControllers();
+            
+            if (_announcementFiles.isNotEmpty) {
+              _setupAnnouncementPlaylist();
+            }
+          } else if (state is MediaPlayerInitial) {
+            setState(() {
+              _isLoading = true;
+              _isDownloading = false;
+              _errorMessage = null;
+            });
+            
+            // Stop all playback
+            _playlistPlayer.stop();
+            _announcementPlayer.stop();
             _announcementTimer?.cancel();
+            setState(() {
+              _isPlayingAnnouncement = false;
+            });
+          } else if (state is MediaDownloading) {
+            setState(() {
+              _isLoading = false;
+              _isDownloading = true;
+              _errorMessage = null;
+              _downloadCurFile = state.curFile;
+              _downloadTotalFiles = state.totalFiles;
+              _downloadPercent = state.percent;
+            });
+          } else if (state is MediaError) {
+            setState(() {
+              _isLoading = false;
+              _isDownloading = false;
+              _errorMessage = state.message;
+            });
+            
+            // Stop all playback on error
+            _playlistPlayer.stop();
+            _announcementPlayer.stop();
+            _announcementTimer?.cancel();
+            setState(() {
+              _isPlayingAnnouncement = false;
+            });
           }
         },
-        builder: (context, state) {
-          if (state is MediaPlayerInitial) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          
-          if (state is MediaDownloading) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    color: Colors.white,
-                    value: state.percent == null ? null : (state.percent! / 100),
-                  ),
-                  Gap(16),
-                  Text(
-                    '${state.curFile} / ${state.totalFiles}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
-                  ),
-                  Text(
-                    '${state.percent != null ? state.percent!.round() : 0}%',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
-                  )
-                ],
-              ),
-            );
-          }
-          
-          if (state is MediaError) {
-            return Center(
-              child: Text(
-                'Error: ${state.message}',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 18,
-                ),
-              ),
-            );
-          }
-          
-          if (state is MediaReady) {
-            return _buildMediaContent(state.playlistFiles);
-          }
-          
-          return Container();
-        },
+        child: _buildCurrentState(),
       ),
     );
   }

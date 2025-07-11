@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
-
 import 'package:voice_interaction/data/services/playlist_api_service.dart';
 import 'package:voice_interaction/data/services/playlist_storage_service.dart';
 import 'package:voice_interaction/domain/models/announcement_id_api/announcement_id_api.dart';
@@ -33,9 +31,6 @@ class PlaylistRepository {
       final PlaylistIdApi? remotePlaylistId = await _playlistApiService.getCurrentPlaylistId();
       final Playlist? localPlaylist = currentPlaylist;
 
-      debugPrint(remotePlaylistId.toString());
-      debugPrint(localPlaylist.toString());
-
       final AnnouncementIdApi? remoteAnnouncementId = await _playlistApiService.getCurrentAnnouncementId();
       final Playlist? localAnnouncement = currentAnnouncement;
 
@@ -63,19 +58,14 @@ class PlaylistRepository {
         _announcementUpdateAvailable = true;
       }
 
-      debugPrint((_playlistUpdateAvailable || _announcementUpdateAvailable).toString());
-
       return (_playlistUpdateAvailable || _announcementUpdateAvailable);
 
     } catch (e) {
-      debugPrint(e.toString());
+      return false;
     }
-
-    return false;
   }
 
   Future<void> downloadUpdates({Function(int currentFile, int totalFiles, double percent)? onProgress}) async {
-    debugPrint("Starting download");
     try {
       int totalFiles = 0;
       int currentFileCount = 0;
@@ -137,12 +127,9 @@ class PlaylistRepository {
         });
       }
 
-      debugPrint("Updates done");
-
       await loadPlaylists();
 
     } catch (e) {
-      debugPrint("Error downloading updates: ${e.toString()}");
       rethrow;
     }
   }
@@ -154,7 +141,6 @@ class PlaylistRepository {
 
       return (_playlistUpdateAvailable || _announcementUpdateAvailable);
     } catch (e) {
-      debugPrint("Error checking files: $e");
       return false;
     }
   }
@@ -162,7 +148,5 @@ class PlaylistRepository {
   Future<void> loadPlaylists() async {
     _currentPlaylist = await _playlistStorageService.getCurrentPlaylist();
     _currentAnnouncement = await _playlistStorageService.getCurrentAnnouncement();
-
-    debugPrint(currentPlaylist.toString());
   }
 }

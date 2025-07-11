@@ -1,8 +1,8 @@
 import 'package:android_package_installer/android_package_installer.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path_provider/path_provider.dart';
+
 import 'package:voice_interaction/domain/models/version/version.dart';
 
 class UpdateService {
@@ -27,7 +27,6 @@ class UpdateService {
 
   Future<void> downloadLatest({void Function(int count, int total)? onProgress}) async {
     final fileDir = await getApplicationSupportDirectory();
-    debugPrint(fileDir.toString());
     final filePath = "${fileDir.path}/releases/latest.apk";
     final response = await _dio.get("https://api.github.com/repos/crashtestdumm69/flutter-releases/releases/latest");
     throwIf(response.statusCode != 200, "Update failed");

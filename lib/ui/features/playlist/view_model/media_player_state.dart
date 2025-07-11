@@ -1,23 +1,5 @@
 part of 'media_player_view_model.dart';
 
-class MediaFile {
-  final String filePath;
-  final String? imageFilePath;
-  final bool isVideo;
-  final bool isAudio;
-  final bool hasImage;
-  final int delay;
-  
-  MediaFile({
-    required this.filePath,
-    this.imageFilePath,
-    required this.isVideo,
-    required this.isAudio,
-    required this.hasImage,
-    required this.delay,
-  });
-}
-
 abstract class MediaPlayerState {}
 
 class MediaPlayerInitial extends MediaPlayerState {}
@@ -44,10 +26,10 @@ class MediaError extends MediaPlayerState {
 
 class MediaReady extends MediaPlayerState {
   final List<MediaFile> playlistFiles;
-  final List<MediaFile>? announcementFiles;
+  final List<MediaFile> announcementFiles;
 
   MediaReady({
     required this.playlistFiles,
-    this.announcementFiles
+    required this.announcementFiles
   });
 }

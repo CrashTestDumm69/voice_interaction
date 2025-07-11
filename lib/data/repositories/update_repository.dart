@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:voice_interaction/data/services/update_service.dart';
@@ -16,7 +15,6 @@ class UpdateRepository {
       final currentVersion = Version.parse(packageInfo.version);
       return latestVersion > currentVersion ? latestVersion : null;
     } catch (e) {
-      debugPrint("Error: $e");
       return null;
     }
   }

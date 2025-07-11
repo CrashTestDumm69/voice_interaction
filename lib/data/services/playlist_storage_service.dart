@@ -79,7 +79,6 @@ class PlaylistStorageService {
         );
       }
 
-      // Download image file if needed
       if (file.isAudio && file.hasBackgroundImage) {
         final imageFile = File(file.imageFilePath!);
         if (!(await imageFile.exists())) {

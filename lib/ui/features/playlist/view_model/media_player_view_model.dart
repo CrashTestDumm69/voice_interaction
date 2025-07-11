@@ -7,6 +7,24 @@ import 'package:voice_interaction/domain/models/playlist/playlist.dart';
 part 'media_player_event.dart';
 part 'media_player_state.dart';
 
+class MediaFile {
+  final String filePath;
+  final String? imageFilePath;
+  final bool isVideo;
+  final bool isAudio;
+  final bool hasImage;
+  final int delay;
+  
+  MediaFile({
+    required this.filePath,
+    this.imageFilePath,
+    required this.isVideo,
+    required this.isAudio,
+    required this.hasImage,
+    required this.delay,
+  });
+}
+
 class MediaPlayerViewModel extends Bloc<MediaPlayerEvent, MediaPlayerState> {
   final PlaylistRepository _playlistRepository;
 
@@ -40,7 +58,7 @@ class MediaPlayerViewModel extends Bloc<MediaPlayerEvent, MediaPlayerState> {
         if (state is! MediaReady && _playlist != null) {
           emit(
             MediaReady(
-              playlistFiles: _convertToMediaFiles(_playlist)!,
+              playlistFiles: _convertToMediaFiles(_playlist),
               announcementFiles: _convertToMediaFiles(_announcement)
             )
           );
@@ -68,13 +86,15 @@ class MediaPlayerViewModel extends Bloc<MediaPlayerEvent, MediaPlayerState> {
         }
       );
       _playlist = _playlistRepository.currentPlaylist;
+      _announcement = _playlistRepository.currentAnnouncement;
+      
       if(!await _playlistRepository.checkMissingFiles()) {
         if (_playlist == null) {
           emit(MediaError(message: "No playlist available"));
         } else {
           emit(
             MediaReady(
-              playlistFiles: _convertToMediaFiles(_playlist)!,
+              playlistFiles: _convertToMediaFiles(_playlist),
               announcementFiles: _convertToMediaFiles(_announcement)
             )
           );
@@ -97,16 +117,17 @@ class MediaPlayerViewModel extends Bloc<MediaPlayerEvent, MediaPlayerState> {
     });
   }
 
-  List<MediaFile>? _convertToMediaFiles(Playlist? playlist) {
+  List<MediaFile> _convertToMediaFiles(Playlist? playlist) {
     if (playlist != null) {
       return playlist.files.map((e) => MediaFile(
         filePath: e.filePath,
         isVideo: e.isVideo,
         isAudio: e.isAudio,
         hasImage: e.hasBackgroundImage,
+        imageFilePath: e.imageFilePath,
         delay: e.delay)).toList();
     } else {
-      return null;
+      return [];
     }
   }
 

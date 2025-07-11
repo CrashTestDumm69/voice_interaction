@@ -2,7 +2,7 @@ import 'package:path_provider/path_provider.dart';
 
 class PlatformApiData {
   static const String baseUrl = "https://cento-platform.vercel.app";
-  static const String serialNumber = "123";
+  static const String serialNumber = "test-cento";
   static const String getPlaylistIdUrl = "$baseUrl/api/device-playlists/serialNumber?serialNumber=$serialNumber";
   static String getPlaylistUrl(String id) {
     return "$baseUrl/api/get-playlist?id=$id";

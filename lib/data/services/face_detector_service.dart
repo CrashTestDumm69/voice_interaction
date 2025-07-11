@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
-
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:camera/camera.dart';
 
@@ -34,7 +32,6 @@ class FaceDetectorService {
 
       await _cameraController!.initialize();
       _isInitialized = true;
-      debugPrint('Camera initialized successfully');
     } catch (e) {
       rethrow;
     }
@@ -52,7 +49,6 @@ class FaceDetectorService {
       }
 
       _isDetecting = true;
-      debugPrint('Starting face detection...');
 
       await _cameraController!.startImageStream((CameraImage image) {
         if (!_isDetecting) return;
@@ -66,18 +62,14 @@ class FaceDetectorService {
 
   Future<void> stopDetection() async {
     if (!_isDetecting) {
-      debugPrint('Detection not running');
       return;
     }
 
     _isDetecting = false;
-    debugPrint('Stopping face detection...');
     
     if (_cameraController != null) {
       await _cameraController!.stopImageStream();
     }
-    
-    debugPrint('Face detection stopped');
   }
 
   void _processCameraImage(CameraImage image) async {
@@ -89,11 +81,7 @@ class FaceDetectorService {
         return;
       }
 
-      final faces = await _faceDetector.processImage(inputImage);
-      
-      if (_isDetecting) {
-        debugPrint('Faces detected: ${faces.length}');
-      }
+      await _faceDetector.processImage(inputImage);
     } catch (e) {
       rethrow;
     }
@@ -101,7 +89,6 @@ class FaceDetectorService {
 
   InputImage? _convertCameraImageToInputImage(CameraImage image) {
     if (_cameraController == null) {
-      debugPrint("Null controller, skipping processing");
       return null;
     }
 
@@ -112,18 +99,15 @@ class FaceDetectorService {
     int rotationCompensation = (sensorOrientation + 90) % 360;
     rotation = InputImageRotationValue.fromRawValue(rotationCompensation);
     if (rotation == null) {
-      debugPrint("Null rotation, skipping processing");
       return null;
     }
 
     final format = InputImageFormatValue.fromRawValue(image.format.raw);
     if (format == null) {
-      debugPrint("Null format - ${format.toString()}, skipping processing");
       return null;
     }
 
     if (image.planes.length != 1) {
-      debugPrint("Unexpected number of planes: ${image.planes.length}");
       return null;
     }
     final plane = image.planes.first;
