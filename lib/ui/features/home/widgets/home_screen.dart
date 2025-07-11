@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:voice_interaction/data/services/face_detector_service.dart';
 import 'package:voice_interaction/routing/routes.dart';
-
 import 'package:voice_interaction/ui/features/home/widgets/menu_tile_widget.dart';
 import 'package:voice_interaction/utils/injection_container.dart';
 
@@ -21,41 +21,36 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        height: double.maxFinite,
-        width: double.maxFinite,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.black,
-              Colors.deepPurple.withAlpha(50),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Image.asset("assets/centelon_logo.png"),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 100.0),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: menuItems.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 100,
-                  mainAxisSpacing: 20,
-                  childAspectRatio: 2.5,
+      body: Stack(
+        children: [
+          Container(
+            color: Colors.transparent,
+            height: double.maxFinite,
+            width: double.maxFinite,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Image.asset("assets/centelon_logo.png"),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: menuItems.length,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 100,
+                      mainAxisSpacing: 20,
+                      childAspectRatio: 2.5,
+                    ),
+                    itemBuilder: (context, index) => menuItems[index],
+                  ),
                 ),
-                itemBuilder: (context, index) => menuItems[index],
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
