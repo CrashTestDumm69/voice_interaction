@@ -7,14 +7,21 @@ import 'package:camera/camera.dart';
 class FaceDetectorService {
   final FaceDetector _faceDetector;
   CameraController? _cameraController;
-  bool _isDetecting = false;
-  bool _isInitialized = false;
 
-  FaceDetectorService() : _faceDetector = FaceDetector(options: FaceDetectorOptions());
+  FaceDetectorService() : _faceDetector = FaceDetector(
+    options: FaceDetectorOptions(
+      enableClassification: false,
+      enableContours: false,
+      enableLandmarks: false,
+      enableTracking: false,
+      minFaceSize: 0.1
+    )
+  );
+
+  final _faceStreamController = StreamController<List<Face>>.broadcast();
+  Stream<List<Face>> get faceStream => _faceStreamController.stream;
 
   Future<void> initializeCamera() async {
-    if (_isInitialized) return;
-
     try {
       final cameras = await availableCameras();
       if (cameras.isEmpty) throw Exception('No cameras available');
@@ -31,28 +38,14 @@ class FaceDetectorService {
       );
 
       await _cameraController!.initialize();
-      _isInitialized = true;
     } catch (e) {
       rethrow;
     }
   }
 
   Future<void> startDetection() async {
-    if (_isDetecting) {
-      return;
-    }
-    
     try {
-    
-      if (!_isInitialized) {
-        await initializeCamera();
-      }
-
-      _isDetecting = true;
-
       await _cameraController!.startImageStream((CameraImage image) {
-        if (!_isDetecting) return;
-        
         _processCameraImage(image);
       });
     } catch (e) {
@@ -61,27 +54,20 @@ class FaceDetectorService {
   }
 
   Future<void> stopDetection() async {
-    if (!_isDetecting) {
-      return;
-    }
-
-    _isDetecting = false;
-    
     if (_cameraController != null) {
       await _cameraController!.stopImageStream();
     }
   }
 
   void _processCameraImage(CameraImage image) async {
-    if (!_isDetecting) return;
-
     try {
       final inputImage = _convertCameraImageToInputImage(image);
       if (inputImage == null) {
         return;
       }
 
-      await _faceDetector.processImage(inputImage);
+      final faces = await _faceDetector.processImage(inputImage);
+      _faceStreamController.add(faces);
     } catch (e) {
       rethrow;
     }

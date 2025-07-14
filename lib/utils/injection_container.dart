@@ -27,7 +27,6 @@ Future<void> initializeDeps() async {
   // Face detector
   sl.registerSingleton(FaceDetectorService());
   sl.registerSingleton(FaceDetectorRepository(faceDetectorService: sl()));
-  await sl<FaceDetectorRepository>().init();
 
   // Update
   sl.registerSingleton(UpdateService(dio: sl()));

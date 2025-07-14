@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:voice_interaction/config/platform_api_data.dart';
 
+import 'package:voice_interaction/config/platform_api_data.dart';
+import 'package:voice_interaction/data/repositories/face_detector_repository.dart';
 import 'package:voice_interaction/routing/router.dart';
 import 'package:voice_interaction/utils/injection_container.dart';
 
@@ -25,7 +26,17 @@ void main() async {
   await initializeDeps();
   await PlatformApiData.init();
 
+  await sl<FaceDetectorRepository>().initCamera();
+  await sl<FaceDetectorRepository>().startDetection();
+  _handleFaceDetection();
+
   runApp(const MyApp());
+}
+
+void _handleFaceDetection() {
+  sl<FaceDetectorRepository>().faceStream.listen((faceDetected) {
+    if (faceDetected) {}
+  });
 }
 
 class MyApp extends StatelessWidget {
