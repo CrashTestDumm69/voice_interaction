@@ -171,11 +171,27 @@ class RealtimeApiService {
     await _connection!.setRemoteDescription(answer);
   }
 
+  Future<void> sendHi() async {
+    final msg = {
+      "type": "conversation.item.create",
+      "item": {
+        "type": "message",
+        "role": "user",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "Hello"
+          }
+        ]
+      }
+    };
+    await _dataChannel?.send(RTCDataChannelMessage(jsonEncode(msg)));
+    await _dataChannel?.send(RTCDataChannelMessage(jsonEncode({"type": "response.create"})));
+  }
+
   void returnFunctionCall(Map<String, dynamic> msg) async {
     await _dataChannel?.send(RTCDataChannelMessage(jsonEncode(msg)));
-    await _dataChannel?.send(
-      RTCDataChannelMessage(jsonEncode({"type": "response.create"})),
-    );
+    await _dataChannel?.send(RTCDataChannelMessage(jsonEncode({"type": "response.create"})));
   }
 
   void muteMic() {

@@ -4,6 +4,7 @@ import 'package:media_kit/media_kit.dart';
 
 import 'package:voice_interaction/config/platform_api_data.dart';
 import 'package:voice_interaction/data/repositories/face_detector_repository.dart';
+import 'package:voice_interaction/data/repositories/realtime_api_repository.dart';
 import 'package:voice_interaction/routing/router.dart';
 import 'package:voice_interaction/utils/injection_container.dart';
 
@@ -26,16 +27,32 @@ void main() async {
   await initializeDeps();
   await PlatformApiData.init();
 
-  await sl<FaceDetectorRepository>().initCamera();
-  await sl<FaceDetectorRepository>().startDetection();
   _handleFaceDetection();
 
   runApp(const MyApp());
 }
 
-void _handleFaceDetection() {
-  sl<FaceDetectorRepository>().faceStream.listen((faceDetected) {
-    if (faceDetected) {}
+void _handleFaceDetection() async {
+  final faceRepo = sl<FaceDetectorRepository>();
+  final realtimeRepo = sl<RealtimeApiRepository>();
+  await faceRepo.initCamera();
+  await faceRepo.startDetection();
+
+  faceRepo.faceStream.listen((faceDetected) async {
+    if (faceDetected) {
+      debugPrint("Face detected");
+      await realtimeRepo.startSession(
+        onSpeak: () => debugPrint("Speaking"),
+        onListen: () => debugPrint("Listening"),
+        onConnect: () => debugPrint("Connected"),
+        onDisconnect: () => debugPrint("Disconnected"),
+        onFunctionCall: null
+      );
+      await realtimeRepo.sendHi();
+    } else {
+      debugPrint("Face lost");
+      realtimeRepo.closeSession();
+    }
   });
 }
 
