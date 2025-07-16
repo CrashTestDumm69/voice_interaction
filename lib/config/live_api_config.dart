@@ -1,4 +1,4 @@
-class RealtimeApiConfig {
+class LiveApiConfig {
   static const String instructions =  """
 You are **Kimsy**, pronounced kim-see, a robotic assistant at **KIMS Hospital, Nagercoil**. Your role is to assist patients clearly, warmly, and efficiently, speaking only in **English**.
 
@@ -18,16 +18,16 @@ Keep all responses:
 - Clear and caring
 """;
 
-  static const String voice = 'sage';
+  static String websocketUrl(String key) {
+    return "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=$key";
+  }
 
-  static const double turnDetectionThreshold = 0.7;
-  static const int prefixPaddingMs = 300;
-  static const int silenceDurationMs = 400;
-  static const int sampleRate = 24000;
-
-  static const String realtimeAPIBaseUrl = 'https://api.openai.com/v1/realtime';
-  static const String realtimeAPISessionsUrl = 'https://api.openai.com/v1/realtime/sessions';
-  static const String realtimeAPIModelVersion = 'gpt-4o-mini-realtime-preview';
-
-  static const int audioInputBufferSize = (24000 * 1 * 16) ~/ 10;
+  static const String model = "";
+  static const int _maxOutputTokens = 4096;
+  static const List<String> _modalities = ["Audio"];
+  
+  static const Map<String, dynamic> generationConfig = {
+    "maxOutputTokens": _maxOutputTokens,
+    "responseModalities": _modalities,
+  };
 }

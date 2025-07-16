@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 
 import 'package:voice_interaction/data/repositories/face_detector_repository.dart';
 import 'package:voice_interaction/data/repositories/playlist_repository.dart';
-import 'package:voice_interaction/data/repositories/realtime_api_repository.dart';
+import 'package:voice_interaction/data/repositories/live_api_repository.dart';
 import 'package:voice_interaction/data/repositories/update_repository.dart';
 import 'package:voice_interaction/data/repositories/volume_repositroy.dart';
 import 'package:voice_interaction/data/services/dotenv_service.dart';
@@ -11,8 +11,8 @@ import 'package:voice_interaction/data/services/face_detector_service.dart';
 import 'package:voice_interaction/data/services/native_volume_handler_service.dart';
 import 'package:voice_interaction/data/services/playlist_api_service.dart';
 import 'package:voice_interaction/data/services/playlist_storage_service.dart';
-import 'package:voice_interaction/data/services/realtime_api_service.dart';
-import 'package:voice_interaction/data/services/realtime_api_tools_service.dart';
+import 'package:voice_interaction/data/services/live_api_service.dart';
+import 'package:voice_interaction/data/services/live_api_tools_service.dart';
 import 'package:voice_interaction/data/services/update_service.dart';
 import 'package:voice_interaction/ui/features/interaction/view_model/interaction_view_model.dart';
 import 'package:voice_interaction/ui/features/playlist/view_model/media_player_view_model.dart';
@@ -42,11 +42,11 @@ Future<void> initializeDeps() async {
   await sl<DotenvService>().loadEnv();
 
   // Realtime Api
-  sl.registerSingleton(RealtimeApiToolsService(volumeHandlerService: sl()));
-  sl<RealtimeApiToolsService>().loadTools();
-  sl.registerSingleton(RealtimeApiService(realtimeApiToolsService: sl(), dio: sl()));
-  sl.registerSingleton(RealtimeApiRepository(realtimeApiService: sl(), dotenvService: sl()));
-  sl.registerSingleton(InteractionViewModel(volumeRepository: sl(), realtimeApiRepository: sl()));
+  sl.registerSingleton(LiveApiToolsService(volumeHandlerService: sl()));
+  sl<LiveApiToolsService>().loadTools();
+  sl.registerSingleton(LiveApiService(liveApiToolsService: sl(), dio: sl()));
+  sl.registerSingleton(LiveApiRepository(liveApiService: sl(), dotenvService: sl()));
+  sl.registerSingleton(InteractionViewModel(volumeRepository: sl(), liveApiRepository: sl()));
 
   // Platform playlists
   sl.registerSingleton(PlaylistApiService(dio: sl()));

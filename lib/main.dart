@@ -4,13 +4,14 @@ import 'package:media_kit/media_kit.dart';
 
 import 'package:voice_interaction/config/platform_api_data.dart';
 import 'package:voice_interaction/data/repositories/face_detector_repository.dart';
-import 'package:voice_interaction/data/repositories/realtime_api_repository.dart';
+import 'package:voice_interaction/data/repositories/live_api_repository.dart';
 import 'package:voice_interaction/routing/router.dart';
 import 'package:voice_interaction/utils/injection_container.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
+
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   
   SystemChrome.setPreferredOrientations([
@@ -34,7 +35,7 @@ void main() async {
 
 void _handleFaceDetection() async {
   final faceRepo = sl<FaceDetectorRepository>();
-  final realtimeRepo = sl<RealtimeApiRepository>();
+  final realtimeRepo = sl<LiveApiRepository>();
   await faceRepo.initCamera();
   await faceRepo.startDetection();
 
@@ -48,7 +49,6 @@ void _handleFaceDetection() async {
         onDisconnect: () => debugPrint("Disconnected"),
         onFunctionCall: null
       );
-      await realtimeRepo.sendHi();
     } else {
       debugPrint("Face lost");
       realtimeRepo.closeSession();

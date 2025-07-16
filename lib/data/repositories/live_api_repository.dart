@@ -1,12 +1,12 @@
 import 'package:voice_interaction/data/services/dotenv_service.dart';
-import 'package:voice_interaction/data/services/realtime_api_service.dart';
+import 'package:voice_interaction/data/services/live_api_service.dart';
 
-class RealtimeApiRepository {
-  final RealtimeApiService _realtimeApiService;
+class LiveApiRepository {
+  final LiveApiService _liveApiService;
   final DotenvService _dotenvService;
 
-  RealtimeApiRepository({required RealtimeApiService realtimeApiService, required DotenvService dotenvService})
-      : _realtimeApiService = realtimeApiService,
+  LiveApiRepository({required LiveApiService liveApiService, required DotenvService dotenvService})
+      : _liveApiService = liveApiService,
         _dotenvService = dotenvService;
 
   Future<void> startSession({
@@ -19,7 +19,7 @@ class RealtimeApiRepository {
     required Future<Map<String, dynamic>> Function(String functionName, Map<String, dynamic> arguments)? onFunctionCall
   }) async {
     final apiKey = _dotenvService.getApiKey();
-    await _realtimeApiService.initConnection(
+    await _liveApiService.initConnection(
       apiKey,
       onConnect: onConnect,
       onDisconnect: onDisconnect,
@@ -31,20 +31,16 @@ class RealtimeApiRepository {
     );
   }
 
-  Future<void> sendHi() async {
-    await _realtimeApiService.sendHi();
-  }
-
   void muteMicrophone() {
-    _realtimeApiService.muteMic();
+    _liveApiService.muteMic();
   }
 
   void unmuteMicrophone() {
-    _realtimeApiService.unmuteMic();
+    _liveApiService.unmuteMic();
   }
 
   void closeSession() {
-    _realtimeApiService.close();
+    _liveApiService.close();
   }
 
   void dispose() {

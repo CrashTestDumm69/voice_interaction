@@ -1,4 +1,4 @@
-class RealtimeApiTools {
+class LiveApiTools {
   static const String changeVolumeToolName = 'change_volume';
   static const String changeVolumeToolDescription = 'Change the volume of the device';
   static const String changeVolumeToolParamName = 'volume';

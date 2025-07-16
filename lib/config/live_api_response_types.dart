@@ -1,4 +1,4 @@
-class RealtimeApiResponseTypes {
+class LiveApiResponseTypes {
   static const String sessionCreated = "session.created";
   static const String conversationItemCreated = "conversation.item.created";
   static const String outputAudioBufferStarted = "output_audio_buffer.started";

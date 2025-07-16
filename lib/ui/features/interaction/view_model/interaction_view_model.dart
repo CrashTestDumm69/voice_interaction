@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:voice_interaction/config/realtime_api_tools.dart';
+import 'package:voice_interaction/config/live_api_tools.dart';
 
-import 'package:voice_interaction/data/repositories/realtime_api_repository.dart';
+import 'package:voice_interaction/data/repositories/live_api_repository.dart';
 import 'package:voice_interaction/data/repositories/volume_repositroy.dart';
 
 part 'interaction_event.dart';
@@ -13,16 +13,16 @@ enum InteractionConnectionState { connected, connecting, disconnected }
 enum InteractionSpeechState { idle, speaking, listening }
 
 class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
-  final RealtimeApiRepository _realtimeApiRepository;
+  final LiveApiRepository _liveApiRepository;
   final VolumeRepositroy _volumeRepository;
 
   InteractionSpeechState _speechState = InteractionSpeechState.idle;
   bool _isMicMuted = false;
 
   InteractionViewModel({
-    required RealtimeApiRepository realtimeApiRepository,
+    required LiveApiRepository liveApiRepository,
     required VolumeRepositroy volumeRepository,
-  }) : _realtimeApiRepository = realtimeApiRepository,
+  }) : _liveApiRepository = liveApiRepository,
        _volumeRepository = volumeRepository,
        super(InteractionInitial()) {
     on<StartSession>((event, emit) {
@@ -30,12 +30,12 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
 
       onFunctionCall(functionName, arguments) async {
         debugPrint("Function called: $functionName with arguments: $arguments");
-        if (functionName == RealtimeApiTools.changeVolumeToolName) {
+        if (functionName == LiveApiTools.changeVolumeToolName) {
           final volume = arguments['volume'] as int;
           volume.clamp(0, 15);
           await _volumeRepository.setVolume(volume);
           return {"success": true, "data": "Volume set to $volume"};
-        } else if (functionName == RealtimeApiTools.getCurrentVolumeToolName) {
+        } else if (functionName == LiveApiTools.getCurrentVolumeToolName) {
           final currentVolume = await _volumeRepository.getVolume();
           return {"success": true, "data": currentVolume};
         } else {
@@ -77,7 +77,7 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
         debugPrint("Error in interaction: $error");
       }
 
-      _realtimeApiRepository.startSession(
+      _liveApiRepository.startSession(
         onSpeak: onSpeak,
         onConnect: onConnect,
         onDisconnect: onDisconnect,
@@ -125,7 +125,7 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
     });
 
     on<MuteMic>((event, emit) {
-      _realtimeApiRepository.muteMicrophone();
+      _liveApiRepository.muteMicrophone();
       _isMicMuted = true;
       emit(
         InteractionConnected(
@@ -136,7 +136,7 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
     });
 
     on<UnmuteMic>((event, emit) {
-      _realtimeApiRepository.unmuteMicrophone();
+      _liveApiRepository.unmuteMicrophone();
       _isMicMuted = false;
       emit(
         InteractionConnected(
@@ -147,7 +147,7 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
     });
 
     on<EndSession>((event, emit) {
-      _realtimeApiRepository.closeSession();
+      _liveApiRepository.closeSession();
       _speechState = InteractionSpeechState.idle;
       _isMicMuted = false;
       emit(InteractionDisconnected());
