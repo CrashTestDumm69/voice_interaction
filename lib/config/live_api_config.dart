@@ -18,13 +18,11 @@ Keep all responses:
 - Clear and caring
 """;
 
-  static String websocketUrl(String key) {
-    return "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=$key";
-  }
+  static String websocketUrl = "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent";
 
-  static const String model = "";
+  static const String model = "gemini-2.5-flash-preview-native-audio-dialog";
   static const int _maxOutputTokens = 4096;
-  static const List<String> _modalities = ["Audio"];
+  static const List<String> _modalities = ["AUDIO"];
   
   static const Map<String, dynamic> generationConfig = {
     "maxOutputTokens": _maxOutputTokens,

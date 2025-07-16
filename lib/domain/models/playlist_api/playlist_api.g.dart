@@ -21,7 +21,5 @@ Map<String, dynamic> _$PlaylistApiToJson(PlaylistApi instance) =>
       'id': instance.id,
       'versionId': instance.versionId,
       'contentType': instance.contentType,
-      'files': instance.files
-          .map((e) => e.toJson())
-          .toList(),
+      'files': instance.files,
     };
