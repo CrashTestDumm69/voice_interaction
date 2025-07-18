@@ -26,12 +26,8 @@ class LiveApiService {
     )?
     onFunctionCall,
   }) async {
-    final IOWebSocketChannel channel = IOWebSocketChannel.connect(
+    final WebSocketChannel channel = WebSocketChannel.connect(
       Uri.parse(LiveApiConfig.websocketUrl),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer AIzaSyDiADkvYGF5l0fRyjWLf9jp6mPfEZPQfAg"
-      }
     );
     print("Starting socket");
     channel.stream.listen(
@@ -40,8 +36,8 @@ class LiveApiService {
       onError: (err) => onError?.call(err)
     );
 
-    final msg = LiveApiMessage.setup(model: LiveApiConfig.model, prompt: LiveApiConfig.instructions).toJson();
-    print(msg.toString());
+    final msg = LiveApiMessage.setup(model: LiveApiConfig.model).toJson();
+    print(jsonEncode(msg));
     channel.sink.add(jsonEncode(msg));
   }
 
