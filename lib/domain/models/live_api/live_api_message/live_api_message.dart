@@ -1,34 +1,39 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:voice_interaction/domain/models/live_api/blob/blob.dart';
-import 'package:voice_interaction/domain/models/live_api/content/content.dart';
-import 'package:voice_interaction/domain/models/live_api/generate_client_content/generate_client_content.dart';
 
-import 'package:voice_interaction/domain/models/live_api/generate_content_setup/generate_content_setup.dart';
-import 'package:voice_interaction/domain/models/live_api/generate_realtime_input/generate_realtime_input.dart';
-import 'package:voice_interaction/domain/models/live_api/generation_config/generation_config.dart';
+import 'package:voice_interaction/domain/models/live_api/common_types/blob/blob.dart';
+import 'package:voice_interaction/domain/models/live_api/common_types/content/content.dart';
+import 'package:voice_interaction/domain/models/live_api/client_content/client_content.dart';
+import 'package:voice_interaction/domain/models/live_api/content_setup/content_setup.dart';
+import 'package:voice_interaction/domain/models/live_api/realtime_input/realtime_input.dart';
+import 'package:voice_interaction/domain/models/live_api/common_types/generation_config/generation_config.dart';
+import 'package:voice_interaction/domain/models/live_api/server_content/server_content.dart';
 
 part 'live_api_message.g.dart';
 
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 class LiveApiMessage {
-  GenerateContentSetup? setup;
-  GenerateClientContent? clientContent;
-  GenerateRealtimeInput? realtimeInput;
+  ContentSetup? setup;
+  ClientContent? clientContent;
+  RealtimeInput? realtimeInput;
+  Map? setupComplete;
+  ServerContent? serverContent;
 
   LiveApiMessage({
     this.setup,
     this.clientContent,
-    this.realtimeInput
+    this.realtimeInput,
+    this.setupComplete,
+    this.serverContent
   });
 
   factory LiveApiMessage.fromJson(Map<String, dynamic> json) => _$LiveApiMessageFromJson(json);
   Map<String, dynamic> toJson() => _$LiveApiMessageToJson(this);
 
-  factory LiveApiMessage.clientContent(Content content) => LiveApiMessage(clientContent: GenerateClientContent(turns: [content]));
+  factory LiveApiMessage.clientContent(Content content) => LiveApiMessage(clientContent: ClientContent(turns: [content]));
   
   factory LiveApiMessage.setup({required String model, String? prompt}) {
     return LiveApiMessage(
-      setup: GenerateContentSetup(
+      setup: ContentSetup(
         model: model,
         systemInstruction: prompt,
         generationConfig: GenerationConfig()
@@ -37,9 +42,9 @@ class LiveApiMessage {
   }
   
   factory LiveApiMessage.realtimeInput({String? audio, String? video, String? text}) {
-    GenerateRealtimeInput realtimeInput = GenerateRealtimeInput();
+    RealtimeInput realtimeInput = RealtimeInput();
     if (audio != null) {
-      realtimeInput.audio = Blob(mimeType: "audio/mpeg", data: audio);
+      realtimeInput.audio = Blob(mimeType: "audio/pcm", data: audio);
     }
 
     if (video != null) {

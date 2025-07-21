@@ -11,20 +11,25 @@ LiveApiMessage _$LiveApiMessageFromJson(Map<String, dynamic> json) =>
       setup:
           json['setup'] == null
               ? null
-              : GenerateContentSetup.fromJson(
-                json['setup'] as Map<String, dynamic>,
-              ),
+              : ContentSetup.fromJson(json['setup'] as Map<String, dynamic>),
       clientContent:
           json['clientContent'] == null
               ? null
-              : GenerateClientContent.fromJson(
+              : ClientContent.fromJson(
                 json['clientContent'] as Map<String, dynamic>,
               ),
       realtimeInput:
           json['realtimeInput'] == null
               ? null
-              : GenerateRealtimeInput.fromJson(
+              : RealtimeInput.fromJson(
                 json['realtimeInput'] as Map<String, dynamic>,
+              ),
+      setupComplete: json['setupComplete'] as Map<String, dynamic>?,
+      serverContent:
+          json['serverContent'] == null
+              ? null
+              : ServerContent.fromJson(
+                json['serverContent'] as Map<String, dynamic>,
               ),
     );
 
@@ -35,4 +40,7 @@ Map<String, dynamic> _$LiveApiMessageToJson(LiveApiMessage instance) =>
         'clientContent': value,
       if (instance.realtimeInput?.toJson() case final value?)
         'realtimeInput': value,
+      if (instance.setupComplete case final value?) 'setupComplete': value,
+      if (instance.serverContent?.toJson() case final value?)
+        'serverContent': value,
     };

@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:voice_interaction/domain/models/live_api/pre_built_voice_config/pre_built_voice_config.dart';
+import 'package:voice_interaction/domain/models/live_api/common_types/pre_built_voice_config/pre_built_voice_config.dart';
 
 part 'voice_config.g.dart';
 

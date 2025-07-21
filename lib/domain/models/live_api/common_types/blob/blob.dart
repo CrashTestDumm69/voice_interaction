@@ -9,7 +9,7 @@ class Blob {
 
   Blob({
     required this.mimeType,
-    required this.data
+    required this.data,
   });
 
   factory Blob.fromJson(Map<String, dynamic> json) => _$BlobFromJson(json);

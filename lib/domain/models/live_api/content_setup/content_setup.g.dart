@@ -1,14 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'generate_content_setup.dart';
+part of 'content_setup.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-GenerateContentSetup _$GenerateContentSetupFromJson(
-  Map<String, dynamic> json,
-) => GenerateContentSetup(
+ContentSetup _$ContentSetupFromJson(Map<String, dynamic> json) => ContentSetup(
   model: json['model'] as String,
   generationConfig:
       json['generationConfig'] == null
@@ -19,8 +17,8 @@ GenerateContentSetup _$GenerateContentSetupFromJson(
   systemInstruction: json['systemInstruction'] as String?,
 );
 
-Map<String, dynamic> _$GenerateContentSetupToJson(
-  GenerateContentSetup instance,
+Map<String, dynamic> _$ContentSetupToJson(
+  ContentSetup instance,
 ) => <String, dynamic>{
   'model': instance.model,
   if (instance.generationConfig?.toJson() case final value?)
