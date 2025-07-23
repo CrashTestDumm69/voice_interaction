@@ -7,16 +7,16 @@ part of 'voice_config.dart';
 // **************************************************************************
 
 VoiceConfig _$VoiceConfigFromJson(Map<String, dynamic> json) => VoiceConfig(
-  preBuiltVoiceConfig:
-      json['preBuiltVoiceConfig'] == null
+  prebuiltVoiceConfig:
+      json['prebuiltVoiceConfig'] == null
           ? null
-          : PreBuiltVoiceConfig.fromJson(
-            json['preBuiltVoiceConfig'] as Map<String, dynamic>,
+          : PrebuiltVoiceConfig.fromJson(
+            json['prebuiltVoiceConfig'] as Map<String, dynamic>,
           ),
 );
 
 Map<String, dynamic> _$VoiceConfigToJson(VoiceConfig instance) =>
     <String, dynamic>{
-      if (instance.preBuiltVoiceConfig?.toJson() case final value?)
-        'preBuiltVoiceConfig': value,
+      if (instance.prebuiltVoiceConfig?.toJson() case final value?)
+        'prebuiltVoiceConfig': value,
     };

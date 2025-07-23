@@ -14,14 +14,17 @@ ContentSetup _$ContentSetupFromJson(Map<String, dynamic> json) => ContentSetup(
           : GenerationConfig.fromJson(
             json['generationConfig'] as Map<String, dynamic>,
           ),
-  systemInstruction: json['systemInstruction'] as String?,
+  systemInstruction:
+      json['systemInstruction'] == null
+          ? null
+          : Content.fromJson(json['systemInstruction'] as Map<String, dynamic>),
 );
 
-Map<String, dynamic> _$ContentSetupToJson(
-  ContentSetup instance,
-) => <String, dynamic>{
-  'model': instance.model,
-  if (instance.generationConfig?.toJson() case final value?)
-    'generationConfig': value,
-  if (instance.systemInstruction case final value?) 'systemInstruction': value,
-};
+Map<String, dynamic> _$ContentSetupToJson(ContentSetup instance) =>
+    <String, dynamic>{
+      'model': instance.model,
+      if (instance.generationConfig?.toJson() case final value?)
+        'generationConfig': value,
+      if (instance.systemInstruction?.toJson() case final value?)
+        'systemInstruction': value,
+    };

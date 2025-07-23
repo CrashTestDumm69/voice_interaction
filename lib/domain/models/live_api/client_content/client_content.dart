@@ -7,6 +7,8 @@ part 'client_content.g.dart';
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 class ClientContent {
   List<Content>? turns;
+
+  @JsonKey(name: "turn_complete")
   bool? turnComplete;
 
   ClientContent({
@@ -17,5 +19,5 @@ class ClientContent {
   factory ClientContent.fromJson(Map<String, dynamic> json) => _$ClientContentFromJson(json);
   Map<String, dynamic> toJson() => _$ClientContentToJson(this);
 
-  factory ClientContent.clientText(String msg) => ClientContent(turns: [Content.text(msg, "user")]);
+  factory ClientContent.clientText(String msg) => ClientContent(turns: [Content.text(msg)]);
 }

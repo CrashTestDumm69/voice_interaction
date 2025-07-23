@@ -1,8 +1,11 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:voice_interaction/domain/models/live_api/common_types/blob/blob.dart';
-import 'package:voice_interaction/domain/models/live_api/common_types/content/content.dart';
 import 'package:voice_interaction/domain/models/live_api/client_content/client_content.dart';
+import 'package:voice_interaction/domain/models/live_api/common_types/content/content.dart';
+import 'package:voice_interaction/domain/models/live_api/common_types/prebuilt_voice_config/prebuilt_voice_config.dart';
+import 'package:voice_interaction/domain/models/live_api/common_types/speech_config/speech_config.dart';
+import 'package:voice_interaction/domain/models/live_api/common_types/voice_config/voice_config.dart';
 import 'package:voice_interaction/domain/models/live_api/content_setup/content_setup.dart';
 import 'package:voice_interaction/domain/models/live_api/realtime_input/realtime_input.dart';
 import 'package:voice_interaction/domain/models/live_api/common_types/generation_config/generation_config.dart';
@@ -29,14 +32,24 @@ class LiveApiMessage {
   factory LiveApiMessage.fromJson(Map<String, dynamic> json) => _$LiveApiMessageFromJson(json);
   Map<String, dynamic> toJson() => _$LiveApiMessageToJson(this);
 
-  factory LiveApiMessage.clientContent(Content content) => LiveApiMessage(clientContent: ClientContent(turns: [content]));
+  factory LiveApiMessage.clientText(String msg) => LiveApiMessage(clientContent: ClientContent.clientText(msg));
   
-  factory LiveApiMessage.setup({required String model, String? prompt}) {
+  factory LiveApiMessage.setup({required String model, String? prompt, String? voice, String? languageCode}) {
     return LiveApiMessage(
       setup: ContentSetup(
         model: model,
-        systemInstruction: prompt,
-        generationConfig: GenerationConfig()
+        systemInstruction: prompt == null ? null : Content.prompt(prompt),
+        generationConfig: GenerationConfig(
+          maxOutputTokens: 4096,
+          speechConfig: SpeechConfig(
+            voiceConfig: VoiceConfig(
+              prebuiltVoiceConfig: PrebuiltVoiceConfig(
+                voiceName: voice ?? "zephyr"
+              ),
+            ),
+            languageCode: languageCode
+          )
+        )
       ),
     );
   }
@@ -44,7 +57,7 @@ class LiveApiMessage {
   factory LiveApiMessage.realtimeInput({String? audio, String? video, String? text}) {
     RealtimeInput realtimeInput = RealtimeInput();
     if (audio != null) {
-      realtimeInput.audio = Blob(mimeType: "audio/pcm", data: audio);
+      realtimeInput.audio = Blob(mimeType: "audio/pcm;rate=24000", data: audio);
     }
 
     if (video != null) {

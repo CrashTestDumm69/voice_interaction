@@ -19,16 +19,7 @@ class LiveApiRepository {
     required Future<Map<String, dynamic>> Function(String functionName, Map<String, dynamic> arguments)? onFunctionCall
   }) async {
     final apiKey = _dotenvService.getApiKey();
-    await _liveApiService.initConnection(
-      apiKey,
-      onConnect: onConnect,
-      onDisconnect: onDisconnect,
-      onSpeak: onSpeak,
-      onListen: onListen,
-      onMessage: onMessage,
-      onError: onError,
-      onFunctionCall: onFunctionCall
-    );
+    await _liveApiService.initConnection();
   }
 
   void muteMicrophone() {

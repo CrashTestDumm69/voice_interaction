@@ -15,6 +15,7 @@ class Part {
 
   Part({
     this.text,
+    this.inlineData,
     this.functionCall,
     this.functionResponse
   });

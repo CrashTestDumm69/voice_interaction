@@ -7,14 +7,14 @@ part of 'content.dart';
 // **************************************************************************
 
 Content _$ContentFromJson(Map<String, dynamic> json) => Content(
+  role: json['role'] as String?,
   parts:
       (json['parts'] as List<dynamic>)
           .map((e) => Part.fromJson(e as Map<String, dynamic>))
           .toList(),
-  role: json['role'] as String,
 );
 
 Map<String, dynamic> _$ContentToJson(Content instance) => <String, dynamic>{
+  if (instance.role case final value?) 'role': value,
   'parts': instance.parts.map((e) => e.toJson()).toList(),
-  'role': instance.role,
 };

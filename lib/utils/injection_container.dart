@@ -41,7 +41,8 @@ Future<void> initializeDeps() async {
   await sl<DotenvService>().loadEnv();
 
   // Live Api
-  sl.registerSingleton(LiveApiService(dio: sl()));
+  sl.registerSingleton(LiveApiService());
+  sl<LiveApiService>().initConnection();
   sl.registerSingleton(LiveApiRepository(liveApiService: sl(), dotenvService: sl()));
   sl.registerSingleton(InteractionViewModel(volumeRepository: sl(), liveApiRepository: sl()));
 

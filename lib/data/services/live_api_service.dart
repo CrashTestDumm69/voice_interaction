@@ -1,44 +1,96 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
+import 'package:flutter_voice_engine/flutter_voice_engine.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 import 'package:voice_interaction/config/live_api_config.dart';
 import 'package:voice_interaction/domain/models/live_api/live_api_message/live_api_message.dart';
 import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class LiveApiService {
-  final Dio _dio;
+  final _voiceEngine = FlutterVoiceEngine();
 
-  LiveApiService({required Dio dio})
-      : _dio = dio;
+  IOWebSocketChannel? _channel;
 
-  Future<void> initConnection(
-    String apiKey, {
-    void Function()? onSpeak,
-    void Function()? onListen,
-    void Function()? onConnect,
-    void Function()? onDisconnect,
-    void Function(dynamic message)? onMessage,
-    void Function(dynamic error)? onError,
-    Future<Map<String, dynamic>> Function(
-      String functionName,
-      Map<String, dynamic> args,
-    )?
-    onFunctionCall,
-  }) async {
-    final WebSocketChannel channel = WebSocketChannel.connect(
+  final StreamController<Uint8List> _speakerStream = StreamController<Uint8List>.broadcast();
+
+  Future<void> _initAudio() async {
+    await Permission.microphone.request();
+    
+    _voiceEngine.audioConfig = AudioConfig(
+      sampleRate: 24000,
+      channels: 1,
+      bitDepth: 16,
+      bufferSize: 2048,
+      amplitudeThreshold: 0.05,
+      enableAEC: true
+    );
+
+    _voiceEngine.sessionConfig = AudioSessionConfig(
+      category: AudioCategory.playAndRecord,
+      mode: AudioMode.voiceChat,
+      options: const {AudioOption.defaultToSpeaker, AudioOption.duckOthers},
+      preferredBufferDuration: 0.005
+    );
+
+    await _voiceEngine.initialize();
+  }
+
+  Future<void> initConnection() async {
+    _channel = IOWebSocketChannel.connect(
       Uri.parse(LiveApiConfig.websocketUrl),
     );
+    await _initAudio();
     print("Starting socket");
-    channel.stream.listen(
-      (msg) => onMessage?.call(msg),
-      onDone: () => onDisconnect?.call(),
-      onError: (err) => onError?.call(err)
+    _channel!.stream.listen(
+      (data) {
+        final msg = utf8.decode(data);
+        final structuredMsg = LiveApiMessage.fromJson(jsonDecode(msg));
+        print("\n\nMessage - $msg\n\n");
+
+        if (structuredMsg.setupComplete != null) {
+          print("Setup done");
+        } else if (structuredMsg.serverContent != null) {
+          final serverContent = structuredMsg.serverContent;
+          if (serverContent!.modelTurn != null) {
+            final model = serverContent.modelTurn;
+            final parts = model!.parts;
+            for (var part in parts) {
+              if (part.inlineData != null) {
+                final data = part.inlineData!.data;
+                final sound = base64Decode(data);
+                _speakerStream.add(sound);
+              }
+            }
+          } else if (serverContent.turnComplete != null) {
+            print("Turn completion - ${serverContent.turnComplete}");
+          } else if (serverContent.generationComplete != null) {
+            print("Gen completion - ${serverContent.generationComplete}");
+          }
+        }
+      },
+      onDone: () => print("Done"),
+      onError: (err) => print("Error - $err")
     );
 
-    final msg = LiveApiMessage.setup(model: LiveApiConfig.model).toJson();
+
+    _voiceEngine.audioChunkStream.listen((audio) {
+      final micInput = LiveApiMessage.realtimeInput(audio: base64Encode(audio));
+      _channel?.sink.add(jsonEncode(micInput));
+    });
+
+    _speakerStream.stream.listen((audio) async {
+      await _voiceEngine.playAudioChunk(audio);
+    });
+
+    await _voiceEngine.startRecording();
+    print("Start speaking");
+
+    final msg = LiveApiMessage.setup(model: LiveApiConfig.model, languageCode: "ml-IN", prompt: "Always speak in malayaalam.");
     print(jsonEncode(msg));
-    channel.sink.add(jsonEncode(msg));
+    _channel!.sink.add(jsonEncode(msg));
   }
 
   void returnFunctionCall(Map<String, dynamic> msg) async {}

@@ -12,12 +12,12 @@ ClientContent _$ClientContentFromJson(Map<String, dynamic> json) =>
           (json['turns'] as List<dynamic>?)
               ?.map((e) => Content.fromJson(e as Map<String, dynamic>))
               .toList(),
-      turnComplete: json['turnComplete'] as bool? ?? true,
+      turnComplete: json['turn_complete'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$ClientContentToJson(ClientContent instance) =>
     <String, dynamic>{
       if (instance.turns?.map((e) => e.toJson()).toList() case final value?)
         'turns': value,
-      if (instance.turnComplete case final value?) 'turnComplete': value,
+      if (instance.turnComplete case final value?) 'turn_complete': value,
     };

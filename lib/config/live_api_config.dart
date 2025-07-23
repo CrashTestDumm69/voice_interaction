@@ -3,7 +3,7 @@ class LiveApiConfig {
 
   static String websocketUrl = "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent?key=AIzaSyBu0TTorN6Pft6AcKKXviADF2Lsp14evzc";
 
-  static const String model = "gemini-2.5-flash-preview-native-audio-dialog";
+  static const String model = "models/gemini-2.0-flash-live-001";
   static const int _maxOutputTokens = 4096;
   static const List<String> _modalities = ["AUDIO"];
   
