@@ -17,25 +17,21 @@ GenerationConfig _$GenerationConfigFromJson(Map<String, dynamic> json) =>
       temperature: (json['temperature'] as num?)?.toInt(),
       topP: (json['topP'] as num?)?.toInt(),
       topK: (json['topK'] as num?)?.toInt(),
-      speechConfig:
-          json['speechConfig'] == null
-              ? null
-              : SpeechConfig.fromJson(
-                json['speechConfig'] as Map<String, dynamic>,
-              ),
+      speechConfig: json['speechConfig'] == null
+          ? null
+          : SpeechConfig.fromJson(json['speechConfig'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$GenerationConfigToJson(
-  GenerationConfig instance,
-) => <String, dynamic>{
-  if (instance.responseModalities?.map((e) => _$ModalityEnumMap[e]!).toList()
-      case final value?)
-    'responseModalities': value,
-  if (instance.maxOutputTokens case final value?) 'maxOutputTokens': value,
-  if (instance.temperature case final value?) 'temperature': value,
-  if (instance.topP case final value?) 'topP': value,
-  if (instance.topK case final value?) 'topK': value,
-  if (instance.speechConfig?.toJson() case final value?) 'speechConfig': value,
-};
+Map<String, dynamic> _$GenerationConfigToJson(GenerationConfig instance) =>
+    <String, dynamic>{
+      'responseModalities': ?instance.responseModalities
+          ?.map((e) => _$ModalityEnumMap[e]!)
+          .toList(),
+      'maxOutputTokens': ?instance.maxOutputTokens,
+      'temperature': ?instance.temperature,
+      'topP': ?instance.topP,
+      'topK': ?instance.topK,
+      'speechConfig': ?instance.speechConfig?.toJson(),
+    };
 
 const _$ModalityEnumMap = {Modality.image: 'IMAGE', Modality.audio: 'AUDIO'};

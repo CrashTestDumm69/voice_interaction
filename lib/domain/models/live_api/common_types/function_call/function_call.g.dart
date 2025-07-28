@@ -14,7 +14,7 @@ FunctionCall _$FunctionCallFromJson(Map<String, dynamic> json) => FunctionCall(
 
 Map<String, dynamic> _$FunctionCallToJson(FunctionCall instance) =>
     <String, dynamic>{
-      if (instance.id case final value?) 'id': value,
+      'id': ?instance.id,
       'name': instance.name,
-      if (instance.args case final value?) 'args': value,
+      'args': ?instance.args,
     };

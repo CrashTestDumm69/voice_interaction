@@ -8,16 +8,14 @@ part of 'client_content.dart';
 
 ClientContent _$ClientContentFromJson(Map<String, dynamic> json) =>
     ClientContent(
-      turns:
-          (json['turns'] as List<dynamic>?)
-              ?.map((e) => Content.fromJson(e as Map<String, dynamic>))
-              .toList(),
+      turns: (json['turns'] as List<dynamic>?)
+          ?.map((e) => Content.fromJson(e as Map<String, dynamic>))
+          .toList(),
       turnComplete: json['turn_complete'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$ClientContentToJson(ClientContent instance) =>
     <String, dynamic>{
-      if (instance.turns?.map((e) => e.toJson()).toList() case final value?)
-        'turns': value,
-      if (instance.turnComplete case final value?) 'turn_complete': value,
+      'turns': ?instance.turns?.map((e) => e.toJson()).toList(),
+      'turn_complete': ?instance.turnComplete,
     };

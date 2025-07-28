@@ -15,7 +15,7 @@ FunctionResponse _$FunctionResponseFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$FunctionResponseToJson(FunctionResponse instance) =>
     <String, dynamic>{
-      if (instance.id case final value?) 'id': value,
+      'id': ?instance.id,
       'name': instance.name,
       'response': instance.response,
     };
