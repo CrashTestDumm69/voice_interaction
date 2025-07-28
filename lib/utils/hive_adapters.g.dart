@@ -100,3 +100,35 @@ class PlaylistFileAdapter extends TypeAdapter<PlaylistFile> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+class SettingsAdapter extends TypeAdapter<Settings> {
+  @override
+  final typeId = 2;
+
+  @override
+  Settings read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Settings(initialLocation: fields[0] as String);
+  }
+
+  @override
+  void write(BinaryWriter writer, Settings obj) {
+    writer
+      ..writeByte(1)
+      ..writeByte(0)
+      ..write(obj.initialLocation);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SettingsAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}

@@ -38,9 +38,9 @@ class LiveApiService {
     await _voiceEngine.initialize();
   }
 
-  Future<void> initConnection() async {
+  Future<void> initConnection(String apiKey) async {
     _channel = IOWebSocketChannel.connect(
-      Uri.parse(LiveApiConfig.websocketUrl),
+      Uri.parse("${LiveApiConfig.websocketUrl}?key=$apiKey"),
     );
     await _initAudio();
     print("Starting socket");

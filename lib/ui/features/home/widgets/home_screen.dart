@@ -12,8 +12,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<MenuTileWidget> menuItems = [
       MenuTileWidget(icon: Icons.mic_rounded, label: "Interaction", color: Colors.red, onTap: () => context.push(Routes.interaction)),
-      MenuTileWidget(icon: Icons.search, label: "Playlists", color: Colors.deepPurple, onTap: () => context.push(Routes.mediaPlayer)),
-      MenuTileWidget(icon: Icons.settings, label: "Start detection", color: Colors.yellow.shade700, onTap: () {}),
+      MenuTileWidget(icon: Icons.search, label: "Playlists", color: Colors.green, onTap: () => context.go(Routes.mediaPlayer)),
+      MenuTileWidget(icon: Icons.settings, label: "Settings", color: Colors.yellow.shade700, onTap: () => context.push(Routes.settings)),
       MenuTileWidget(icon: Icons.info, label: "Stop detection", color: Colors.blueAccent, onTap: () {}),
     ];
 

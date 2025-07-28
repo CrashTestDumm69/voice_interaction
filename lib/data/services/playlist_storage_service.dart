@@ -2,26 +2,20 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:voice_interaction/domain/models/playlist/playlist.dart';
 import 'package:voice_interaction/domain/models/playlist/playlist_file.dart';
-import 'package:voice_interaction/utils/hive_registrar.g.dart';
 
 class PlaylistStorageService {
   static const String _playlistBoxKey = "playlist";
   static const String _announcementBoxKey = "announcement";
 
-  late final Box _playlistBox;
+  late final Box<Playlist> _playlistBox;
 
   final Dio _dio;
 
   PlaylistStorageService({required Dio dio}) : _dio = dio;
 
   Future<void> initService() async {
-    final directory = await getApplicationSupportDirectory();
-    Hive
-      ..init("${directory.path}/boxes")
-      ..registerAdapters();
     _playlistBox = await Hive.openBox<Playlist>(_playlistBoxKey);
   }
 
@@ -29,7 +23,6 @@ class PlaylistStorageService {
     await _playlistBox.close();
   }
 
-  // Updated store function with simple progress callbacks
   Future<void> store(
     Playlist playlist, {
     Function(int currentFile, int totalFiles, double percent)? onProgress,
@@ -42,15 +35,14 @@ class PlaylistStorageService {
       return;
     }
 
-    // Calculate total files to download
     final List<String> filesToDownload = [];
-    
+
     for (PlaylistFile file in playlist.files) {
       final localFile = File(file.filePath);
       if (!(await localFile.exists())) {
         filesToDownload.add(file.filePath);
       }
-      
+
       if (file.isAudio && file.hasBackgroundImage) {
         final imageFile = File(file.imageFilePath!);
         if (!(await imageFile.exists())) {
@@ -63,19 +55,18 @@ class PlaylistStorageService {
     if (totalFiles == 0) return;
 
     int currentFile = 0;
-    
+
     for (PlaylistFile file in playlist.files) {
-      // Download main file
       final localFile = File(file.filePath);
       if (!(await localFile.exists())) {
         currentFile++;
         await _dio.download(
-          file.fileUrl, 
+          file.fileUrl,
           file.filePath,
           onReceiveProgress: (count, total) {
             final percent = ((count / total) * 100);
             onProgress?.call(currentFile, totalFiles, percent);
-          }
+          },
         );
       }
 
@@ -84,12 +75,12 @@ class PlaylistStorageService {
         if (!(await imageFile.exists())) {
           currentFile++;
           await _dio.download(
-            file.imageUrl!, 
+            file.imageUrl!,
             file.imageFilePath,
             onReceiveProgress: (count, total) {
               final percent = ((count / total) * 100);
               onProgress?.call(currentFile, totalFiles, percent);
-            }
+            },
           );
         }
       }
@@ -104,39 +95,39 @@ class PlaylistStorageService {
   Future<Playlist?> getCurrentAnnouncement() async {
     final Playlist? announcement = _playlistBox.get(_announcementBoxKey);
     return announcement;
-  } 
+  }
 
   Future<void> deletePlaylist() async {
     final Playlist? currentPlaylist = await getCurrentPlaylist();
-    
+
     if (currentPlaylist == null) {
       return;
     }
-    
+
     for (final PlaylistFile file in currentPlaylist.files) {
       final localFile = File(file.filePath);
       if (await localFile.exists()) {
         await localFile.delete();
       }
     }
-    
+
     await _playlistBox.delete(_playlistBoxKey);
   }
 
   Future<void> deleteAnnouncement() async {
     final Playlist? currentAnnouncement = await getCurrentAnnouncement();
-    
+
     if (currentAnnouncement == null) {
       return;
     }
-    
+
     for (final PlaylistFile file in currentAnnouncement.files) {
       final localFile = File(file.filePath);
       if (await localFile.exists()) {
         await localFile.delete();
       }
     }
-    
+
     await _playlistBox.delete(_announcementBoxKey);
   }
 
@@ -154,7 +145,7 @@ class PlaylistStorageService {
       }
 
       if (file.isAudio && file.hasBackgroundImage) {
-        if(!await File(file.imageFilePath!).exists()) {
+        if (!await File(file.imageFilePath!).exists()) {
           return true;
         }
       }
@@ -177,7 +168,7 @@ class PlaylistStorageService {
       }
 
       if (file.isAudio && file.hasBackgroundImage) {
-        if(!await File(file.imageFilePath!).exists()) {
+        if (!await File(file.imageFilePath!).exists()) {
           return true;
         }
       }

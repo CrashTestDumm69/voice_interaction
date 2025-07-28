@@ -6,6 +6,6 @@ class DotenvService {
   }
 
   String getApiKey() {
-    return dotenv.env["OPENAI_API_KEY"] ?? "";
+    return dotenv.env["GEMINI_API_KEY"] ?? "";
   }
 }

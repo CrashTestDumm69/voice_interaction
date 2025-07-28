@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
+import 'package:voice_interaction/routing/routes.dart';
 import 'package:voice_interaction/ui/features/playlist/view_model/media_player_view_model.dart';
 
 class MediaPlayerScreen extends StatefulWidget {
@@ -389,7 +392,6 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
               _errorMessage = null;
             });
             
-            // Stop all playback
             _playlistPlayer.stop();
             _announcementPlayer.stop();
             _announcementTimer?.cancel();
@@ -412,7 +414,6 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
               _errorMessage = state.message;
             });
             
-            // Stop all playback on error
             _playlistPlayer.stop();
             _announcementPlayer.stop();
             _announcementTimer?.cancel();
@@ -421,7 +422,19 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
             });
           }
         },
-        child: _buildCurrentState(),
+        child: GestureDetector(
+          onScaleUpdate: (details) {
+            if (details.pointerCount == 2 && details.scale < 1.0) {
+              context.go(Routes.home);
+            }
+          },
+          child: Container(
+            color: Colors.transparent,
+            width: double.maxFinite,
+            height: double.maxFinite,
+            child: _buildCurrentState()
+          )
+        ),
       ),
     );
   }

@@ -127,7 +127,7 @@ class PlaylistRepository {
         });
       }
 
-      await loadPlaylists();
+      await _loadPlaylists();
 
     } catch (e) {
       rethrow;
@@ -145,7 +145,12 @@ class PlaylistRepository {
     }
   }
 
-  Future<void> loadPlaylists() async {
+  Future<void> init() async {
+    await _playlistStorageService.initService();
+    await _loadPlaylists();
+  }
+
+  Future<void> _loadPlaylists() async {
     _currentPlaylist = await _playlistStorageService.getCurrentPlaylist();
     _currentAnnouncement = await _playlistStorageService.getCurrentAnnouncement();
   }

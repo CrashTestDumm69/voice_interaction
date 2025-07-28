@@ -16,10 +16,10 @@ class LiveApiRepository {
     void Function()? onDisconnect,
     void Function(dynamic message)? onMessage,
     void Function(dynamic error)? onError,
-    required Future<Map<String, dynamic>> Function(String functionName, Map<String, dynamic> arguments)? onFunctionCall
+    Future<Map<String, dynamic>> Function(String functionName, Map<String, dynamic> arguments)? onFunctionCall
   }) async {
     final apiKey = _dotenvService.getApiKey();
-    await _liveApiService.initConnection();
+    await _liveApiService.initConnection(apiKey);
   }
 
   void muteMicrophone() {

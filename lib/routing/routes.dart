@@ -3,4 +3,5 @@ class Routes {
   static const interaction = "/interaction";
   static const update = "/update";
   static const mediaPlayer = "/media_player";
+  static const settings = "/settings";
 }

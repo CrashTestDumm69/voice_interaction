@@ -22,7 +22,7 @@ class MenuTileWidget extends StatelessWidget {
       onTap: onTap,
       child: Card(
         elevation: 4,
-        color: Colors.white.withValues(alpha: 0.1),
+        color: Colors.white.withValues(alpha: 0.2),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
