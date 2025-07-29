@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:voice_interaction/domain/models/live_api/common_types/blob/blob.dart';
+import 'package:voice_interaction/domain/models/gemini_api_common_types/blob/blob.dart';
 
 part 'realtime_input.g.dart';
 

@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:voice_interaction/domain/models/live_api/common_types/prebuilt_voice_config/prebuilt_voice_config.dart';
+import 'package:voice_interaction/domain/models/gemini_api_common_types/prebuilt_voice_config/prebuilt_voice_config.dart';
 
 part 'voice_config.g.dart';
 

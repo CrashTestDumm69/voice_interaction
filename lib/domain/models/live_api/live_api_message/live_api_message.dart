@@ -1,14 +1,14 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:voice_interaction/domain/models/live_api/common_types/blob/blob.dart';
+import 'package:voice_interaction/domain/models/gemini_api_common_types/blob/blob.dart';
 import 'package:voice_interaction/domain/models/live_api/client_content/client_content.dart';
-import 'package:voice_interaction/domain/models/live_api/common_types/content/content.dart';
-import 'package:voice_interaction/domain/models/live_api/common_types/prebuilt_voice_config/prebuilt_voice_config.dart';
-import 'package:voice_interaction/domain/models/live_api/common_types/speech_config/speech_config.dart';
-import 'package:voice_interaction/domain/models/live_api/common_types/voice_config/voice_config.dart';
+import 'package:voice_interaction/domain/models/gemini_api_common_types/content/content.dart';
+import 'package:voice_interaction/domain/models/gemini_api_common_types/prebuilt_voice_config/prebuilt_voice_config.dart';
+import 'package:voice_interaction/domain/models/gemini_api_common_types/speech_config/speech_config.dart';
+import 'package:voice_interaction/domain/models/gemini_api_common_types/voice_config/voice_config.dart';
 import 'package:voice_interaction/domain/models/live_api/content_setup/content_setup.dart';
 import 'package:voice_interaction/domain/models/live_api/realtime_input/realtime_input.dart';
-import 'package:voice_interaction/domain/models/live_api/common_types/generation_config/generation_config.dart';
+import 'package:voice_interaction/domain/models/gemini_api_common_types/generation_config/generation_config.dart';
 import 'package:voice_interaction/domain/models/live_api/server_content/server_content.dart';
 
 part 'live_api_message.g.dart';
