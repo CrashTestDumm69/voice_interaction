@@ -13,7 +13,7 @@ GenerationConfig _$GenerationConfigFromJson(Map<String, dynamic> json) =>
               ?.map((e) => $enumDecode(_$ModalityEnumMap, e))
               .toList() ??
           const [Modality.audio],
-      maxOutputTokens: (json['maxOutputTokens'] as num?)?.toInt() ?? 4096,
+      maxOutputTokens: (json['maxOutputTokens'] as num?)?.toInt(),
       temperature: (json['temperature'] as num?)?.toInt(),
       topP: (json['topP'] as num?)?.toInt(),
       topK: (json['topK'] as num?)?.toInt(),

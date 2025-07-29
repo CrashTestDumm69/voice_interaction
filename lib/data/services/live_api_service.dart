@@ -88,7 +88,12 @@ class LiveApiService {
     await _voiceEngine.startRecording();
     print("Start speaking");
 
-    final msg = LiveApiMessage.setup(model: LiveApiConfig.model, languageCode: "ml-IN", prompt: "Always speak in malayaalam.");
+    final msg = LiveApiMessage.setup(
+      model: LiveApiConfig.model,
+      voice: "zephyr",
+      languageCode: "ml-IN",
+      prompt: "Always speak in malayaalam."
+    );
     print(jsonEncode(msg));
     _channel!.sink.add(jsonEncode(msg));
   }

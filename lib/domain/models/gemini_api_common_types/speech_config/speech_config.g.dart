@@ -7,14 +7,14 @@ part of 'speech_config.dart';
 // **************************************************************************
 
 SpeechConfig _$SpeechConfigFromJson(Map<String, dynamic> json) => SpeechConfig(
-  voiceConfig: json['voiceConfig'] == null
-      ? null
-      : VoiceConfig.fromJson(json['voiceConfig'] as Map<String, dynamic>),
-  languageCode: json['languageCode'] as String?,
+  voiceConfig: VoiceConfig.fromJson(
+    json['voiceConfig'] as Map<String, dynamic>,
+  ),
+  languageCode: json['languageCode'] as String,
 );
 
 Map<String, dynamic> _$SpeechConfigToJson(SpeechConfig instance) =>
     <String, dynamic>{
-      'voiceConfig': ?instance.voiceConfig?.toJson(),
-      'languageCode': ?instance.languageCode,
+      'voiceConfig': instance.voiceConfig.toJson(),
+      'languageCode': instance.languageCode,
     };

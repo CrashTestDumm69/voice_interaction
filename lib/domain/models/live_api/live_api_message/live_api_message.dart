@@ -34,17 +34,17 @@ class LiveApiMessage {
 
   factory LiveApiMessage.clientText(String msg) => LiveApiMessage(clientContent: ClientContent.clientText(msg));
   
-  factory LiveApiMessage.setup({required String model, String? prompt, String? voice, String? languageCode}) {
+  factory LiveApiMessage.setup({required String model, required String voice, required String languageCode, required String prompt}) {
     return LiveApiMessage(
       setup: ContentSetup(
         model: model,
-        systemInstruction: prompt == null ? null : Content.prompt(prompt),
+        systemInstruction: Content.prompt(prompt),
         generationConfig: GenerationConfig(
           maxOutputTokens: 4096,
           speechConfig: SpeechConfig(
             voiceConfig: VoiceConfig(
               prebuiltVoiceConfig: PrebuiltVoiceConfig(
-                voiceName: voice ?? "zephyr"
+                voiceName: voice
               ),
             ),
             languageCode: languageCode

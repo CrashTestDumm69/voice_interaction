@@ -23,7 +23,7 @@ class GenerationConfig {
 
   GenerationConfig({
     this.responseModalities = const [Modality.audio],
-    this.maxOutputTokens = 4096,
+    this.maxOutputTokens,
     this.temperature,
     this.topP,
     this.topK,

@@ -5,6 +5,7 @@ import 'package:voice_interaction/ui/features/home/widgets/home_screen.dart';
 import 'package:voice_interaction/ui/features/interaction/widgets/interaction_screen.dart';
 import 'package:voice_interaction/ui/features/playlist/widgets/media_player_screen.dart';
 import 'package:voice_interaction/ui/features/settings/widgets/settings_screen.dart';
+import 'package:voice_interaction/ui/features/tts/widgets/tts_screen.dart';
 import 'package:voice_interaction/ui/features/update/widgets/update_screen.dart';
 import 'package:voice_interaction/utils/injection_container.dart';
 
@@ -32,6 +33,10 @@ GoRouter router({required String initialLocation}) => GoRouter(
     GoRoute(
       path: Routes.settings,
       builder: (context, state) => SettingsScreen(viewModel: sl())
+    ),
+    GoRoute(
+      path: Routes.tts,
+      builder: (context, state) => TtsScreen(viewModel: sl())
     )
   ]
 );

@@ -14,7 +14,7 @@ class HomeScreen extends StatelessWidget {
       MenuTileWidget(icon: Icons.mic_rounded, label: "Interaction", color: Colors.red, onTap: () => context.push(Routes.interaction)),
       MenuTileWidget(icon: Icons.search, label: "Playlists", color: Colors.green, onTap: () => context.go(Routes.mediaPlayer)),
       MenuTileWidget(icon: Icons.settings, label: "Settings", color: Colors.yellow.shade700, onTap: () => context.push(Routes.settings)),
-      MenuTileWidget(icon: Icons.info, label: "Stop detection", color: Colors.blueAccent, onTap: () {}),
+      MenuTileWidget(icon: Icons.info, label: "Speech generation", color: Colors.blueAccent, onTap: () => context.push(Routes.tts)),
     ];
 
     return Scaffold(

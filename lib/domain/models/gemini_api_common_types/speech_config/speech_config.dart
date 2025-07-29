@@ -6,12 +6,12 @@ part 'speech_config.g.dart';
 
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 class SpeechConfig {
-  VoiceConfig? voiceConfig;
-  String? languageCode;
+  VoiceConfig voiceConfig;
+  String languageCode;
 
   SpeechConfig({
-    this.voiceConfig,
-    this.languageCode
+    required this.voiceConfig,
+    required this.languageCode
   });
 
   factory SpeechConfig.fromJson(Map<String, dynamic> json) => _$SpeechConfigFromJson(json);
