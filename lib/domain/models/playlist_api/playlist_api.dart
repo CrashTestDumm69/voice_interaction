@@ -7,13 +7,11 @@ part 'playlist_api.g.dart';
 class PlaylistApi {
   final String id;
   final String versionId;
-  final String contentType;
   final List<PlaylistFileApi> files;
 
   PlaylistApi({
     required this.id,
     required this.versionId,
-    required this.contentType,
     required this.files,
   });
 

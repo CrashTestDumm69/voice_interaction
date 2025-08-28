@@ -31,7 +31,6 @@ class GeminiTtsRepository {
     }
 
     _speechFiles = dir.listSync().whereType<File>().toList();
-    
   }
 
   Future<void> generateAndSpeech({required String text, required String name}) async {
