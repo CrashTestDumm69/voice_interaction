@@ -77,15 +77,15 @@ class InteractionViewModel extends Bloc<InteractionEvent, InteractionState> {
         debugPrint("Error in interaction: $error");
       }
 
-      // _liveApiRepository.startSession(
-      //   onSpeak: onSpeak,
-      //   onConnect: onConnect,
-      //   onDisconnect: onDisconnect,
-      //   onListen: onListen,
-      //   onMessage: onMessage,
-      //   onError: onError,
-      //   onFunctionCall: onFunctionCall,
-      // );
+      _liveApiRepository.startSession(
+        onSpeak: onSpeak,
+        onConnect: onConnect,
+        onDisconnect: onDisconnect,
+        onListen: onListen,
+        onMessage: onMessage,
+        onError: onError,
+        onFunctionCall: onFunctionCall,
+      );
     });
 
     on<ConnectionStatusChanged>((event, emit) {

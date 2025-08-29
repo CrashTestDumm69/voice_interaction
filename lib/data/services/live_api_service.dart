@@ -91,8 +91,8 @@ class LiveApiService {
     final msg = LiveApiMessage.setup(
       model: LiveApiConfig.model,
       voice: "zephyr",
-      languageCode: "ml-IN",
-      prompt: "Always speak in malayaalam."
+      languageCode: "en-AU",
+      prompt: "Always speak in English."
     );
     print(jsonEncode(msg));
     _channel!.sink.add(jsonEncode(msg));
