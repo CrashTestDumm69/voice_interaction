@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:voice_interaction/routing/routes.dart';
+import 'package:voice_interaction/ui/features/actions/widgets/actions_screen.dart';
 import 'package:voice_interaction/ui/features/home/widgets/home_screen.dart';
 import 'package:voice_interaction/ui/features/interaction/widgets/interaction_screen.dart';
 import 'package:voice_interaction/ui/features/playlist/widgets/media_player_screen.dart';
@@ -43,7 +44,16 @@ GoRouter router() => GoRouter(
           child: MediaPlayerScreen(viewModel: sl())
         );
       }
-    )
+    ),
+    GoRoute(
+      path: Routes.actions,
+      pageBuilder: (context, state) {
+        return _buildSlideUpPage(
+          key: state.pageKey,
+          child: ActionsScreen(viewModel: sl())
+        );
+      }
+    ),
   ]
 );
 

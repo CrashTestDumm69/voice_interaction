@@ -27,7 +27,7 @@ void main() async {
   await initializeDeps();
   await PlatformApiData.init();
 
-  _handleFaceDetection();
+  // _handleFaceDetection();
 
   runApp(const MyApp());
 }
